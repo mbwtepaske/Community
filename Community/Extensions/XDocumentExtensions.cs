@@ -32,7 +32,7 @@
       return Validate(document, schema, XmlSeverityType.Error);
     }
 
-    public static Boolean ValidateForErrors(this XDocument document, XmlSchema schema)
+    public static Boolean ValidateForErrorsAndWarnings(this XDocument document, XmlSchema schema)
     {
       return Validate(document, schema, XmlSeverityType.Error | XmlSeverityType.Warning);
     }

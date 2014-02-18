@@ -1,28 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace System
+﻿namespace System
 {
+  using Diagnostics;
+  using Globalization;
+  using Linq;
+
   public static class StringExtensions
   {
     /// <summary>
-    /// Returns a String array that contains the substrings in this String that are delimited by elements of a specified Unicode character array. A parameter specifies whether to return empty array elements.
+    /// Returns an instance of <typeparam name="TException" /> where the first argument is assumed to be the message-string.
     /// </summary>
     [DebuggerStepThrough]
-    public static String[] Split(this String instance, String separator, StringSplitOptions options = StringSplitOptions.RemoveEmptyEntries)
+    public static TException FormatException<TException>(this String instance, params Object[] arguments) where TException : Exception
     {
-      Assert.ThrowIfNull<NullReferenceException>(instance);
-      
-      return instance.Split(new[] { separator }, options);
+      return (TException)Activator.CreateInstance(typeof(TException), FormatString(instance, null, arguments));
     }
 
     /// <summary>
-    /// Indicates whether the specified string is null or an System.String.Empty string
+    /// Replaces the format item in a specified string with the string representation of a corresponding object in a specified array.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static String FormatString(this String instance, params Object[] arguments)
+    {
+      return FormatString(instance, null, arguments);
+    }
+
+    /// <summary>
+    /// Replaces the format item in a specified string with the string representation of a corresponding object in a specified array.
+    /// A specified parameter supplies culture-specific formatting information.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static String FormatString(this String instance, IFormatProvider formatProvider, params Object[] arguments)
+    {
+      Assert.ThrowIfNull<NullReferenceException>(instance);
+
+      return String.Format(formatProvider, instance, arguments);
+    }
+
+    /// <summary>
+    /// Indicates whether the specified string is null or an System.String.Empty string.
     /// </summary>
     [DebuggerStepThrough]
     public static Boolean IfNullOrEmpty(this String instance)
@@ -37,6 +52,17 @@ namespace System
     public static Boolean IsNullOrWhiteSpace(this String instance)
     {
       return String.IsNullOrWhiteSpace(instance);
+    }
+
+    /// <summary>
+    /// Returns a String array that contains the substrings in this String that are delimited by elements of a specified Unicode character array. A parameter specifies whether to return empty array elements.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static String[] Split(this String instance, String separator, StringSplitOptions options = StringSplitOptions.RemoveEmptyEntries)
+    {
+      Assert.ThrowIfNull<NullReferenceException>(instance);
+      
+      return instance.Split(new[] { separator }, options);
     }
   }
 }

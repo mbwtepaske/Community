@@ -1,5 +1,6 @@
 ﻿namespace System
 {
+  using Diagnostics;
   using Linq;
   using Linq.Expressions;
 
@@ -11,6 +12,7 @@
     /// <summary>
     /// Throws a <typeparamref name="TException"/> when the <param name="expression" /> returns true.
     /// </summary>
+    [DebuggerNonUserCode]
     public static void Throw<TException, TObject>(TObject instance, Expression<Predicate<TObject>> expression, params Object[] arguments)
       where TException : Exception
     {
@@ -23,6 +25,7 @@
     /// <summary>
     /// Throws <typeparamref name="TException"/> when the object is null.
     /// </summary>
+    [DebuggerNonUserCode]
     public static void ThrowIfNull<TException>(Object instance, params Object[] arguments)
       where TException : Exception
     {
@@ -32,6 +35,7 @@
     /// <summary>
     /// Throws <typeparamref name="TException"/> when the string is null or empty.
     /// </summary>
+    [DebuggerNonUserCode]
     public static void ThrowIfNullOrEmpty<TException>(String instance, params Object[] arguments)
       where TException : Exception
     {
@@ -41,7 +45,8 @@
     /// <summary>
     /// Throws <typeparamref name="TException"/> when the string is null, empty or contains only white-spaces characters.
     /// </summary>
-    public static void ThrowIfNullOrEmpty<TException>(String instance, params Object[] arguments)
+    [DebuggerNonUserCode]
+    public static void ThrowIfNullOrWhiteSpace<TException>(String instance, params Object[] arguments)
       where TException : Exception
     {
       Throw<TException, String>(instance, @object => String.IsNullOrWhiteSpace(@object), arguments);
