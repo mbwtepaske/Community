@@ -1,11 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
-
-namespace System.Collections.Generic
+﻿namespace System.Collections.Generic
 {
+  using Diagnostics;
+
   /// <summary>
-  /// Provides a set of static methods for querying objects that implement <see cref="T:System.Collections.Generic.IDictionary<TKey, TValue>" />.
+  /// Provides a set of static methods for querying objects that implement <see cref="T:System.Collections.Generic.IDictionary" />.
   /// </summary>
   public static class DictionaryExtensions
   {
@@ -16,7 +14,7 @@ namespace System.Collections.Generic
     public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
     {
       Assert.ThrowIfNull<NullReferenceException>(dictionary, "dictionary");
-      
+       
       return dictionary.GetValueOrDefault(key, default(TValue));
     }
 
@@ -28,7 +26,7 @@ namespace System.Collections.Generic
     {
       Assert.ThrowIfNull<NullReferenceException>(dictionary, "dictionary");
 
-      var value = default(TValue);
+      TValue value;
 
       return dictionary.TryGetValue(key, out value) ? value : defaultValue;
     }
@@ -42,7 +40,7 @@ namespace System.Collections.Generic
       Assert.ThrowIfNull<NullReferenceException>(dictionary, "dictionary");
       Assert.ThrowIfNull<ArgumentNullException>(dictionary, "defaultValueFactory");
 
-      var value = default(TValue);
+      TValue value;
 
       return dictionary.TryGetValue(key, out value) ? value : defaultValueFactory();
     }

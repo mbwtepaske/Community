@@ -1,8 +1,6 @@
 ﻿namespace System
 {
   using Diagnostics;
-  using Globalization;
-  using Linq;
 
   public static class StringExtensions
   {

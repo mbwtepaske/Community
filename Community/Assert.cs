@@ -1,8 +1,6 @@
 ﻿namespace System
 {
   using Diagnostics;
-  using Linq;
-  using Linq.Expressions;
 
   /// <summary>
   /// Contains various static methods for generic purposes, like validation of arguments.
@@ -10,17 +8,19 @@
   public static class Assert
   {
     /// <summary>
-    /// Throws a <typeparamref name="TException"/> when the <param name="expression" /> returns true.
+    /// Throws a <typeparamref name="TException"/> when the <param name="predicate" /> returns true.
     /// </summary>
     [DebuggerNonUserCode]
-    public static void Throw<TException, TObject>(TObject instance, Expression<Predicate<TObject>> expression, params Object[] arguments)
+    public static void Throw<TException, TObject>(TObject instance, Predicate<TObject> predicate, params Object[] arguments)
       where TException : Exception
     {
-      if (expression.Compile().Invoke(instance))
+      if (predicate(instance))
       {
-        throw Activator.CreateInstance(typeof(TException), arguments) as Exception;
+        throw (Exception)Activator.CreateInstance(typeof(TException), arguments);
       }
     }
+
+    private static readonly Predicate<Object> IsNull = @object => @object == null;
 
     /// <summary>
     /// Throws <typeparamref name="TException"/> when the object is null.
@@ -29,7 +29,16 @@
     public static void ThrowIfNull<TException>(Object instance, params Object[] arguments)
       where TException : Exception
     {
-      Throw<TException, Object>(instance, @object => @object == null, arguments);
+      Throw<TException, Object>(instance, IsNull, arguments);
+    }
+
+    /// <summary>
+    /// Throws <see cref="T:ArgumentNullException"/> when the object is null.
+    /// </summary>
+    [DebuggerNonUserCode]
+    public static void ThrowIfNull(Object instance, params Object[] arguments)
+    {
+      Throw<ArgumentNullException, Object>(instance, IsNull, arguments);
     }
 
     /// <summary>
@@ -39,7 +48,7 @@
     public static void ThrowIfNullOrEmpty<TException>(String instance, params Object[] arguments)
       where TException : Exception
     {
-      Throw<TException, String>(instance, @object => String.IsNullOrEmpty(@object), arguments);
+      Throw<TException, String>(instance, String.IsNullOrEmpty, arguments);
     }
 
     /// <summary>
@@ -49,7 +58,7 @@
     public static void ThrowIfNullOrWhiteSpace<TException>(String instance, params Object[] arguments)
       where TException : Exception
     {
-      Throw<TException, String>(instance, @object => String.IsNullOrWhiteSpace(@object), arguments);
+      Throw<TException, String>(instance, String.IsNullOrWhiteSpace, arguments);
     }
   }
 }

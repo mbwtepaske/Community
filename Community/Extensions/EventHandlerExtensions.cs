@@ -22,7 +22,10 @@
     [DebuggerNonUserCode]
     public static void Raise<TEventArgs>(this EventHandler<TEventArgs> eventHandler, Object sender, TEventArgs eventArgs) where TEventArgs : EventArgs
     {
-      Raise(eventHandler, sender, eventArgs);
+      if (eventHandler != null)
+      {
+        eventHandler.Invoke(sender, eventArgs);
+      }
     }
   }
 }

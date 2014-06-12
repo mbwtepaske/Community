@@ -1,12 +1,10 @@
 ﻿namespace System.ComponentModel
 {
   using Collections.Concurrent;
-  using Collections.Generic;
   using Globalization;
-  using Linq;
 
   /// <summary>
-  /// Represents a service class for getting <see cref="System.ComponentModel.TypeConverters"/> and caching them for quick access.
+  /// Represents a service class for getting <see cref="System.ComponentModel.TypeConverter"/> and caching them for quick access.
   /// </summary>
   public class TypeConverterService : IServiceProvider
   {
@@ -36,7 +34,7 @@
     }
 
     /// <summary>
-    /// Returns a <see cref="System.ComponentModel.TypeConverters"/> for the specified <see cref="System.Type"/>.
+    /// Returns a <see cref="System.ComponentModel.TypeConverter"/> for the specified <see cref="System.Type"/>.
     /// </summary>
     public virtual TypeConverter this[Type type]
     {
@@ -86,6 +84,7 @@
     /// </summary>
     public static String ConvertToString(Object value, CultureInfo culture = null)
     {
+      Assert.ThrowIfNull<ArgumentNullException>(value, "value");
       if (value == null)
       {
         throw new ArgumentNullException("value");
@@ -94,6 +93,9 @@
       return Default[value.GetType()].ConvertToString(null, culture, value);
     }
 
+    /// <summary>
+    /// Returns the default instance of the current <see cref="System.AppDomain"/>.
+    /// </summary>
     Object IServiceProvider.GetService(Type serviceType)
     {
       return Default[serviceType];

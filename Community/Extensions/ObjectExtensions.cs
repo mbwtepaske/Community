@@ -10,7 +10,7 @@
     [DebuggerNonUserCode]
     public static Boolean IsNotNull(this Object instance)
     {
-      return !Object.Equals(instance, null);
+      return !Equals(instance, null);
     }
 
     /// <summary>
@@ -19,7 +19,7 @@
     [DebuggerNonUserCode]
     public static Boolean IsNull(this Object instance)
     {
-      return Object.Equals(instance, null);
+      return Equals(instance, null);
     }
 	}
 }

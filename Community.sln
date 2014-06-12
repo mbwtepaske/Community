@@ -18,6 +18,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.Automation", "Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.Automation.Tests", "Community.Automation.Tests\Community.Automation.Tests.csproj", "{E257A764-00D4-4C08-BB15-19EFFC61116A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{97A65E74-DCA5-433B-83BD-A405111E13B5}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\BuildNewPackage-RanAutomatically.ps1 = .nuget\BuildNewPackage-RanAutomatically.ps1
+		.nuget\New-NuGetPackage.ps1 = .nuget\New-NuGetPackage.ps1
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\UploadPackage-RunManually.bat = .nuget\UploadPackage-RunManually.bat
+		.nuget\UploadPackage-RunManually.ps1 = .nuget\UploadPackage-RunManually.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

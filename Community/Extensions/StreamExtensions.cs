@@ -1,6 +1,6 @@
 ﻿namespace System.IO
 {
-  using System.Diagnostics;
+  using Diagnostics;
 
   /// <summary>
   /// Provides a set of extension-methods for <see cref="T:System.IO.Stream" />.
