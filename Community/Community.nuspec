@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>M.B.W. te Paske</authors>
+    <owners>M.B.W. te Paske</owners>
+    <!-- <licenseUrl></licenseUrl> -->
+    <projectUrl>https://github.com/mbwtepaske/Community</projectUrl>
+    <!-- <iconUrl></iconUrl> -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <!-- <releaseNotes></releaseNotes> -->
+    <copyright>Copyright 2014</copyright>
+    <!-- <tags></tags> -->
+  </metadata>
+</package>

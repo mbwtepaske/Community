@@ -49,5 +49,19 @@
 
       return elements.Concat(source);
     }
+
+    /// <summary>
+    /// Formats  the specified elements before the source elements.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static String Format<TElement>(this IEnumerable<TElement> source, String format)
+    {
+      if (source == null)
+      {
+        throw new NullReferenceException("source");
+      }
+
+      return String.Format(format, source.ToArray());
+    }
 	}
 }

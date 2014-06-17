@@ -1,4 +1,6 @@
-﻿namespace System.IO
+﻿using Community;
+
+namespace System.IO
 {
   using Diagnostics;
 
@@ -8,13 +10,57 @@
   public static class StreamExtensions
   {
     /// <summary>
+    /// Reads and returns a specified amount of bytes from the stream.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static Byte[] Read(this Stream stream, Int32 length)
+    {
+      if (stream == null)
+      {
+        throw new NullReferenceException("stream");
+      }
+
+      if (length < 0)
+      {
+        throw new ArgumentOutOfRangeException(String.Format(Exceptions.ARGUMENT_LESS, "length", "zero"));
+      }
+
+      var buffer = new Byte[length];
+
+      stream.Read(buffer, 0, length);
+
+      return buffer;
+    }
+
+    /// <summary>
+    /// </summary>
+    [DebuggerStepThrough]
+    public static Byte[] ReadToEnd(this Stream stream)
+    {
+      if (stream == null)
+      {
+        throw new NullReferenceException("stream");
+      }
+
+      var buffer = new Byte[stream.Length - stream.Position];
+
+      stream.Read(buffer, 0, buffer.Length);
+
+      return buffer;
+    }
+
+
+    /// <summary>
     /// Resets the position to the beginning and returns the stream.
     /// </summary>
     [DebuggerStepThrough]
     public static TStream Reset<TStream>(this TStream stream)
       where TStream : Stream
     {
-      Assert.ThrowIfNull<NullReferenceException>(stream, "stream");
+      if (stream == null)
+      {
+        throw new NullReferenceException("stream");
+      }
 
       stream.SeekBegin();
 
@@ -27,7 +73,10 @@
     [DebuggerStepThrough]
     public static Int64 SeekBegin(this Stream stream)
     {
-      Assert.ThrowIfNull<NullReferenceException>(stream, "stream");
+      if (stream == null)
+      {
+        throw new NullReferenceException("stream");
+      }
 
       return SeekBegin(stream, 0);
     }
@@ -38,7 +87,15 @@
     [DebuggerStepThrough]
     public static Int64 SeekBegin(this Stream stream, Int64 offset)
     {
-      Assert.ThrowIfNull<NullReferenceException>(stream, "stream");
+      if (stream == null)
+      {
+        throw new NullReferenceException("stream");
+      }
+
+      if (offset < 0)
+      {
+        throw new ArgumentOutOfRangeException("offset");
+      }
 
       return stream.Seek(offset, SeekOrigin.Begin);
     }
@@ -49,7 +106,10 @@
     [DebuggerStepThrough]
     public static Int64 SeekEnd(this Stream stream)
     {
-      Assert.ThrowIfNull<NullReferenceException>(stream, "stream");
+      if (stream == null)
+      {
+        throw new NullReferenceException("stream");
+      }
 
       return SeekEnd(stream, 0);
     }
@@ -60,9 +120,17 @@
     [DebuggerStepThrough]
     public static Int64 SeekEnd(this Stream stream, Int64 offset)
     {
-      Assert.ThrowIfNull<NullReferenceException>(stream, "stream");
+      if (stream == null)
+      {
+        throw new NullReferenceException("stream");
+      }
 
-      return stream.Seek(offset, SeekOrigin.End);
+      if (offset > 0)
+      {
+        throw new ArgumentOutOfRangeException("offset");
+      }
+
+      return stream.Seek(-offset, SeekOrigin.End);
     }
   }
 }
