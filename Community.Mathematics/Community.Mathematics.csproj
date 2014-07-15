@@ -32,19 +32,51 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="IVector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Vector.cs" />
+    <Compile Include="Vector2D.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector2F.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector2M.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector3D.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector3F.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector3M.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector4D.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector4F.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Vector4M.cs">
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Extensions\" />
     <Folder Include="Geometry\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vector.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
