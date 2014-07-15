@@ -1,0 +1,66 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="Microsoft.CSharp" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.CodeDom" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ output extension="/" #>
+<#@ include file="EF.Utility.CS.ttinclude" #>
+<#
+var visualStudio = (this.Host as IServiceProvider).GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+var project = visualStudio.Solution
+  .FindProjectItem(this.Host.TemplateFile)
+  .ContainingProject as EnvDTE.Project;
+var defaultNamespace = project.Properties
+  .Item("DefaultNamespace")
+  .Value
+  .ToString();
+
+var dimensions = new[] { 2, 3, 4 };
+var types = new Dictionary<Type, Char>
+{
+  { typeof(Decimal), 'M' },
+  { typeof(Double), 'D' },
+  { typeof(Single), 'F' }
+};
+var fileManager = EntityFrameworkTemplateFileManager.Create(this);
+var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
+var codeOptions = new CodeGeneratorOptions
+{
+  BracingStyle = "C",
+  VerbatimOrder = true
+};
+
+foreach (var type in types.Keys)
+{
+  foreach (var dimension in dimensions)
+  {
+    fileManager.StartNewFile(String.Format("Vector{0}{1}.cs", dimension, types[type]));
+    
+    using (var stringWriter = new StringWriter())
+    using (var textWriter = new IndentedTextWriter(stringWriter, "  "))
+    {
+      codeProvider.GenerateCodeFromCompileUnit(Create(defaultNamespace, type, dimension), textWriter, codeOptions);
+
+      Write(stringWriter.ToString());
+    }
+  }
+}
+
+fileManager.Process();
+#>
+<#+
+public CodeCompileUnit Create(String @namespace, Type type, Int32 dimension)
+{
+  var codeUnit = new CodeCompileUnit();
+  var codeNamespace = new CodeNamespace(@namespace);
+
+  codeNamespace.Imports.Add(new CodeNamespaceImport("System"));
+  codeUnit.Namespaces.Add(codeNamespace);
+
+  return codeUnit;
+}
+#>
