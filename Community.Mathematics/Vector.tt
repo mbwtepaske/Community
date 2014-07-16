@@ -1,5 +1,6 @@
 ﻿<#@ template debug="true" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
+<#@ assembly name="EnvDTE" #>
 <#@ assembly name="Microsoft.CSharp" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.CodeDom" #>
@@ -7,8 +8,9 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
-<#@ output extension="/" #>
-<#@ include file="EF.Utility.CS.ttinclude" #>
+<#@ import namespace="EnvDTE" #>
+<#@ output extension=".cs" #>
+<#@ include file="T4Toolbox.tt" #>
 <#
 var visualStudio = (this.Host as IServiceProvider).GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
 var project = visualStudio.Solution
@@ -19,48 +21,121 @@ var defaultNamespace = project.Properties
   .Value
   .ToString();
 
-var dimensions = new[] { 2, 3, 4 };
+var dimensions = new Dictionary<Int32, Char>
+{ 
+  { 1, 'X' },
+  { 2, 'Y' },
+  { 3, 'Z' },
+  { 4, 'W' }
+};
 var types = new Dictionary<Type, Char>
 {
   { typeof(Decimal), 'M' },
   { typeof(Double), 'D' },
   { typeof(Single), 'F' }
 };
-var fileManager = EntityFrameworkTemplateFileManager.Create(this);
-var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
-var codeOptions = new CodeGeneratorOptions
-{
-  BracingStyle = "C",
-  VerbatimOrder = true
-};
 
-foreach (var type in types.Keys)
+
+
+var codeTemplate = new CodeTemplate();
+
+codeTemplate.WriteLine("using System;");
+codeTemplate.WriteLine("using System.Collections;");
+codeTemplate.WriteLine("using System.Collections.Generic;");
+codeTemplate.WriteLine();
+
+using (codeTemplate.RenderNamespace())
 {
-  foreach (var dimension in dimensions)
+  for (var dimension = 2; dimension <= dimensions.Count; dimension++)
   {
-    fileManager.StartNewFile(String.Format("Vector{0}{1}.cs", dimension, types[type]));
-    
-    using (var stringWriter = new StringWriter())
-    using (var textWriter = new IndentedTextWriter(stringWriter, "  "))
+    foreach (var type in types.Keys)
     {
-      codeProvider.GenerateCodeFromCompileUnit(Create(defaultNamespace, type, dimension), textWriter, codeOptions);
+      codeTemplate.WriteLine("public struct Vector{0}{1} : IVector<{2}>", dimension, types[type], type.Name);
 
-      Write(stringWriter.ToString());
+      using (codeTemplate.RenderScope())
+      {
+        for (var index = 1; index <= dimension; index++)
+        {
+          codeTemplate.WriteLine("public {0} {1};", type.Name, dimensions[index]);
+        }
+      }
+
+      codeTemplate.WriteLine();
     }
   }
 }
 
-fileManager.Process();
+Write(codeTemplate.TransformText());
 #>
 <#+
-public CodeCompileUnit Create(String @namespace, Type type, Int32 dimension)
+class CodeTemplate : CSharpTemplate
 {
-  var codeUnit = new CodeCompileUnit();
-  var codeNamespace = new CodeNamespace(@namespace);
+  private const String IndentString = "  ";
+  
+  public IDisposable RenderClass(String name)
+  {
+    WriteLine("public class " + name);
 
-  codeNamespace.Imports.Add(new CodeNamespaceImport("System"));
-  codeUnit.Namespaces.Add(codeNamespace);
+    return RenderScope();
+  }
 
-  return codeUnit;
+  public IDisposable RenderNamespace(String name = null)
+  {
+    WriteLine("namespace " + (name ?? DefaultNamespace));
+
+    return RenderScope();
+  }
+
+  public IDisposable RenderScope()
+  {
+    WriteLine("{");
+    PushIndent(IndentString);
+
+    return new ActionDisposable(delegate
+    {
+      PopIndent();
+      WriteLine("}");
+    });
+  }
+  
+  public IDisposable RenderStructure(String name)
+  {
+    WriteLine("public struct " + name);
+
+    return RenderScope();
+  }
+
+  public override String TransformText()
+  {
+    return GenerationEnvironment.ToString();
+  }
+
+  public void WriteLine()
+  {
+    WriteLine(String.Empty);
+  }
+}
+#>
+<#+
+class ActionDisposable : IDisposable
+{
+  private Action Action
+  {
+    get;
+    set;
+  }
+
+  public ActionDisposable(Action action)
+  {
+    Action = action;
+  }
+
+  public void Dispose()
+  {
+    if (Action != null)
+    {
+      Action.Invoke();
+    }
+  }
 }
 #>
