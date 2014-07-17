@@ -11,52 +11,42 @@
 <#@ import namespace="EnvDTE" #>
 <#@ output extension=".cs" #>
 <#@ include file="T4Toolbox.tt" #>
+<#@ include file="CodeTemplate.tt" #>
 <#
-var visualStudio = (this.Host as IServiceProvider).GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
-var project = visualStudio.Solution
-  .FindProjectItem(this.Host.TemplateFile)
-  .ContainingProject as EnvDTE.Project;
-var defaultNamespace = project.Properties
-  .Item("DefaultNamespace")
-  .Value
-  .ToString();
-
-var dimensions = new Dictionary<Int32, Char>
+var dimensions = new Dictionary<Int32, []>
 { 
-  { 1, 'X' },
-  { 2, 'Y' },
-  { 3, 'Z' },
-  { 4, 'W' }
+  { 1, new[] { 'A', 'X' } },
+  { 2, new[] { 'B', 'Y' } },
+  { 3, new[] { 'C', 'Z' } },
+  { 4, new[] { 'D', 'W' } }
 };
-var types = new Dictionary<Type, Char>
+var types = new[]
 {
-  { typeof(Decimal), 'M' },
-  { typeof(Double), 'D' },
-  { typeof(Single), 'F' }
+	new { Type = typeof(Double), Suffix = 'D' },
+	new { Type = typeof(Single), Suffix = 'S' }
 };
-
-
 
 var codeTemplate = new CodeTemplate();
 
-codeTemplate.WriteLine("using System;");
-codeTemplate.WriteLine("using System.Collections;");
-codeTemplate.WriteLine("using System.Collections.Generic;");
+codeTemplate.RenderUsing("System");
+codeTemplate.RenderUsing("System.Runtime.InteropServices");
 codeTemplate.WriteLine();
 
 using (codeTemplate.RenderNamespace())
 {
-  for (var dimension = 2; dimension <= dimensions.Count; dimension++)
+  for (var dimension = 2; dimension <= 4; dimension++)
   {
-    foreach (var type in types.Keys)
+    foreach (var type in types)
     {
-      codeTemplate.WriteLine("public struct Vector{0}{1} : IVector<{2}>", dimension, types[type], type.Name);
+      codeTemplate.WriteLine("[StructLayout(LayoutKind.Explicit)]");
+      codeTemplate.WriteLine("public struct Vector{0}{1} : IVector<{2}>", dimension, type.Suffix, type.Type.Name);
 
       using (codeTemplate.RenderScope())
       {
+        for (var index1 = 0; index1 < 2
         for (var index = 1; index <= dimension; index++)
         {
-          codeTemplate.WriteLine("public {0} {1};", type.Name, dimensions[index]);
+          codeTemplate.WriteLine("public {0} {1};", type.Type.Name, dimensions[index]);
         }
       }
 
@@ -65,77 +55,5 @@ using (codeTemplate.RenderNamespace())
   }
 }
 
-Write(codeTemplate.TransformText());
-#>
-<#+
-class CodeTemplate : CSharpTemplate
-{
-  private const String IndentString = "  ";
-  
-  public IDisposable RenderClass(String name)
-  {
-    WriteLine("public class " + name);
-
-    return RenderScope();
-  }
-
-  public IDisposable RenderNamespace(String name = null)
-  {
-    WriteLine("namespace " + (name ?? DefaultNamespace));
-
-    return RenderScope();
-  }
-
-  public IDisposable RenderScope()
-  {
-    WriteLine("{");
-    PushIndent(IndentString);
-
-    return new ActionDisposable(delegate
-    {
-      PopIndent();
-      WriteLine("}");
-    });
-  }
-  
-  public IDisposable RenderStructure(String name)
-  {
-    WriteLine("public struct " + name);
-
-    return RenderScope();
-  }
-
-  public override String TransformText()
-  {
-    return GenerationEnvironment.ToString();
-  }
-
-  public void WriteLine()
-  {
-    WriteLine(String.Empty);
-  }
-}
-#>
-<#+
-class ActionDisposable : IDisposable
-{
-  private Action Action
-  {
-    get;
-    set;
-  }
-
-  public ActionDisposable(Action action)
-  {
-    Action = action;
-  }
-
-  public void Dispose()
-  {
-    if (Action != null)
-    {
-      Action.Invoke();
-    }
-  }
-}
+WriteLine(codeTemplate.TransformText());
 #>

@@ -44,6 +44,7 @@
     <Folder Include="Geometry\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CodeTemplate.tt" />
     <None Include="Vector.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Vector.cs</LastGenOutput>
