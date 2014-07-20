@@ -38,6 +38,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Vector.bak.cs" />
+    <Compile Include="Vector.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Vector.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />

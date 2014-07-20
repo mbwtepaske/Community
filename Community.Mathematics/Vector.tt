@@ -7,23 +7,28 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Runtime.InteropServices" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="EnvDTE" #>
 <#@ output extension=".cs" #>
 <#@ include file="T4Toolbox.tt" #>
 <#@ include file="CodeTemplate.tt" #>
 <#
-var dimensions = new Dictionary<Int32, []>
+var fields = new Dictionary<Char, Int32>
 { 
-  { 1, new[] { 'A', 'X' } },
-  { 2, new[] { 'B', 'Y' } },
-  { 3, new[] { 'C', 'Z' } },
-  { 4, new[] { 'D', 'W' } }
+  { 'A', 0 },
+  { 'B', 1 },
+  { 'C', 2 },
+  { 'D', 3 },
+  { 'X', 0 },
+  { 'Y', 1 },
+  { 'Z', 2 },
+  { 'W', 3 }
 };
 var types = new[]
 {
 	new { Type = typeof(Double), Suffix = 'D' },
-	new { Type = typeof(Single), Suffix = 'S' }
+	new { Type = typeof(Single), Suffix = 'F' }
 };
 
 var codeTemplate = new CodeTemplate();
@@ -34,19 +39,61 @@ codeTemplate.WriteLine();
 
 using (codeTemplate.RenderNamespace())
 {
-  for (var dimension = 2; dimension <= 4; dimension++)
+  for (var dimension = 1; dimension < 4; dimension++)
   {
     foreach (var type in types)
     {
+      var typeSize = Marshal.SizeOf(type.Type);
+
       codeTemplate.WriteLine("[StructLayout(LayoutKind.Explicit)]");
-      codeTemplate.WriteLine("public struct Vector{0}{1} : IVector<{2}>", dimension, type.Suffix, type.Type.Name);
+      codeTemplate.WriteLine("public struct Vector{0}{1} : IVector<{2}>", dimension + 1, type.Suffix, type.Type.Name);
 
       using (codeTemplate.RenderScope())
       {
-        for (var index1 = 0; index1 < 2
-        for (var index = 1; index <= dimension; index++)
+        foreach (var pair in fields.Where(pair => pair.Value <= dimension))
         {
-          codeTemplate.WriteLine("public {0} {1};", type.Type.Name, dimensions[index]);
+          codeTemplate.WriteLine("[FieldOffset(0x{0:X2})]", typeSize * pair.Value);
+          codeTemplate.WriteLine("public {0} {1};", type.Type.Name, pair.Key);
+          codeTemplate.WriteLine();
+        }
+
+        codeTemplate.WriteLine("public {0} this[Int32 index]",  type.Type.Name);
+
+        using (codeTemplate.RenderScope())
+        {
+          codeTemplate.WriteLine("get");
+
+          using (codeTemplate.RenderScope())
+          {
+            codeTemplate.WriteLine("switch (index)");
+
+            using (codeTemplate.RenderScope())
+            {
+              for (var index = 0; index <= dimension; index++)
+              {
+                codeTemplate.WriteLine("case {0}: return {1};", index, fields.ElementAt(index).Key);
+              }
+
+              codeTemplate.WriteLine("default: throw new ArgumentOutOfRangeException();");
+            }
+          }
+          
+          codeTemplate.WriteLine("set");
+
+          using (codeTemplate.RenderScope())
+          {
+            codeTemplate.WriteLine("switch (index)");
+
+            using (codeTemplate.RenderScope())
+            {
+              for (var index = 0; index <= dimension; index++)
+              {
+                codeTemplate.WriteLine("case {0}: {1} = value; break;", index, fields.ElementAt(index).Key);
+              }
+
+              codeTemplate.WriteLine("default: throw new ArgumentOutOfRangeException();");
+            }
+          }
         }
       }
 

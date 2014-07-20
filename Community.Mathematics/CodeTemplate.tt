@@ -1,0 +1,71 @@
+﻿<#+
+class CodeTemplate : CSharpTemplate
+{
+  private const String IndentString = "  ";
+  
+  public IDisposable RenderNamespace(String name = null)
+  {
+    WriteLine("namespace " + (name ?? DefaultNamespace));
+
+    return RenderScope();
+  }
+
+  public IDisposable RenderProperty(String name, Type type)
+  {
+    WriteLine("public {0} {1}", type.Name, name);
+
+    return RenderScope();
+  }
+
+  public IDisposable RenderScope()
+  {
+    WriteLine("{");
+    PushIndent(IndentString);
+
+    return new ActionDisposable(delegate
+    {
+      PopIndent();
+      WriteLine("}");
+    });
+  }
+  
+  public void RenderUsing(String name)
+  {
+    WriteLine("using {0};", name);
+  }
+
+  public override String TransformText()
+  {
+		base.TransformText();
+    
+    return GenerationEnvironment.ToString();
+  }
+
+  public void WriteLine()
+  {
+    WriteLine(String.Empty);
+	}
+}
+
+class ActionDisposable : IDisposable
+{
+  private Action Action
+  {
+    get;
+    set;
+  }
+
+  public ActionDisposable(Action action)
+  {
+    Action = action;
+  }
+
+  public void Dispose()
+  {
+    if (Action != null)
+    {
+      Action.Invoke();
+    }
+  }
+}
+#>
