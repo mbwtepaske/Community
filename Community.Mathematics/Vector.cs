@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Community.Mathematics
 {
-  [StructLayout(LayoutKind.Explicit)]
   public struct Vector2D : IVector<Double>
   {
-    [FieldOffset(0x00)]
-    public Double A;
-
-    [FieldOffset(0x08)]
-    public Double B;
-
-    [FieldOffset(0x00)]
-    public Double X;
-
-    [FieldOffset(0x08)]
-    public Double Y;
+    public Double M1;
+    public Double M2;
 
     public Double this[Int32 index]
     {
@@ -24,8 +16,8 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: return A;
-          case 1: return B;
+          case 0: return M1;
+          case 1: return M2;
           default: throw new ArgumentOutOfRangeException();
         }
       }
@@ -33,28 +25,51 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: A = value; break;
-          case 1: B = value; break;
+          case 0: M1 = value; break;
+          case 1: M2 = value; break;
           default: throw new ArgumentOutOfRangeException();
         }
       }
     }
+
+    public Vector2D(Double value)
+    {
+      M1 = value;
+      M2 = value;
+    }
+
+    public Vector2D(Double m1, Double m2)
+    {
+      M1 = m1;
+      M2 = m2;
+    }
+
+    public IEnumerator<Double> GetEnumerator()
+    {
+      yield return M1;
+      yield return M2;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public override String ToString()
+    {
+      return ToString("F3", null);
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
+    }
   }
 
-  [StructLayout(LayoutKind.Explicit)]
   public struct Vector2F : IVector<Single>
   {
-    [FieldOffset(0x00)]
-    public Single A;
-
-    [FieldOffset(0x04)]
-    public Single B;
-
-    [FieldOffset(0x00)]
-    public Single X;
-
-    [FieldOffset(0x04)]
-    public Single Y;
+    public Single M1;
+    public Single M2;
 
     public Single this[Int32 index]
     {
@@ -62,8 +77,8 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: return A;
-          case 1: return B;
+          case 0: return M1;
+          case 1: return M2;
           default: throw new ArgumentOutOfRangeException();
         }
       }
@@ -71,34 +86,52 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: A = value; break;
-          case 1: B = value; break;
+          case 0: M1 = value; break;
+          case 1: M2 = value; break;
           default: throw new ArgumentOutOfRangeException();
         }
       }
     }
+
+    public Vector2F(Single value)
+    {
+      M1 = value;
+      M2 = value;
+    }
+
+    public Vector2F(Single m1, Single m2)
+    {
+      M1 = m1;
+      M2 = m2;
+    }
+
+    public IEnumerator<Single> GetEnumerator()
+    {
+      yield return M1;
+      yield return M2;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public override String ToString()
+    {
+      return ToString("F3", null);
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
+    }
   }
 
-  [StructLayout(LayoutKind.Explicit)]
   public struct Vector3D : IVector<Double>
   {
-    [FieldOffset(0x00)]
-    public Double A;
-
-    [FieldOffset(0x08)]
-    public Double B;
-
-    [FieldOffset(0x10)]
-    public Double C;
-
-    [FieldOffset(0x00)]
-    public Double X;
-
-    [FieldOffset(0x08)]
-    public Double Y;
-
-    [FieldOffset(0x10)]
-    public Double Z;
+    public Double M1;
+    public Double M2;
+    public Double M3;
 
     public Double this[Int32 index]
     {
@@ -106,9 +139,9 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: return A;
-          case 1: return B;
-          case 2: return C;
+          case 0: return M1;
+          case 1: return M2;
+          case 2: return M3;
           default: throw new ArgumentOutOfRangeException();
         }
       }
@@ -116,35 +149,56 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: A = value; break;
-          case 1: B = value; break;
-          case 2: C = value; break;
+          case 0: M1 = value; break;
+          case 1: M2 = value; break;
+          case 2: M3 = value; break;
           default: throw new ArgumentOutOfRangeException();
         }
       }
     }
+
+    public Vector3D(Double value)
+    {
+      M1 = value;
+      M2 = value;
+      M3 = value;
+    }
+
+    public Vector3D(Double m1, Double m2, Double m3)
+    {
+      M1 = m1;
+      M2 = m2;
+      M3 = m3;
+    }
+
+    public IEnumerator<Double> GetEnumerator()
+    {
+      yield return M1;
+      yield return M2;
+      yield return M3;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public override String ToString()
+    {
+      return ToString("F3", null);
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
+    }
   }
 
-  [StructLayout(LayoutKind.Explicit)]
   public struct Vector3F : IVector<Single>
   {
-    [FieldOffset(0x00)]
-    public Single A;
-
-    [FieldOffset(0x04)]
-    public Single B;
-
-    [FieldOffset(0x08)]
-    public Single C;
-
-    [FieldOffset(0x00)]
-    public Single X;
-
-    [FieldOffset(0x04)]
-    public Single Y;
-
-    [FieldOffset(0x08)]
-    public Single Z;
+    public Single M1;
+    public Single M2;
+    public Single M3;
 
     public Single this[Int32 index]
     {
@@ -152,9 +206,9 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: return A;
-          case 1: return B;
-          case 2: return C;
+          case 0: return M1;
+          case 1: return M2;
+          case 2: return M3;
           default: throw new ArgumentOutOfRangeException();
         }
       }
@@ -162,41 +216,57 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: A = value; break;
-          case 1: B = value; break;
-          case 2: C = value; break;
+          case 0: M1 = value; break;
+          case 1: M2 = value; break;
+          case 2: M3 = value; break;
           default: throw new ArgumentOutOfRangeException();
         }
       }
     }
+
+    public Vector3F(Single value)
+    {
+      M1 = value;
+      M2 = value;
+      M3 = value;
+    }
+
+    public Vector3F(Single m1, Single m2, Single m3)
+    {
+      M1 = m1;
+      M2 = m2;
+      M3 = m3;
+    }
+
+    public IEnumerator<Single> GetEnumerator()
+    {
+      yield return M1;
+      yield return M2;
+      yield return M3;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public override String ToString()
+    {
+      return ToString("F3", null);
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
+    }
   }
 
-  [StructLayout(LayoutKind.Explicit)]
   public struct Vector4D : IVector<Double>
   {
-    [FieldOffset(0x00)]
-    public Double A;
-
-    [FieldOffset(0x08)]
-    public Double B;
-
-    [FieldOffset(0x10)]
-    public Double C;
-
-    [FieldOffset(0x18)]
-    public Double D;
-
-    [FieldOffset(0x00)]
-    public Double X;
-
-    [FieldOffset(0x08)]
-    public Double Y;
-
-    [FieldOffset(0x10)]
-    public Double Z;
-
-    [FieldOffset(0x18)]
-    public Double W;
+    public Double M1;
+    public Double M2;
+    public Double M3;
+    public Double M4;
 
     public Double this[Int32 index]
     {
@@ -204,10 +274,10 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: return A;
-          case 1: return B;
-          case 2: return C;
-          case 3: return D;
+          case 0: return M1;
+          case 1: return M2;
+          case 2: return M3;
+          case 3: return M4;
           default: throw new ArgumentOutOfRangeException();
         }
       }
@@ -215,42 +285,61 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: A = value; break;
-          case 1: B = value; break;
-          case 2: C = value; break;
-          case 3: D = value; break;
+          case 0: M1 = value; break;
+          case 1: M2 = value; break;
+          case 2: M3 = value; break;
+          case 3: M4 = value; break;
           default: throw new ArgumentOutOfRangeException();
         }
       }
     }
+
+    public Vector4D(Double value)
+    {
+      M1 = value;
+      M2 = value;
+      M3 = value;
+      M4 = value;
+    }
+
+    public Vector4D(Double m1, Double m2, Double m3, Double m4)
+    {
+      M1 = m1;
+      M2 = m2;
+      M3 = m3;
+      M4 = m4;
+    }
+
+    public IEnumerator<Double> GetEnumerator()
+    {
+      yield return M1;
+      yield return M2;
+      yield return M3;
+      yield return M4;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public override String ToString()
+    {
+      return ToString("F3", null);
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
+    }
   }
 
-  [StructLayout(LayoutKind.Explicit)]
   public struct Vector4F : IVector<Single>
   {
-    [FieldOffset(0x00)]
-    public Single A;
-
-    [FieldOffset(0x04)]
-    public Single B;
-
-    [FieldOffset(0x08)]
-    public Single C;
-
-    [FieldOffset(0x0C)]
-    public Single D;
-
-    [FieldOffset(0x00)]
-    public Single X;
-
-    [FieldOffset(0x04)]
-    public Single Y;
-
-    [FieldOffset(0x08)]
-    public Single Z;
-
-    [FieldOffset(0x0C)]
-    public Single W;
+    public Single M1;
+    public Single M2;
+    public Single M3;
+    public Single M4;
 
     public Single this[Int32 index]
     {
@@ -258,10 +347,10 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: return A;
-          case 1: return B;
-          case 2: return C;
-          case 3: return D;
+          case 0: return M1;
+          case 1: return M2;
+          case 2: return M3;
+          case 3: return M4;
           default: throw new ArgumentOutOfRangeException();
         }
       }
@@ -269,13 +358,52 @@ namespace Community.Mathematics
       {
         switch (index)
         {
-          case 0: A = value; break;
-          case 1: B = value; break;
-          case 2: C = value; break;
-          case 3: D = value; break;
+          case 0: M1 = value; break;
+          case 1: M2 = value; break;
+          case 2: M3 = value; break;
+          case 3: M4 = value; break;
           default: throw new ArgumentOutOfRangeException();
         }
       }
+    }
+
+    public Vector4F(Single value)
+    {
+      M1 = value;
+      M2 = value;
+      M3 = value;
+      M4 = value;
+    }
+
+    public Vector4F(Single m1, Single m2, Single m3, Single m4)
+    {
+      M1 = m1;
+      M2 = m2;
+      M3 = m3;
+      M4 = m4;
+    }
+
+    public IEnumerator<Single> GetEnumerator()
+    {
+      yield return M1;
+      yield return M2;
+      yield return M3;
+      yield return M4;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public override String ToString()
+    {
+      return ToString("F3", null);
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
     }
   }
 

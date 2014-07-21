@@ -14,17 +14,6 @@
 <#@ include file="T4Toolbox.tt" #>
 <#@ include file="CodeTemplate.tt" #>
 <#
-var fields = new Dictionary<Char, Int32>
-{ 
-  { 'A', 0 },
-  { 'B', 1 },
-  { 'C', 2 },
-  { 'D', 3 },
-  { 'X', 0 },
-  { 'Y', 1 },
-  { 'Z', 2 },
-  { 'W', 3 }
-};
 var types = new[]
 {
 	new { Type = typeof(Double), Suffix = 'D' },
@@ -34,7 +23,9 @@ var types = new[]
 var codeTemplate = new CodeTemplate();
 
 codeTemplate.RenderUsing("System");
-codeTemplate.RenderUsing("System.Runtime.InteropServices");
+codeTemplate.RenderUsing("System.Collections");
+codeTemplate.RenderUsing("System.Collections.Generic");
+codeTemplate.RenderUsing("System.Linq");
 codeTemplate.WriteLine();
 
 using (codeTemplate.RenderNamespace())
@@ -45,18 +36,19 @@ using (codeTemplate.RenderNamespace())
     {
       var typeSize = Marshal.SizeOf(type.Type);
 
-      codeTemplate.WriteLine("[StructLayout(LayoutKind.Explicit)]");
+      //codeTemplate.WriteLine("[StructLayout(LayoutKind.Explicit)]");
       codeTemplate.WriteLine("public struct Vector{0}{1} : IVector<{2}>", dimension + 1, type.Suffix, type.Type.Name);
 
       using (codeTemplate.RenderScope())
       {
-        foreach (var pair in fields.Where(pair => pair.Value <= dimension))
+        for (var index = 0; index <= dimension; index++)
         {
-          codeTemplate.WriteLine("[FieldOffset(0x{0:X2})]", typeSize * pair.Value);
-          codeTemplate.WriteLine("public {0} {1};", type.Type.Name, pair.Key);
-          codeTemplate.WriteLine();
+          //codeTemplate.WriteLine("[FieldOffset(0x{0:X2})]", typeSize * pair.Value);
+          codeTemplate.WriteLine("public {0} M{1};", type.Type.Name, index + 1);
+          //codeTemplate.WriteLine();
         }
 
+        codeTemplate.WriteLine();
         codeTemplate.WriteLine("public {0} this[Int32 index]",  type.Type.Name);
 
         using (codeTemplate.RenderScope())
@@ -71,7 +63,7 @@ using (codeTemplate.RenderNamespace())
             {
               for (var index = 0; index <= dimension; index++)
               {
-                codeTemplate.WriteLine("case {0}: return {1};", index, fields.ElementAt(index).Key);
+                codeTemplate.WriteLine("case {0}: return M{1};", index, index + 1);
               }
 
               codeTemplate.WriteLine("default: throw new ArgumentOutOfRangeException();");
@@ -88,12 +80,84 @@ using (codeTemplate.RenderNamespace())
             {
               for (var index = 0; index <= dimension; index++)
               {
-                codeTemplate.WriteLine("case {0}: {1} = value; break;", index, fields.ElementAt(index).Key);
+                codeTemplate.WriteLine("case {0}: M{1} = value; break;", index, index + 1);
               }
 
               codeTemplate.WriteLine("default: throw new ArgumentOutOfRangeException();");
             }
           }
+        }
+
+        codeTemplate.WriteLine();
+
+        // Uniform Constructor
+        codeTemplate.WriteLine("public Vector{0}{1}({2} value)", dimension + 1, type.Suffix, type.Type.Name);
+        
+        using (codeTemplate.RenderScope())
+        {
+          for (var index = 0; index <= dimension; index++)
+          {
+            codeTemplate.WriteLine("M{0} = value;", index + 1);
+          }
+        }
+
+        codeTemplate.WriteLine();
+
+        // Non-Uniform Constructor
+        codeTemplate.WriteLine("public Vector{0}{1}({2})"
+          , dimension + 1
+          , type.Suffix
+          , String.Join(", ", Enumerable.Range(1, dimension + 1).Select(index => type.Type.Name + " m" + index)));
+
+        using (codeTemplate.RenderScope())
+        {
+          for (var index = 0; index <= dimension; index++)
+          {
+            codeTemplate.WriteLine("M{0} = m{0};", index + 1);
+          }
+        }
+
+        codeTemplate.WriteLine();
+
+        // GetEnumerator
+        codeTemplate.WriteLine("public IEnumerator<{0}> GetEnumerator()", type.Type.Name);
+
+        using (codeTemplate.RenderScope())
+        {
+          for (var index = 0; index <= dimension; index++)
+          {
+            codeTemplate.WriteLine("yield return M{0};", index + 1);
+          }
+        }
+
+        codeTemplate.WriteLine();
+
+        // GetEnumerator
+        codeTemplate.WriteLine("IEnumerator IEnumerable.GetEnumerator()");
+
+        using (codeTemplate.RenderScope())
+        {
+          codeTemplate.WriteLine("return GetEnumerator();");
+        }
+
+        codeTemplate.WriteLine();
+
+        // ToString
+        codeTemplate.WriteLine("public override String ToString()");
+
+        using (codeTemplate.RenderScope())
+        {
+          codeTemplate.WriteLine("return ToString(\"F3\", null);");
+        }
+
+        codeTemplate.WriteLine();
+
+        // ToString
+        codeTemplate.WriteLine("public String ToString(String format, IFormatProvider formatProvider)");
+
+        using (codeTemplate.RenderScope())
+        {
+          codeTemplate.WriteLine("return \"[\" + String.Join(\", \", this.Select(value => value.ToString(format, formatProvider))) + \"]\";");
         }
       }
 

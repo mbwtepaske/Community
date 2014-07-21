@@ -34,10 +34,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="IVector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
-    <Compile Include="Vector.bak.cs" />
     <Compile Include="Vector.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -45,7 +45,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <Folder Include="Geometry\" />
   </ItemGroup>
   <ItemGroup>
