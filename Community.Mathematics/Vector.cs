@@ -1,60 +1,141 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Community.Mathematics
 {
-  public struct Vector2D : IVector<Double>
+  /// <summary>
+  /// Represents a double-precision vector.
+  /// </summary>
+  [Serializable]
+  public class Vector : IEnumerable<Double>, IEquatable<Vector>, IFormattable
   {
-    public Double M1;
-    public Double M2;
-
     public Double this[Int32 index]
     {
       get
       {
-        switch (index)
-        {
-          case 0: return M1;
-          case 1: return M2;
-          default: throw new ArgumentOutOfRangeException();
-        }
+        return Data[index];
       }
       set
       {
-        switch (index)
-        {
-          case 0: M1 = value; break;
-          case 1: M2 = value; break;
-          default: throw new ArgumentOutOfRangeException();
-        }
+        Data[index] = value;
       }
     }
 
-    public Vector2D(Double value)
+    public Int32 Size
     {
-      M1 = value;
-      M2 = value;
+      get
+      {
+        return Data.Length;
+      }
     }
 
-    public Vector2D(Double m1, Double m2)
+    protected Double[] Data
     {
-      M1 = m1;
-      M2 = m2;
+      get;
+      private set;
     }
+
+    public Vector(Int32 size)
+    {
+      Data = new Double[size];
+    }
+
+    public Vector(Double value, Int32 size)
+    {
+      Data = Enumerable.Repeat(value, size).ToArray();
+    }
+
+    public Vector(params Double[] values) : this(values.Length)
+    {
+      values.CopyTo(Data, 0);
+    }
+    
+    public Double GetLength()
+    {
+      return GetLength(this);
+    }
+
+    public Double GetLengthSquare()
+    {
+      return GetLengthSquare(this);
+    }
+
+    public static Double GetLength(Vector vector)
+    {
+      return Math.Sqrt(GetLengthSquare(vector));
+    }
+
+    public static Double GetLengthSquare(Vector vector)
+    {
+      return vector.Sum(value => value * value);
+    }
+
+    #region IEnumeration
 
     public IEnumerator<Double> GetEnumerator()
     {
-      yield return M1;
-      yield return M2;
+      return Data.AsEnumerable().GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return GetEnumerator();
+      return Data.GetEnumerator();
     }
 
+    #endregion
+
+    #region IEquatability
+
+    public Boolean Equals(Vector other)
+    {
+      return !ReferenceEquals(other, null) && Data.SequenceEqual(other.Data);
+    }
+
+    public override Boolean Equals(Object other)
+    {
+      return !ReferenceEquals(other, null) && GetType() == other.GetType() && Equals(other as Vector);
+    }
+
+    public override Int32 GetHashCode()
+    {
+      return Data
+        .Select(scalar => scalar.GetHashCode())
+        .Aggregate((current, next) => current ^ next);
+    }
+
+    public static Boolean operator ==(Vector left, Vector right)
+    {
+      if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+      {
+        return true;
+      }
+
+      return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
+    }
+
+    public static Boolean operator !=(Vector left, Vector right)
+    {
+      if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+      {
+        return false;
+      }
+
+      if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
+      {
+        return true;
+      }
+
+      return !left.Equals(right);
+    }
+
+    #endregion
+
+    #region IFormattable
+    
     public override String ToString()
     {
       return ToString("F3", null);
@@ -62,355 +143,247 @@ namespace Community.Mathematics
 
     public String ToString(String format, IFormatProvider formatProvider)
     {
-      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
+      return "[" + String.Join(", ", Data.Select(scalar => scalar.ToString(format, formatProvider))) + "]";
     }
+
+    #endregion
+
+    private static void ValidateParameters(Vector first, params Vector[] additional)
+    {
+      if (first == null)
+      {
+        throw new ArgumentNullException("first");
+      }
+
+      foreach (var vector in additional)
+      {
+        if (vector == null)
+        {
+          throw new ArgumentNullException();
+        }
+
+        if (first.Size != vector.Size)
+        {
+          throw new ArgumentException("vector sizes do not match");
+        }
+      }
+    }
+
+    #region Operators
+
+    private static Double Add(Double left, Double right)
+    {
+      return left + right;
+    }
+
+    public static Vector Add(Vector left, Vector right)
+    {
+      return Operation(left, right, null, Add);
+    }
+
+    public static Vector Add(Vector left, Vector right, Vector result)
+    {
+      return Operation(left, right, result, Add);
+    }
+
+    private static Double Divide(Double left, Double right)
+    {
+      return left / right;
+    }
+
+    public static Vector Divide(Vector left, Vector right)
+    {
+      return Operation(left, right, null, Divide);
+    }
+
+    public static Vector Divide(Vector left, Vector right, Vector result)
+    {
+      return Operation(left, right, result, Divide);
+    }
+
+    public static Vector Interpolate(Vector left, Vector right, Double value)
+    {
+      return Interpolate(left, right, value, null);
+    }
+
+    public static Vector Interpolate(Vector left, Vector right, Double value, Vector result)
+    {
+      return Interpolate(left, right, new Vector(value, left.Size), result);
+    }
+
+    public static Vector Interpolate(Vector left, Vector right, Vector values)
+    {
+      return Interpolate(left, right, values, null);
+    }
+
+    public static Vector Interpolate(Vector left, Vector right, Vector values, Vector result)
+    {
+      if (result != null)
+      {
+        ValidateParameters(left, right, values, result);
+      }
+      else
+      {
+        ValidateParameters(left, right, values);
+
+        result = new Vector(left.Size);
+      }
+
+      for (var index = 0; index < result.Size; index++)
+      {
+        result[index] = left[index] + (right[index] - left[index]) * values[index];
+      }
+
+      return result;
+    }
+
+    private static Double Modulo(Double left, Double right)
+    {
+      return left % right;
+    }
+
+    public static Vector Modulo(Vector left, Vector right)
+    {
+      return Operation(left, right, null, Modulo);
+    }
+
+    public static Vector Modulo(Vector left, Vector right, Vector result)
+    {
+      return Operation(left, right, result, Modulo);
+    }
+
+    private static Double Multiply(Double left, Double right)
+    {
+      return left * right;
+    }
+
+    public static Vector Multiply(Vector left, Vector right)
+    {
+      return Operation(left, right, null, Multiply);
+    }
+
+    public static Vector Multiply(Vector left, Vector right, Vector result)
+    {
+      return Operation(left, right, result, Multiply);
+    }
+
+    private static Vector Operation(Vector left, Double right, Vector result, Func<Double, Double, Double> operation)
+    {
+      if (result != null)
+      {
+        ValidateParameters(left, result);
+      }
+      else
+      {
+        ValidateParameters(left);
+
+        result = new Vector(left.Size);
+      }
+
+      for (var index = 0; index < result.Size; index++)
+      {
+        result[index] = operation(left[index], right);
+      }
+
+      return result;
+    }
+
+    private static Vector Operation(Vector left, Vector right, Vector result, Func<Double, Double, Double> operation)
+    {
+      if (result != null)
+      {
+        ValidateParameters(left, right, result);
+      }
+      else
+      {
+        ValidateParameters(left, right);
+
+        result = new Vector(left.Size);
+      }
+
+      for (var index = 0; index < result.Size; index++)
+      {
+        result[index] = operation(left[index], right[index]);
+      }
+
+      return result;
+    }
+
+    private static Double Subtract(Double left, Double right)
+    {
+      return left - right;
+    }
+
+    public static Vector Subtract(Vector left, Vector right)
+    {
+      return Operation(left, right, null, Subtract);
+    }
+
+    public static Vector Subtract(Vector left, Vector right, Vector result)
+    {
+      return Operation(left, right, result, Subtract);
+    }
+
+    public static implicit operator Vector(Double[] values)
+    {
+      return new Vector(values);
+    }
+
+    public static implicit operator Double[](Vector vector)
+    {
+      return vector.Data;
+    }
+
+    public static Vector operator +(Vector left, Double right)
+    {
+      return Operation(left, right, left, Add);
+    }
+
+    public static Vector operator +(Vector left, Vector right)
+    {
+      return Operation(left, right, left, Add);
+    }
+
+    public static Vector operator -(Vector left, Double right)
+    {
+      return Operation(left, right, left, Subtract);
+    }
+
+    public static Vector operator -(Vector left, Vector right)
+    {
+      return Operation(left, right, left, Subtract);
+    }
+
+    public static Vector operator *(Vector left, Double right)
+    {
+      return Operation(left, right, left, Multiply);
+    }
+
+    public static Vector operator *(Vector left, Vector right)
+    {
+      return Operation(left, right, left, Multiply);
+    }
+
+    public static Vector operator /(Vector left, Double right)
+    {
+      return Operation(left, right, left, Divide);
+    }
+
+    public static Vector operator /(Vector left, Vector right)
+    {
+      return Operation(left, right, left, Divide);
+    }
+
+    public static Vector operator %(Vector left, Double right)
+    {
+      return Operation(left, right, left, Modulo);
+    }
+
+    public static Vector operator %(Vector left, Vector right)
+    {
+      return Operation(left, right, left, Modulo);
+    }
+
+    #endregion
   }
-
-  public struct Vector2F : IVector<Single>
-  {
-    public Single M1;
-    public Single M2;
-
-    public Single this[Int32 index]
-    {
-      get
-      {
-        switch (index)
-        {
-          case 0: return M1;
-          case 1: return M2;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-      set
-      {
-        switch (index)
-        {
-          case 0: M1 = value; break;
-          case 1: M2 = value; break;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-    }
-
-    public Vector2F(Single value)
-    {
-      M1 = value;
-      M2 = value;
-    }
-
-    public Vector2F(Single m1, Single m2)
-    {
-      M1 = m1;
-      M2 = m2;
-    }
-
-    public IEnumerator<Single> GetEnumerator()
-    {
-      yield return M1;
-      yield return M2;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    public override String ToString()
-    {
-      return ToString("F3", null);
-    }
-
-    public String ToString(String format, IFormatProvider formatProvider)
-    {
-      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
-    }
-  }
-
-  public struct Vector3D : IVector<Double>
-  {
-    public Double M1;
-    public Double M2;
-    public Double M3;
-
-    public Double this[Int32 index]
-    {
-      get
-      {
-        switch (index)
-        {
-          case 0: return M1;
-          case 1: return M2;
-          case 2: return M3;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-      set
-      {
-        switch (index)
-        {
-          case 0: M1 = value; break;
-          case 1: M2 = value; break;
-          case 2: M3 = value; break;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-    }
-
-    public Vector3D(Double value)
-    {
-      M1 = value;
-      M2 = value;
-      M3 = value;
-    }
-
-    public Vector3D(Double m1, Double m2, Double m3)
-    {
-      M1 = m1;
-      M2 = m2;
-      M3 = m3;
-    }
-
-    public IEnumerator<Double> GetEnumerator()
-    {
-      yield return M1;
-      yield return M2;
-      yield return M3;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    public override String ToString()
-    {
-      return ToString("F3", null);
-    }
-
-    public String ToString(String format, IFormatProvider formatProvider)
-    {
-      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
-    }
-  }
-
-  public struct Vector3F : IVector<Single>
-  {
-    public Single M1;
-    public Single M2;
-    public Single M3;
-
-    public Single this[Int32 index]
-    {
-      get
-      {
-        switch (index)
-        {
-          case 0: return M1;
-          case 1: return M2;
-          case 2: return M3;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-      set
-      {
-        switch (index)
-        {
-          case 0: M1 = value; break;
-          case 1: M2 = value; break;
-          case 2: M3 = value; break;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-    }
-
-    public Vector3F(Single value)
-    {
-      M1 = value;
-      M2 = value;
-      M3 = value;
-    }
-
-    public Vector3F(Single m1, Single m2, Single m3)
-    {
-      M1 = m1;
-      M2 = m2;
-      M3 = m3;
-    }
-
-    public IEnumerator<Single> GetEnumerator()
-    {
-      yield return M1;
-      yield return M2;
-      yield return M3;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    public override String ToString()
-    {
-      return ToString("F3", null);
-    }
-
-    public String ToString(String format, IFormatProvider formatProvider)
-    {
-      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
-    }
-  }
-
-  public struct Vector4D : IVector<Double>
-  {
-    public Double M1;
-    public Double M2;
-    public Double M3;
-    public Double M4;
-
-    public Double this[Int32 index]
-    {
-      get
-      {
-        switch (index)
-        {
-          case 0: return M1;
-          case 1: return M2;
-          case 2: return M3;
-          case 3: return M4;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-      set
-      {
-        switch (index)
-        {
-          case 0: M1 = value; break;
-          case 1: M2 = value; break;
-          case 2: M3 = value; break;
-          case 3: M4 = value; break;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-    }
-
-    public Vector4D(Double value)
-    {
-      M1 = value;
-      M2 = value;
-      M3 = value;
-      M4 = value;
-    }
-
-    public Vector4D(Double m1, Double m2, Double m3, Double m4)
-    {
-      M1 = m1;
-      M2 = m2;
-      M3 = m3;
-      M4 = m4;
-    }
-
-    public IEnumerator<Double> GetEnumerator()
-    {
-      yield return M1;
-      yield return M2;
-      yield return M3;
-      yield return M4;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    public override String ToString()
-    {
-      return ToString("F3", null);
-    }
-
-    public String ToString(String format, IFormatProvider formatProvider)
-    {
-      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
-    }
-  }
-
-  public struct Vector4F : IVector<Single>
-  {
-    public Single M1;
-    public Single M2;
-    public Single M3;
-    public Single M4;
-
-    public Single this[Int32 index]
-    {
-      get
-      {
-        switch (index)
-        {
-          case 0: return M1;
-          case 1: return M2;
-          case 2: return M3;
-          case 3: return M4;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-      set
-      {
-        switch (index)
-        {
-          case 0: M1 = value; break;
-          case 1: M2 = value; break;
-          case 2: M3 = value; break;
-          case 3: M4 = value; break;
-          default: throw new ArgumentOutOfRangeException();
-        }
-      }
-    }
-
-    public Vector4F(Single value)
-    {
-      M1 = value;
-      M2 = value;
-      M3 = value;
-      M4 = value;
-    }
-
-    public Vector4F(Single m1, Single m2, Single m3, Single m4)
-    {
-      M1 = m1;
-      M2 = m2;
-      M3 = m3;
-      M4 = m4;
-    }
-
-    public IEnumerator<Single> GetEnumerator()
-    {
-      yield return M1;
-      yield return M2;
-      yield return M3;
-      yield return M4;
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
-    public override String ToString()
-    {
-      return ToString("F3", null);
-    }
-
-    public String ToString(String format, IFormatProvider formatProvider)
-    {
-      return "[" + String.Join(", ", this.Select(value => value.ToString(format, formatProvider))) + "]";
-    }
-  }
-
 }
-// <autogenerated>
-//   This file was generated by T4 code generator Vector.tt.
-//   Any changes made to this file manually will be lost next time the file is regenerated.
-// </autogenerated>
-
-
