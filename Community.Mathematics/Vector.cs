@@ -13,6 +13,12 @@ namespace Community.Mathematics
   [Serializable]
   public class Vector : IEnumerable<Double>, IEquatable<Vector>, IFormattable
   {
+    protected Double[] Data
+    {
+      get;
+      private set;
+    }
+
     public Double this[Int32 index]
     {
       get
@@ -31,12 +37,6 @@ namespace Community.Mathematics
       {
         return Data.Length;
       }
-    }
-
-    protected Double[] Data
-    {
-      get;
-      private set;
     }
 
     public Vector(Int32 size)
@@ -176,12 +176,7 @@ namespace Community.Mathematics
       return left + right;
     }
 
-    public static Vector Add(Vector left, Vector right)
-    {
-      return Operation(left, right, null, Add);
-    }
-
-    public static Vector Add(Vector left, Vector right, Vector result)
+    public static Vector Add(Vector left, Vector right, Vector result = null)
     {
       return Operation(left, right, result, Add);
     }
@@ -191,32 +186,17 @@ namespace Community.Mathematics
       return left / right;
     }
 
-    public static Vector Divide(Vector left, Vector right)
-    {
-      return Operation(left, right, null, Divide);
-    }
-
-    public static Vector Divide(Vector left, Vector right, Vector result)
+    public static Vector Divide(Vector left, Vector right, Vector result = null)
     {
       return Operation(left, right, result, Divide);
     }
 
-    public static Vector Interpolate(Vector left, Vector right, Double value)
-    {
-      return Interpolate(left, right, value, null);
-    }
-
-    public static Vector Interpolate(Vector left, Vector right, Double value, Vector result)
+    public static Vector Interpolate(Vector left, Vector right, Double value, Vector result = null)
     {
       return Interpolate(left, right, new Vector(value, left.Size), result);
     }
-
-    public static Vector Interpolate(Vector left, Vector right, Vector values)
-    {
-      return Interpolate(left, right, values, null);
-    }
-
-    public static Vector Interpolate(Vector left, Vector right, Vector values, Vector result)
+    
+    public static Vector Interpolate(Vector left, Vector right, Vector values, Vector result = null)
     {
       if (result != null)
       {
@@ -241,13 +221,8 @@ namespace Community.Mathematics
     {
       return left % right;
     }
-
-    public static Vector Modulo(Vector left, Vector right)
-    {
-      return Operation(left, right, null, Modulo);
-    }
-
-    public static Vector Modulo(Vector left, Vector right, Vector result)
+    
+    public static Vector Modulo(Vector left, Vector right, Vector result = null)
     {
       return Operation(left, right, result, Modulo);
     }
@@ -257,12 +232,7 @@ namespace Community.Mathematics
       return left * right;
     }
 
-    public static Vector Multiply(Vector left, Vector right)
-    {
-      return Operation(left, right, null, Multiply);
-    }
-
-    public static Vector Multiply(Vector left, Vector right, Vector result)
+    public static Vector Multiply(Vector left, Vector right, Vector result = null)
     {
       return Operation(left, right, result, Multiply);
     }
@@ -314,19 +284,24 @@ namespace Community.Mathematics
       return left - right;
     }
 
-    public static Vector Subtract(Vector left, Vector right)
-    {
-      return Operation(left, right, null, Subtract);
-    }
-
-    public static Vector Subtract(Vector left, Vector right, Vector result)
+    public static Vector Subtract(Vector left, Vector right, Vector result = null)
     {
       return Operation(left, right, result, Subtract);
+    }
+
+    public static implicit operator Vector(Single[] values)
+    {
+      return new Vector(values.Cast<Single>().Select(Convert.ToDouble).ToArray());
     }
 
     public static implicit operator Vector(Double[] values)
     {
       return new Vector(values);
+    }
+
+    public static implicit operator Single[](Vector vector)
+    {
+      return vector.Data.Select(Convert.ToSingle).ToArray();
     }
 
     public static implicit operator Double[](Vector vector)
@@ -336,52 +311,52 @@ namespace Community.Mathematics
 
     public static Vector operator +(Vector left, Double right)
     {
-      return Operation(left, right, left, Add);
+      return Operation(left, right, null, Add);
     }
 
     public static Vector operator +(Vector left, Vector right)
     {
-      return Operation(left, right, left, Add);
+      return Operation(left, right, null, Add);
     }
 
     public static Vector operator -(Vector left, Double right)
     {
-      return Operation(left, right, left, Subtract);
+      return Operation(left, right, null, Subtract);
     }
 
     public static Vector operator -(Vector left, Vector right)
     {
-      return Operation(left, right, left, Subtract);
+      return Operation(left, right, null, Subtract);
     }
 
     public static Vector operator *(Vector left, Double right)
     {
-      return Operation(left, right, left, Multiply);
+      return Operation(left, right, null, Multiply);
     }
 
     public static Vector operator *(Vector left, Vector right)
     {
-      return Operation(left, right, left, Multiply);
+      return Operation(left, right, null, Multiply);
     }
 
     public static Vector operator /(Vector left, Double right)
     {
-      return Operation(left, right, left, Divide);
+      return Operation(left, right, null, Divide);
     }
 
     public static Vector operator /(Vector left, Vector right)
     {
-      return Operation(left, right, left, Divide);
+      return Operation(left, right, null, Divide);
     }
 
     public static Vector operator %(Vector left, Double right)
     {
-      return Operation(left, right, left, Modulo);
+      return Operation(left, right, null, Modulo);
     }
 
     public static Vector operator %(Vector left, Vector right)
     {
-      return Operation(left, right, left, Modulo);
+      return Operation(left, right, null, Modulo);
     }
 
     #endregion
