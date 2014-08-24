@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Community.Mathematics
+﻿namespace System.Spatial
 {
+  using Collections;
+  using Collections.Generic;
+  using Linq;
+
   public class Matrix : IEnumerable<Double>
   {
     protected Double[,] Data

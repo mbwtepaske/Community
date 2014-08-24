@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Community.Mathematics
+namespace System.Spatial
 {
   /// <summary>
   /// Represents a double-precision vector.
