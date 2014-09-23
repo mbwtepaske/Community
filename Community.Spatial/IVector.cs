@@ -1,16 +1,31 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 
-namespace Community.Mathematics
+namespace System.Spatial
 {
-  public interface IVector<TScalar> : IEnumerable<TScalar>, IFormattable
-    where TScalar : IComparable<TScalar>, IConvertible, IFormattable
+  using Collections.Generic;
+
+  public interface IVector : IEnumerable<Double>, IFormattable
   {
-    TScalar this[Int32 index]
+    /// <summary>
+    /// Gets the amount of components of the vector.
+    /// </summary>
+    Int32 Count
+    {
+      get;
+    }
+
+    /// <summary>
+    /// Gets or sets the component at the specified index.
+    /// </summary>
+    Double this[Int32 index]
     {
       get;
       set;
     }
+  }
+
+  public interface IVector<TVector> : IVector, IEquatable<TVector> where TVector : struct, IVector
+  {
+    Boolean Equals(TVector other, Double tolerance);
   }
 }

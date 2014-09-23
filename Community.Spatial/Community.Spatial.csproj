@@ -7,7 +7,7 @@
     <ProjectGuid>{EC3AD26F-A756-402C-A111-1A5464FA1DCB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Community.Spatial</RootNamespace>
+    <RootNamespace>System.Spatial</RootNamespace>
     <AssemblyName>Community.Spatial</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -35,10 +35,15 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IVector.cs" />
     <Compile Include="Matrix.cs" />
+    <Compile Include="Matrix.Operations.cs">
+      <DependentUpon>Matrix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
-    <Compile Include="Vector.cs" />
+    <Compile Include="Vector4D.cs" />
+    <None Include="Vector.cs" />
     <Compile Include="Vector2.cs">
       <DependentUpon>Vector.cs</DependentUpon>
     </Compile>

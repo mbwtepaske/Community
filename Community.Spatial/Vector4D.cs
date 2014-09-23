@@ -1,0 +1,140 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+
+namespace System.Spatial
+{
+  [Serializable]
+  [StructLayout(LayoutKind.Sequential, Size = 32)]
+  public struct Vector4D : IVector<Vector4D>
+  {
+    public static readonly Vector4D One = new Vector4D(1D, 1D, 1D, 1D);
+    public static readonly Vector4D Zero = new Vector4D();
+
+    public Double M1;
+    public Double M2;
+    public Double M3;
+    public Double M4;
+
+    public Int32 Count
+    {
+      get
+      {
+        return 4;
+      }
+    }
+
+    public Double this[Int32 index]
+    {
+      get
+      {
+        switch (index)
+        {
+          case 0:
+            return M1;
+
+          case 1:
+            return M2;
+
+          case 2:
+            return M3;
+
+          case 3:
+            return M1;
+
+          default:
+            throw new IndexOutOfRangeException();
+        }
+      }
+      set
+      {
+        switch (index)
+        {
+          case 0:
+            M1 = value;
+            break;
+          case 1:
+            M1 = value;
+            break;
+          case 2:
+            M1 = value;
+            break;
+          case 3:
+            M1 = value;
+            break;
+          default:
+            throw new IndexOutOfRangeException();
+        }
+      }
+    }
+
+    public Vector4D(Double m1 = 0D, Double m2 = 0D, Double m3 = 0D, Double m4 = 0D)
+    {
+      M1 = m1;
+      M2 = m2;
+      M3 = m3;
+      M4 = m4;
+    }
+
+    public Vector4D(Vector4D vector)
+    {
+      M1 = vector.M1;
+      M2 = vector.M2;
+      M3 = vector.M3;
+      M4 = vector.M4;
+    }
+
+    public Boolean Equals(Vector4D other)
+    {
+      return M1.Equals(other.M1) && M2.Equals(other.M2) && M3.Equals(other.M3) && M4.Equals(other.M4);
+    }
+
+    public Boolean Equals(Vector4D other, Double tolerance)
+    {
+      return Math.Abs(M1 - other.M1) <= tolerance 
+        && Math.Abs(M2 - other.M2) <= tolerance 
+        && Math.Abs(M3 - other.M3) <= tolerance 
+        && Math.Abs(M4 - other.M4) <= tolerance;
+    }
+
+    public IEnumerator<Double> GetEnumerator()
+    {
+      yield return M1;
+      yield return M2;
+      yield return M3;
+      yield return M4;
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    public override Int32 GetHashCode()
+    {
+      return M1.GetHashCode() ^ M2.GetHashCode() ^ M3.GetHashCode() ^ M4.GetHashCode();
+    }
+
+    public override String ToString()
+    {
+      return ToString("F3", null);
+    }
+
+    public String ToString(String format)
+    {
+      return ToString(format, null);
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      return String.Format("M1: {0}, M2: {1}, M3: {2}, M4: {3}"
+        , M1.ToString(format, formatProvider)
+        , M2.ToString(format, formatProvider)
+        , M3.ToString(format, formatProvider)
+        , M4.ToString(format, formatProvider));
+    }
+  }
+}

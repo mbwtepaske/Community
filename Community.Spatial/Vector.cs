@@ -11,7 +11,7 @@ namespace System.Spatial
   /// Represents a double-precision vector.
   /// </summary>
   [Serializable]
-  public class Vector : IEnumerable<Double>, IEquatable<Vector>, IFormattable
+  public class Vector : IVector
   {
     protected Double[] Data
     {
