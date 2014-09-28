@@ -19,7 +19,7 @@ namespace System.Spatial
     public Double M3;
     public Double M4;
 
-    public Int32 Count
+    Int32 IVector.Count
     {
       get
       {
@@ -56,15 +56,19 @@ namespace System.Spatial
           case 0:
             M1 = value;
             break;
+
           case 1:
-            M1 = value;
+            M2 = value;
             break;
+
           case 2:
-            M1 = value;
+            M3 = value;
             break;
+
           case 3:
-            M1 = value;
+            M4 = value;
             break;
+
           default:
             throw new IndexOutOfRangeException();
         }

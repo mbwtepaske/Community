@@ -4,7 +4,7 @@
   using Collections.Generic;
   using Linq;
 
-  public partial struct Matrix : IEnumerable<Double>
+  public partial struct Matrix : IMatrix<Matrix>
   {
     public Double M11;
     public Double M12;
@@ -22,6 +22,102 @@
     public Double M42;
     public Double M43;
     public Double M44;
+
+    public Int32 Columns
+    {
+      get
+      {
+        return 4;
+      }
+    }
+
+    public Int32 Rows
+    {
+      get
+      {
+        return 4;
+      }
+    }
+
+    public Double this[Int32 index]
+    {
+      get
+      {
+        switch (index)
+        {
+          case 0:
+            return M11;
+
+          case 1:
+            return M12;
+
+          case 2:
+            return M13;
+
+          case 3:
+            return M14;
+
+          case 4:
+            return M21;
+
+          case 5:
+            return M22;
+
+          case 6:
+            return M23;
+
+          case 7:
+            return M24;
+
+          case 8:
+            return M31;
+
+          case 9:
+            return M32;
+
+          case 10:
+            return M33;
+
+          case 11:
+            return M34;
+
+          case 12:
+            return M41;
+
+          case 13:
+            return M42;
+
+          case 14:
+            return M43;
+
+          case 15:
+            return M44;
+
+          default:
+            throw new ArgumentOutOfRangeException("index");
+        }
+      }
+      set
+      {
+        switch (index)
+        {
+          default:
+            throw new ArgumentOutOfRangeException("index");
+        }
+      }
+    }
+   
+    public Double this[Int32 column, Int32 row]
+    {
+      get
+      {
+        return this[column + Rows * Columns];
+      }
+      set
+      {
+        this[column + Rows * Columns] = value;
+      }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="T:Matrix"/> struct.
@@ -54,6 +150,31 @@
       M41 = m41;  M42 = m42;  M43 = m43;  M44 = m44;
     }
 
+    public Boolean Equals(Matrix other)
+    {
+      return Equals(other, 0D);
+    }
+
+    public Boolean Equals(Matrix other, Double tolerance)
+    {
+      return Math.Abs(M11 - other.M11) <= tolerance
+        && Math.Abs(M12 - other.M12) <= tolerance
+        && Math.Abs(M13 - other.M13) <= tolerance
+        && Math.Abs(M14 - other.M14) <= tolerance
+        && Math.Abs(M21 - other.M21) <= tolerance
+        && Math.Abs(M22 - other.M22) <= tolerance
+        && Math.Abs(M23 - other.M23) <= tolerance
+        && Math.Abs(M24 - other.M24) <= tolerance
+        && Math.Abs(M31 - other.M31) <= tolerance
+        && Math.Abs(M32 - other.M32) <= tolerance
+        && Math.Abs(M33 - other.M33) <= tolerance
+        && Math.Abs(M34 - other.M34) <= tolerance
+        && Math.Abs(M41 - other.M41) <= tolerance
+        && Math.Abs(M42 - other.M42) <= tolerance
+        && Math.Abs(M43 - other.M43) <= tolerance
+        && Math.Abs(M44 - other.M44) <= tolerance;
+    }
+
     public IEnumerator<Double> GetEnumerator()
     {
       yield return M11;
@@ -79,9 +200,13 @@
       return GetEnumerator();
     }
 
-    #region Operations
-
-
-    #endregion
+    public override Int32 GetHashCode()
+    {
+      return 
+          M11.GetHashCode() ^ M12.GetHashCode() ^ M13.GetHashCode() ^ M14.GetHashCode()
+        ^ M21.GetHashCode() ^ M22.GetHashCode() ^ M23.GetHashCode() ^ M24.GetHashCode()
+        ^ M31.GetHashCode() ^ M32.GetHashCode() ^ M33.GetHashCode() ^ M34.GetHashCode()
+        ^ M41.GetHashCode() ^ M42.GetHashCode() ^ M43.GetHashCode() ^ M44.GetHashCode();
+    }
   }
 }
