@@ -39,7 +39,7 @@
     }
   }
 
-  public interface IMatrix<TMatrix> : IVector, IEquatable<TMatrix> where TMatrix : struct, IMatrix
+  public interface IMatrix<TMatrix> : IMatrix, IEquatable<TMatrix> where TMatrix : struct, IMatrix
   {
     Boolean Equals(TMatrix other, Double tolerance);
   }

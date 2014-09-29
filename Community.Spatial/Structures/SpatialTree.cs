@@ -17,7 +17,7 @@
       private set;
     }
 
-    public SpatialTree(Int32 dimensions, Vector minimum, Vector maximum)
+    public SpatialTree(Int32 dimensions, IVector minimum, IVector maximum)
     {
       if (dimensions < 1)
       {
@@ -122,13 +122,13 @@
       }
     }
 
-    public Vector Maximum
+    public IVector Maximum
     {
       get;
       private set;
     }
 
-    public Vector Minimum
+    public IVector Minimum
     {
       get;
       private set;
@@ -158,7 +158,7 @@
       set;
     }
 
-    public SpatialTreeNode(SpatialTree<TValue> tree, Vector minimum, Vector maximum)
+    public SpatialTreeNode(SpatialTree<TValue> tree, IVector minimum, IVector maximum)
     {
       if (tree == null)
       {
@@ -170,7 +170,7 @@
         throw new ArgumentNullException("minimum");
       }
 
-      if (minimum.Size != tree.Dimensions)
+      if (minimum.Count != tree.Dimensions)
       {
         throw new ArgumentException("minimum size must be equal to the dimensions of the spatial tree");
       }
@@ -180,7 +180,7 @@
         throw new ArgumentNullException("maximum");
       }
 
-      if (maximum.Size != tree.Dimensions)
+      if (maximum.Count != tree.Dimensions)
       {
         throw new ArgumentException("maximum size must be equal to the dimensions of the spatial tree");
       }

@@ -208,5 +208,15 @@
         ^ M31.GetHashCode() ^ M32.GetHashCode() ^ M33.GetHashCode() ^ M34.GetHashCode()
         ^ M41.GetHashCode() ^ M42.GetHashCode() ^ M43.GetHashCode() ^ M44.GetHashCode();
     }
+
+    public override String ToString()
+    {
+      return base.ToString();
+    }
+
+    public String ToString(String format, IFormatProvider formatProvider)
+    {
+      throw new NotImplementedException();
+    }
   }
 }
