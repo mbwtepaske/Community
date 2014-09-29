@@ -3,17 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace System.Spatial
 {
   /// <summary>
   /// Represents a double-precision vector.
   /// </summary>
-  [Serializable]
   public class Vector : IVector
   {
-    protected Double[] Data
+    public Int32 Count
+    {
+      get
+      {
+        return Storage.Length;
+      }
+    }
+
+    protected Double[] Storage
     {
       get;
       private set;
@@ -23,35 +29,27 @@ namespace System.Spatial
     {
       get
       {
-        return Data[index];
+        return Storage[index];
       }
       set
       {
-        Data[index] = value;
+        Storage[index] = value;
       }
     }
 
-    public Int32 Size
+    public Vector(Int32 count)
     {
-      get
-      {
-        return Data.Length;
-      }
+      Storage = new Double[count];
     }
 
-    public Vector(Int32 size)
+    public Vector(Double value, Int32 count)
     {
-      Data = new Double[size];
-    }
-
-    public Vector(Double value, Int32 size)
-    {
-      Data = Enumerable.Repeat(value, size).ToArray();
+      Storage = Enumerable.Repeat(value, count).ToArray();
     }
 
     public Vector(params Double[] values) : this(values.Length)
     {
-      values.CopyTo(Data, 0);
+      values.CopyTo(Storage, 0);
     }
     
     public Double GetLength()
@@ -78,12 +76,12 @@ namespace System.Spatial
 
     public IEnumerator<Double> GetEnumerator()
     {
-      return Data.AsEnumerable().GetEnumerator();
+      return Storage.AsEnumerable().GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return Data.GetEnumerator();
+      return Storage.GetEnumerator();
     }
 
     #endregion
@@ -92,7 +90,7 @@ namespace System.Spatial
 
     public Boolean Equals(Vector other)
     {
-      return !ReferenceEquals(other, null) && Data.SequenceEqual(other.Data);
+      return !ReferenceEquals(other, null) && Storage.SequenceEqual(other.Storage);
     }
 
     public override Boolean Equals(Object other)
@@ -102,7 +100,7 @@ namespace System.Spatial
 
     public override Int32 GetHashCode()
     {
-      return Data
+      return Storage
         .Select(scalar => scalar.GetHashCode())
         .Aggregate((current, next) => current ^ next);
     }
@@ -143,7 +141,7 @@ namespace System.Spatial
 
     public String ToString(String format, IFormatProvider formatProvider)
     {
-      return "[" + String.Join(", ", Data.Select(scalar => scalar.ToString(format, formatProvider))) + "]";
+      return "[" + String.Join(", ", Storage.Select(scalar => scalar.ToString(format, formatProvider))) + "]";
     }
 
     #endregion
@@ -162,7 +160,7 @@ namespace System.Spatial
           throw new ArgumentNullException();
         }
 
-        if (first.Size != vector.Size)
+        if (first.Count != vector.Count)
         {
           throw new ArgumentException("vector sizes do not match");
         }
@@ -193,7 +191,7 @@ namespace System.Spatial
 
     public static Vector Interpolate(Vector left, Vector right, Double value, Vector result = null)
     {
-      return Interpolate(left, right, new Vector(value, left.Size), result);
+      return Interpolate(left, right, new Vector(value, left.Count), result);
     }
     
     public static Vector Interpolate(Vector left, Vector right, Vector values, Vector result = null)
@@ -206,10 +204,10 @@ namespace System.Spatial
       {
         ValidateParameters(left, right, values);
 
-        result = new Vector(left.Size);
+        result = new Vector(left.Count);
       }
 
-      for (var index = 0; index < result.Size; index++)
+      for (var index = 0; index < result.Count; index++)
       {
         result[index] = left[index] + (right[index] - left[index]) * values[index];
       }
@@ -247,10 +245,10 @@ namespace System.Spatial
       {
         ValidateParameters(left);
 
-        result = new Vector(left.Size);
+        result = new Vector(left.Count);
       }
 
-      for (var index = 0; index < result.Size; index++)
+      for (var index = 0; index < result.Count; index++)
       {
         result[index] = operation(left[index], right);
       }
@@ -268,10 +266,10 @@ namespace System.Spatial
       {
         ValidateParameters(left, right);
 
-        result = new Vector(left.Size);
+        result = new Vector(left.Count);
       }
 
-      for (var index = 0; index < result.Size; index++)
+      for (var index = 0; index < result.Count; index++)
       {
         result[index] = operation(left[index], right[index]);
       }
@@ -301,12 +299,12 @@ namespace System.Spatial
 
     public static implicit operator Single[](Vector vector)
     {
-      return vector.Data.Select(Convert.ToSingle).ToArray();
+      return vector.Storage.Select(Convert.ToSingle).ToArray();
     }
 
     public static implicit operator Double[](Vector vector)
     {
-      return vector.Data;
+      return vector.Storage;
     }
 
     public static Vector operator +(Vector left, Double right)

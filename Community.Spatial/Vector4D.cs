@@ -9,10 +9,10 @@ namespace System.Spatial
 {
   [Serializable]
   [StructLayout(LayoutKind.Sequential, Size = 32)]
-  public struct Vector4D : IVector<Vector4D>
+  public class Vector : IVector<Vector>
   {
-    public static readonly Vector4D One = new Vector4D(1D, 1D, 1D, 1D);
-    public static readonly Vector4D Zero = new Vector4D();
+    public static readonly Vector One = new Vector(1D, 1D, 1D, 1D);
+    public static readonly Vector Zero = new Vector();
 
     public Double M1;
     public Double M2;
@@ -75,7 +75,7 @@ namespace System.Spatial
       }
     }
 
-    public Vector4D(Double m1 = 0D, Double m2 = 0D, Double m3 = 0D, Double m4 = 0D)
+    public Vector(Double m1 = 0D, Double m2 = 0D, Double m3 = 0D, Double m4 = 0D)
     {
       M1 = m1;
       M2 = m2;
@@ -83,7 +83,7 @@ namespace System.Spatial
       M4 = m4;
     }
 
-    public Vector4D(Vector4D vector)
+    public Vector(Vector vector)
     {
       M1 = vector.M1;
       M2 = vector.M2;
@@ -91,12 +91,12 @@ namespace System.Spatial
       M4 = vector.M4;
     }
 
-    public Boolean Equals(Vector4D other)
+    public Boolean Equals(Vector other)
     {
       return M1.Equals(other.M1) && M2.Equals(other.M2) && M3.Equals(other.M3) && M4.Equals(other.M4);
     }
 
-    public Boolean Equals(Vector4D other, Double tolerance)
+    public Boolean Equals(Vector other, Double tolerance)
     {
       return Math.Abs(M1 - other.M1) <= tolerance 
         && Math.Abs(M2 - other.M2) <= tolerance 

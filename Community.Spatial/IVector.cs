@@ -24,7 +24,7 @@ namespace System.Spatial
     }
   }
 
-  public interface IVector<TVector> : IVector, IEquatable<TVector> where TVector : struct, IVector
+  public interface IVector<TVector> : IVector, IEquatable<TVector> where TVector : class, IVector
   {
     Boolean Equals(TVector other, Double tolerance);
   }
