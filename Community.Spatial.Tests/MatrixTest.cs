@@ -1,29 +1,33 @@
-﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace System.Spatial.Tests
 {
+  using ComponentModel;
+  using Linq;
+
   [TestClass]
   public class MatrixTest
   {
+    [Description("Matrix Multiplication: A[3,2] * B[2,3]")]
+    [TestCategory("Multiplication")]
     [TestMethod]
     public void MultiplicationTest()
     {
-      var left = new Matrix(new Double[,]
+      var a = new Matrix(3, 2, 1D, 2D, 3D, 4D, 5D, 6D );
+      var b = new Matrix(2, 3, 7D, 8D, 9D, 10D, 11D, 12D);
+
+      Assert.IsTrue(Matrix.Multiply(a, b).SequenceEqual(new[]
       {
-        { 1D, 2D },
-        { 4D, 3D }
-      });
+        58D, 64D, 
+        139D, 154D 
+      }));
 
-      var right = new Matrix(new Double[,]
+      Assert.IsTrue(Matrix.Multiply(b, a).SequenceEqual(new[]
       {
-        { 1D, 2D, 3D },
-        { 3D, -4D, 7D }
-      });
-
-      var result = Matrix.Multiply(left, right);
-
-      Assert.IsTrue(result.SequenceEqual(new[] { 7D, -6D, 17D, 13D, -4D, 33D }));
+        39D, 54D, 69D,
+        49D, 68D, 87D,
+        59D, 82D, 105D
+      }));
     }
   }
 }

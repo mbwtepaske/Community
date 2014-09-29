@@ -63,7 +63,7 @@ namespace System.Spatial
       {
         for (var columnIndex = 0; columnIndex < result.ColumnCount; columnIndex++)
         {
-          result[columnIndex, rowIndex] = GetColumn(left, columnIndex).Zip(GetRow(right, rowIndex), Multiply).Sum();
+          result[columnIndex, rowIndex] = GetRow(left, rowIndex).Zip(GetColumn(right, columnIndex), Multiply).Sum();
         }
       }
 

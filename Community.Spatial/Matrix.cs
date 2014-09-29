@@ -37,15 +37,15 @@
       }
     }
    
-    public Double this[Int32 column, Int32 row]
+    public Double this[Int32 columnIndex, Int32 rowIndex]
     {
       get
       {
-        return this[column + ColumnCount * row];
+        return this[columnIndex + ColumnCount * rowIndex];
       }
       set
       {
-        this[column + ColumnCount * row] = value;
+        this[columnIndex + ColumnCount * rowIndex] = value;
       }
     }
 
@@ -63,6 +63,9 @@
       Array.ConstrainedCopy(values, 0, Storage, 0, Math.Min(values.Length, Storage.Length));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="T:Matrix"/>.
+    /// </summary>
     public Matrix(Double[,] values) : this(values.GetLength(0), values.GetLength(1), values.Cast<Double>().ToArray())
     {
     }
@@ -112,7 +115,10 @@
 
     public String ToString(String format, IFormatProvider formatProvider)
     {
-      return String.Join(", ", Storage.Select((value, index) => String.Format("M{0}{1}: {2}", index / RowCount + 1, index % ColumnCount + 1, value.ToString(format, formatProvider))));
+      return String.Join(", ", Storage.Select((value, index) => String.Format("M{0}{1}: {2}"
+        , (index / ColumnCount) + 1
+        , (index % ColumnCount) + 1
+        , value.ToString(format, formatProvider))));
     }
 
     protected void Verify(Int32 columnCount, Int32 rowCount)

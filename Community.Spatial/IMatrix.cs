@@ -32,7 +32,7 @@
     /// <summary>
     /// Gets or sets the component at the specified column and row.
     /// </summary>
-    Double this[Int32 column, Int32 rows]
+    Double this[Int32 columnIndex, Int32 rows]
     {
       get;
       set;
