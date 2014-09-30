@@ -37,7 +37,7 @@
   <ItemGroup>
     <Compile Include="MatrixTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="SpatialTreeTest.cs" />
+    <Compile Include="SpatialTreeTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

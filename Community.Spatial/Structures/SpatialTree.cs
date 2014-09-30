@@ -17,7 +17,7 @@
       private set;
     }
 
-    public SpatialTree(Int32 dimensions, IVector minimum, IVector maximum)
+    public SpatialTree(Int32 dimensions, Vector minimum, Vector maximum)
     {
       if (dimensions < 1)
       {
@@ -42,48 +42,42 @@
     {
     }
 
-    public virtual void Split(SpatialTreeNode<TValue> node, IEnumerable<IEnumerable<Double>> divisionsPerDimensions)
+    public virtual void Split(SpatialTreeNode<TValue> node, Double[][] divisionsPerDimensions)
     {
       if (node == null)
       {
         throw new ArgumentNullException("node");
       }
 
-      if (divisionsPerDimensions.Count() != Dimensions)
+      if (divisionsPerDimensions.Length != Dimensions)
       {
         throw new ArgumentException("divisionsPerDimensions must have the same amount as the dimensions of the spatial tree");
       }
 
-      var offsets = new Int32[Dimensions];
+      if (divisionsPerDimensions.SelectMany(dimension => dimension).Any(division => division <= 0D || division >= 1D))
+      {
+        throw new ArgumentException("divisionsPerDimensions may only contain values greater than zero and smaller than one");
+      }
+
       var values = divisionsPerDimensions
         .Select(divisions => divisions
           .OrderBy(division => division)
-          .Where(division => division >= 0D && division <= 1D)
           .Distinct()
           .Prepend(0D)
           .Append(1D)
           .ToArray())
         .ToArray();
       
+      // Calculate the number of nodes to generate
       var count = values
         .Select(divisions => divisions.Length - 1)
-        .Aggregate((x, y) => x * y);
+        .Aggregate((result, current) => result * current);
 
-      var nodes = new List<SpatialTreeNode<TValue>>();
+      var nodes = new SpatialTreeNode<TValue>[count];
+      var offsets = new Int32[Dimensions];
 
-      for (var index = 0; index < count; index++)
+      for (var index = 0; index < count; index++, offsets[0]++)
       {
-        var minimum = new Vector(Dimensions);
-        var maximum = new Vector(Dimensions);
-
-        for (var divisionIndex = 0; divisionIndex < Dimensions; divisionIndex++)
-        {
-          minimum[divisionIndex] = values[divisionIndex][offsets[divisionIndex]];
-          maximum[divisionIndex] = values[divisionIndex][offsets[divisionIndex] + 1];
-        }
-
-        offsets[0]++;
-
         if (offsets[0] == values[0].Length - 1)
         {
           for (var divisionIndex = 0; divisionIndex < Dimensions; divisionIndex++)
@@ -100,10 +94,21 @@
           }
         }
 
-        nodes.Add(new SpatialTreeNode<TValue>(this, minimum, maximum)
+        var minimum = new Vector(Dimensions);
+        var maximum = new Vector(Dimensions);
+
+        for (var dimensionIndex = 0; dimensionIndex < Dimensions; dimensionIndex++)
+        {
+          minimum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 0];
+          maximum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 1];
+        }
+
+        nodes[index] = new SpatialTreeNode<TValue>(this
+          , Interpolation.Linear(node.Minimum, node.Maximum, minimum)
+          , Interpolation.Linear(node.Minimum, node.Maximum, maximum))
         {
           Parent = node
-        });
+        };
       }
 
       node.Nodes = nodes.ToArray();
@@ -122,13 +127,13 @@
       }
     }
 
-    public IVector Maximum
+    public Vector Maximum
     {
       get;
       private set;
     }
 
-    public IVector Minimum
+    public Vector Minimum
     {
       get;
       private set;
@@ -158,7 +163,7 @@
       set;
     }
 
-    public SpatialTreeNode(SpatialTree<TValue> tree, IVector minimum, IVector maximum)
+    public SpatialTreeNode(SpatialTree<TValue> tree, Vector minimum, Vector maximum)
     {
       if (tree == null)
       {
@@ -190,9 +195,14 @@
       Tree = tree;
     }
 
+    public void Split(params Double[] divisionsPerDimensions)
+    {
+      Tree.Split(this, Enumerable.Repeat(divisionsPerDimensions, Tree.Dimensions).ToArray());
+    }
+
     public void Split(IEnumerable<IEnumerable<Double>> divisionsPerDimensions)
     {
-
+      Tree.Split(this, divisionsPerDimensions.Select(Enumerable.ToArray).ToArray());
     }
   }
 }

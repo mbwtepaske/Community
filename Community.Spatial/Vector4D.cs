@@ -70,7 +70,7 @@
     }
 
     public Vector4D(IVector vector)
-      : base(new[] {vector.Take(Count).ToArray()})
+      : base(vector.Take(Count).ToArray())
     {
       if (vector == null)
       {

@@ -15,6 +15,16 @@ namespace System.Spatial
       return left + right;
     }
 
+    public static Vector Add(Vector left, Double right)
+    {
+      return Operation(left, right, Add);
+    }
+
+    public static Vector Add(Vector left, Double right, ref Vector result)
+    {
+      return Operation(left, right, ref result, Add);
+    }
+
     public static Vector Add(Vector left, Vector right)
     {
       return Operation(left, right, Add);
@@ -32,6 +42,16 @@ namespace System.Spatial
     private static Double Divide(Double left, Double right)
     {
       return left / right;
+    }
+
+    public static Vector Divide(Vector left, Double right)
+    {
+      return Operation(left, right, Divide);
+    }
+
+    public static Vector Divide(Vector left, Double right, ref Vector result)
+    {
+      return Operation(left, right, ref result, Divide);
     }
 
     public static Vector Divide(Vector left, Vector right)
@@ -211,7 +231,7 @@ namespace System.Spatial
 
     #endregion
 
-    #region Products
+    #region Various
 
     public static Double Dot(Vector left, Vector right)
     {
@@ -220,11 +240,32 @@ namespace System.Spatial
       return left.Zip(right, Multiply).Sum();
     }
 
+    public static Vector Normalize(Vector vector)
+    {
+      var result = default(Vector);
+
+      return Normalize(vector, ref result);
+    }
+
+    public static Vector Normalize(Vector vector, ref Vector result)
+    {
+      Verify(vector, ref result);
+
+      var length = vector.GetLength();
+
+      if (length.Equals(0D))
+      {
+        throw new ArgumentException("vector length must be greater than zero");
+      }
+
+      return Divide(vector, length, ref result);
+    }
+
     #endregion
 
     #region Verification
 
-    private static void Verify(Vector vector, ref Vector result)
+    protected static void Verify(Vector vector, ref Vector result)
     {
       if (vector == null)
       {
@@ -234,7 +275,7 @@ namespace System.Spatial
       VerifyOrCreateResult(vector.Size, ref result);
     }
 
-    private static void Verify(Vector left, Vector right)
+    protected static void Verify(Vector left, Vector right)
     {
       if (left == null)
       {
@@ -252,13 +293,13 @@ namespace System.Spatial
       }
     }
 
-    private static void Verify(Vector left, Vector right, ref Vector result)
+    protected static void Verify(Vector left, Vector right, ref Vector result)
     {
       Verify(left, right);
       VerifyOrCreateResult(left.Size, ref result);
     }
 
-    private static void VerifyOrCreateResult(Int32 size, ref Vector result)
+    protected static void VerifyOrCreateResult(Int32 size, ref Vector result)
     {
       if (result != null)
       {

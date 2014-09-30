@@ -70,6 +70,20 @@
       }
     }
 
+    public static Vector3D Cross(Vector3D left, Vector3D right, ref Vector3D result)
+    {
+      Verify(left, right);
 
+      if (result == null)
+      {
+        result = new Vector3D();
+      }
+
+      result.X = left.Y * right.Z - left.Z * right.Y;
+      result.Y = left.Z * right.X - left.X * right.Z;
+      result.Z = left.X * right.Y - left.Y * right.X;
+
+      return result;
+    }
   }
 }

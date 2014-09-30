@@ -50,7 +50,7 @@
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:Matrix"/>.
+    /// Initializes a new <see cref="T:Matrix"/>, specifying the column- and row count.
     /// </summary>
     public Matrix(Int32 columnCount, Int32 rowCount, params Double[] values)
     {
@@ -64,7 +64,7 @@
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:Matrix"/>.
+    /// Initializes a new <see cref="T:Matrix"/>, using a 2D-array.
     /// </summary>
     public Matrix(Double[,] values) : this(values.GetLength(1), values.GetLength(0), values.Cast<Double>().ToArray())
     {
@@ -90,6 +90,11 @@
       {
         yield return this[columnIndex, rowIndex];
       }
+    }
+
+    public Boolean IsSquare()
+    {
+      return ColumnCount == RowCount;
     }
 
     protected void Verify(Int32 columnCount, Int32 rowCount)

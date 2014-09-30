@@ -6,6 +6,10 @@ namespace System.Spatial
 {
   public partial class Matrix
   {
+    #region Arithmetics
+
+    #region Addition
+
     public static Matrix Add(Matrix left, Double right)
     {
       var result = default(Matrix);
@@ -38,6 +42,14 @@ namespace System.Spatial
 
       return result;
     }
+
+    #endregion
+
+    #region Division
+    
+    #endregion
+
+    #region Multiplication
 
     private static Double Multiply(Double left, Double right)
     {
@@ -99,6 +111,20 @@ namespace System.Spatial
       return result;
     }
 
+    #endregion
+
+    #region Modulation
+    
+    #endregion
+
+    #region Subtraction
+
+    #endregion
+
+    #endregion
+
+
+    
     private static void VerifyMatrix(IMatrix matrix)
     {
       if (matrix == null)

@@ -1,25 +1,22 @@
-﻿using Xunit;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace System.Spatial.Tests
 {
   using Collections.Generic;
   using Linq;
 
+  [TestClass]
   public class SpatialTreeTest
   {
-    [Fact(DisplayName = "Spatial Tree: Split")]
+    [TestMethod]
     public void SplitTest()
     {
-      var spatialTree = new SpatialTree<Object>(3, new Vector3(0D), new Vector3(1D));
-
-      spatialTree.Split(spatialTree.Root, new Double[][]
+      for (var dimension = 1; dimension <= 4; dimension++)
       {
-        new [] { 0.5D },
-        new [] { 0.5D },
-        new [] { 0.5D }
-      });
+        var spatialTree = new SpatialTree<Object>(dimension, new Vector(dimension, 1D), new Vector(dimension, 2D));
 
-
+        spatialTree.Root.Split(0.25D, 0.80D);
+      }
     }
   }
 }

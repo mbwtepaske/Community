@@ -39,14 +39,22 @@
     <Compile Include="Interpolation.cs" />
     <Compile Include="IVector.cs" />
     <Compile Include="Matrix.cs" />
-    <Compile Include="Matrix.Operations.cs" />
-    <Compile Include="Matrix.Operators.cs" />
+    <Compile Include="Matrix.Operations.cs">
+      <DependentUpon>Matrix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Matrix.Operators.cs">
+      <DependentUpon>Matrix.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quaternion.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Vector.cs" />
-    <Compile Include="Vector.Operations.cs" />
-    <Compile Include="Vector.Operators.cs" />
+    <Compile Include="Vector.Operations.cs">
+      <DependentUpon>Vector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vector.Operators.cs">
+      <DependentUpon>Vector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Vector2D.cs" />
     <Compile Include="Vector3D.cs" />
     <Compile Include="Vector4D.cs" />

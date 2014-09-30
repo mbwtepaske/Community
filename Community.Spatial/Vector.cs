@@ -16,7 +16,7 @@ namespace System.Spatial
     {
       get
       {
-        return Math.Abs(Storage.Sum()) - 1D <= Double.Epsilon;
+        return Math.Abs(GetLength() - 1D) <= Double.Epsilon;
       }
     }
 
@@ -88,7 +88,14 @@ namespace System.Spatial
     {
       return Storage.Sum(value => value * value);
     }
-    
+
+    public Vector Normalize()
+    {
+      var result = this;
+
+      return Divide(this, GetLength(), ref result);
+    }
+
     #region Cloning
 
     public Vector Clone()
