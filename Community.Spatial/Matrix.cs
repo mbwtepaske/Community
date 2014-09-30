@@ -66,9 +66,63 @@
     /// <summary>
     /// Initializes a new instance of the <see cref="T:Matrix"/>.
     /// </summary>
-    public Matrix(Double[,] values) : this(values.GetLength(0), values.GetLength(1), values.Cast<Double>().ToArray())
+    public Matrix(Double[,] values) : this(values.GetLength(1), values.GetLength(0), values.Cast<Double>().ToArray())
     {
     }
+
+    /// <summary>
+    /// Returns the values in the specific column of the matrix.
+    /// </summary>
+    public IEnumerable<Double> GetColumn(Int32 columnIndex)
+    {
+      for (var rowIndex = 0; rowIndex < RowCount; rowIndex++)
+      {
+        yield return this[columnIndex, rowIndex];
+      }
+    }
+
+    /// <summary>
+    /// Returns the values in the specific row of the matrix.
+    /// </summary>
+    public IEnumerable<Double> GetRow(Int32 rowIndex)
+    {
+      for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
+      {
+        yield return this[columnIndex, rowIndex];
+      }
+    }
+
+    protected void Verify(Int32 columnCount, Int32 rowCount)
+    {
+      if (columnCount < 1)
+      {
+        throw new ArgumentException("columnCount");
+      }
+
+      if (rowCount < 1)
+      {
+        throw new ArgumentException("rowCount");
+      }
+    }
+
+    #region Enumeration
+
+    public IEnumerator<Double> GetEnumerator()
+    {
+      foreach (var value in Storage)
+      {
+        yield return value;
+      }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return GetEnumerator();
+    }
+
+    #endregion
+
+    #region Equatability
 
     public Boolean Equals(Matrix other)
     {
@@ -85,24 +139,15 @@
       return false;
     }
 
-    public IEnumerator<Double> GetEnumerator()
-    {
-      foreach (var value in Storage)
-      {
-        yield return value;
-      }
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
-
     public override Int32 GetHashCode()
     {
       return Storage.Select(value => value.GetHashCode()).Aggregate((aggregation, current) => aggregation ^ current);
     }
 
+    #endregion
+
+    #region Formatability
+    
     public override String ToString()
     {
       return ToString("F6", CultureInfo.CurrentUICulture);
@@ -121,17 +166,6 @@
         , value.ToString(format, formatProvider))));
     }
 
-    protected void Verify(Int32 columnCount, Int32 rowCount)
-    {
-      if (columnCount < 1)
-      {
-        throw new ArgumentException("columnCount");
-      }
-
-      if (rowCount < 1)
-      {
-        throw new ArgumentException("rowCount");
-      }
-    }
+    #endregion
   }
 }

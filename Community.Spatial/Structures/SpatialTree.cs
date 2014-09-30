@@ -170,7 +170,7 @@
         throw new ArgumentNullException("minimum");
       }
 
-      if (minimum.Count != tree.Dimensions)
+      if (minimum.Size != tree.Dimensions)
       {
         throw new ArgumentException("minimum size must be equal to the dimensions of the spatial tree");
       }
@@ -180,7 +180,7 @@
         throw new ArgumentNullException("maximum");
       }
 
-      if (maximum.Count != tree.Dimensions)
+      if (maximum.Size != tree.Dimensions)
       {
         throw new ArgumentException("maximum size must be equal to the dimensions of the spatial tree");
       }

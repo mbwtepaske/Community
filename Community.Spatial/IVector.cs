@@ -1,15 +1,13 @@
-﻿using System.Collections;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   using Collections.Generic;
 
-  public interface IVector : IEnumerable<Double>, IFormattable
+  public interface IVector : ICloneable, IEnumerable<Double>, IFormattable
   {
     /// <summary>
     /// Gets the amount of components of the vector.
     /// </summary>
-    Int32 Count
+    Int32 Size
     {
       get;
     }
@@ -24,7 +22,7 @@ namespace System.Spatial
     }
   }
 
-  public interface IVector<TVector> : IVector, IEquatable<TVector> where TVector : class, IVector
+  public interface IVector<TVector> : IVector, IEquatable<TVector>
   {
     Boolean Equals(TVector other, Double tolerance);
   }
