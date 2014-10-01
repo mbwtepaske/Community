@@ -16,6 +16,8 @@ namespace System.Spatial.Tests
         var spatialTree = new SpatialTree<Object>(dimension, new Vector(dimension, 1D), new Vector(dimension, 2D));
 
         spatialTree.Root.Split(0.25D, 0.80D);
+
+
       }
     }
   }

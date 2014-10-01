@@ -30,6 +30,66 @@
     }
 
     /// <summary>
+    /// Formats the specified elements before the source elements.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static String Format<TElement>(this IEnumerable<TElement> source, String format)
+    {
+      if (source == null)
+      {
+        throw new NullReferenceException("source");
+      }
+
+      return String.Format(format, source.ToArray());
+    }
+
+    /// <summary>
+    /// Returns a collection of indices where the specified element is within the collection.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static IEnumerable<Int32> Indices<TElement>(this IEnumerable<TElement> source, TElement element) where TElement : class
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source");
+      }
+
+      var index = 0;
+
+      foreach (var item in source)
+      {
+        if (ReferenceEquals(item, element))
+        {
+          yield return index;
+        }
+
+        index++;
+      }
+    }
+
+    /// <summary>
+    /// Invokes a specific action for each element in the collection.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static void Invoke<TElement>(this IEnumerable<TElement> source, Action<TElement> action)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source");
+      }
+
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
+
+      foreach (var element in source)
+      {
+        action.Invoke(element);
+      }
+    }
+
+    /// <summary>
     /// Prepends the specified elements before the source elements.
     /// </summary>
     [DebuggerStepThrough]
@@ -48,20 +108,6 @@
       Assert.ThrowIfNull<ArgumentNullException>(elements, "elements");
 
       return elements.Concat(source);
-    }
-
-    /// <summary>
-    /// Formats the specified elements before the source elements.
-    /// </summary>
-    [DebuggerStepThrough]
-    public static String Format<TElement>(this IEnumerable<TElement> source, String format)
-    {
-      if (source == null)
-      {
-        throw new NullReferenceException("source");
-      }
-
-      return String.Format(format, source.ToArray());
     }
 
     /// <summary>
