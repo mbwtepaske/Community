@@ -1,4 +1,7 @@
-﻿namespace System.Spatial
+﻿using System.Collections;
+using System.Runtime.CompilerServices;
+
+namespace System.Spatial
 {
   using Collections.Generic;
   using Collections.ObjectModel;
@@ -43,7 +46,13 @@
       private set;
     }
 
-    public HashSet<SpatialTreeNode<TValue>> Nodes
+    public IReadOnlyCollection<SpatialTreeNode<TValue>> Nodes
+    {
+      get;
+      private set;
+    }
+
+    internal IList<SpatialTreeNode<TValue>> NodeList
     {
       get;
       private set;
@@ -66,7 +75,7 @@
       get;
       set;
     }
-
+    
     protected SpatialTreeNode(SpatialTree<TValue> tree, Vector minimum, Vector maximum) : this(tree, null, minimum, maximum)
     {
     }
@@ -100,17 +109,64 @@
 
       Maximum = maximum;
       Minimum = minimum;
-      Nodes = new HashSet<SpatialTreeNode<TValue>>();
+      NodeList = new Collection<SpatialTreeNode<TValue>>();
+      Nodes = new ReadOnlyCollection<SpatialTreeNode<TValue>>(NodeList);
       Parent = parent;
       Tree = tree;
     }
 
-    public virtual void Split(params Double[] divisions)
+    public void Clear()
     {
-      Split(Enumerable.Repeat(divisions, Tree.Dimensions).ToArray());
+      foreach (var node in Enumerate().Reverse())
+      {
+        if (node.NodeList.Any())
+        {
+          NodeList.Clear();
+        }
+      }
     }
 
-    public virtual void Split(Double[][] divisionsPerDimensions)
+    public IEnumerable<SpatialTreeNode<TValue>> Enumerate()
+    {
+      return Enumerate(node => true);
+    }
+
+    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate)
+    {
+      if (continuationPredicate == null)
+      {
+        throw new ArgumentNullException("continuationPredicate");
+      }
+
+      var queue = new Queue<SpatialTreeNode<TValue>>();
+
+      if (continuationPredicate(this))
+      {
+        queue.Enqueue(this);
+      }
+
+      while (queue.Count > 0)
+      {
+        var current = queue.Dequeue();
+
+        yield return current;
+
+        current.NodeList.Where(continuationPredicate).Invoke(queue.Enqueue);
+      }
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
+    public virtual IEnumerable<SpatialTreeNode<TValue>> Split(params Double[] divisions)
+    {
+      return Split(Enumerable.Repeat(divisions, Tree.Dimensions).ToArray());
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
+    public virtual SpatialTreeNode<TValue>[] Split(Double[][] divisionsPerDimensions)
     {
       if (divisionsPerDimensions.Length != Tree.Dimensions)
       {
@@ -134,10 +190,10 @@
       // Calculate the number of nodes to generate
       var count = values
         .Select(divisions => divisions.Length - 1)
-        .Aggregate((result, current) => result * current);
+        .Aggregate((aggregate, current) => aggregate * current);
 
-      var nodes = new SpatialTreeNode<TValue>[count];
       var offsets = new Int32[Tree.Dimensions];
+      var result = new List<SpatialTreeNode<TValue>>();
 
       for (var index = 0; index < count; index++, offsets[0]++)
       {
@@ -166,18 +222,90 @@
           maximum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 1];
         }
 
-        Nodes.Add(Tree.CreateNodeInternal(this
+        var node = Tree.CreateNodeInternal(this
           , Interpolation.Linear(Minimum, Maximum, minimum)
-          , Interpolation.Linear(Minimum, Maximum, maximum)));
+          , Interpolation.Linear(Minimum, Maximum, maximum));
+
+        //NodeList.Add(node);
+        
+        result.Add(node);
       }
 
-      node.Nodes = nodes.ToArray();
-      Tree.Split(this, divisionsPerDimensions.Select(Enumerable.ToArray).ToArray());
+      return result.ToArray();
+    }
+
+    /// <summary>
+    /// Continues to split nodes into the specified divisions until the continuation-predicate returns false.
+    /// </summary>
+    public virtual SpatialTreeNode<TValue>[] Split(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, params Double[] divisions)
+    {
+      return Split(continuationPredicate, node => Enumerable.Repeat(divisions, Tree.Dimensions).ToArray());
+    }
+
+    /// <summary>
+    /// Continues to split nodes into the specified divisions until the continuation-predicate returns false.
+    /// </summary>
+    public virtual SpatialTreeNode<TValue>[] Split(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, Double[][] divisionsPerDimensions)
+    {
+      return Split(continuationPredicate, node => divisionsPerDimensions);
+    }
+
+    /// <summary>
+    /// Continues to split nodes into the specified divisions until the continuation-predicate returns false.
+    /// </summary>
+    public virtual SpatialTreeNode<TValue>[] Split(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, Func<SpatialTreeNode<TValue>, Double[][]> divisionsPerDimensionsProvider)
+    {
+      if (continuationPredicate == null)
+      {
+        throw new ArgumentNullException("continuationPredicate");
+      }
+
+      if (divisionsPerDimensionsProvider == null)
+      {
+        throw new ArgumentNullException("divisionsPerDimensionsProvider");
+      }
+
+      var queue = new Queue<SpatialTreeNode<TValue>>();
+      var result = new List<SpatialTreeNode<TValue>>();
+
+      if (continuationPredicate(this))
+      {
+        queue.Enqueue(this);
+        result.Add(this);
+      }
+
+      while (queue.Count > 0)
+      {
+        var current = queue.Dequeue();
+
+        foreach (var node in current.Split(divisionsPerDimensionsProvider(current)))
+        {
+          if (continuationPredicate(node))
+          {
+            queue.Enqueue(node);
+          }
+
+          result.Add(node);
+        }
+      }
+
+      return result.ToArray();
+    }
+
+    public virtual IEnumerable<SpatialTreeNode<TValue>> Traverse(Vector position)
+    {
+      return Enumerate(current 
+        => current.Minimum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value <= 0)
+        && current.Maximum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value >= 0));
     }
 
     public override String ToString()
     {
-      return base.ToString();
+      return String.Format("L{0}, [{1} - {2}], [{3}]"
+        , Level
+        , Minimum
+        , Maximum
+        , String.Join("-", Address));
     }
   }
 }

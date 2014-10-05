@@ -1,8 +1,5 @@
 ﻿namespace System.Spatial
 {
-  using Collections.Generic;
-  using Linq;
-
   public class SpatialTree<TValue>
   {
     public Int32 Dimensions
@@ -40,14 +37,19 @@
 
     internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
     {
-      return CreateNode(parent, minimum, maximum);
+      var node = CreateNode(parent, minimum, maximum);
+
+      if (parent != null)
+      {
+        parent.NodeList.Add(node);
+      }
+
+      return node;
     }
 
     protected virtual SpatialTreeNode<TValue> CreateNode(SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
     {
-      var node = new SpatialTreeNode<TValue>(this, parent, minimum, maximum);
-
-      return parent.Nodes.Add(node) ? node : null;
+      return new SpatialTreeNode<TValue>(this, parent, minimum, maximum);
     }
   }
 }

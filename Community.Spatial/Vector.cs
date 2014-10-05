@@ -109,7 +109,7 @@ namespace System.Spatial
     }
 
     #endregion
-
+    
     #region Enumeration
 
     public IEnumerator<Double> GetEnumerator()
