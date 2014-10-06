@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Community</RootNamespace>
     <AssemblyName>Community</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,6 +39,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
+    <Compile Include="Properties\AssemblyInfo.Version.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
+    </Compile>
     <Compile Include="Assert.cs" />
     <Compile Include="Exceptions.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -68,7 +74,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Properties\AssemblyInfo.Version.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
+      <LastOutputs>.\AssemblyInfo.Version.cs</LastOutputs>
+    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- <Import Project="$(SolutionDir)$(SolutionName).targets" /> -->
