@@ -4,98 +4,202 @@ using System.Linq;
 
 namespace System.Spatial
 {
-  public partial struct Matrix
+  public partial class Matrix
   {
-    public static Matrix Multiply(Matrix left, Double right)
-    {
-      var result = new Matrix();
+    #region Arithmetics
 
-      return Multiply(ref left, right, out result);
+    #region Addition
+
+    public static Matrix Add(Matrix left, Double right)
+    {
+      var result = default(Matrix);
+
+      return Add(left, right, ref result);
     }
 
-    public static Matrix Multiply(ref Matrix left, Double right)
+    public static Matrix Add(Matrix matrix, Double right, ref Matrix result)
     {
-      var result = new Matrix();
+      VerifyMatrix(matrix);
 
-      return Multiply(ref left, right, out result);
+      return result = new Matrix(matrix.ColumnCount, matrix.RowCount, matrix.Select(value => value + right).ToArray());
     }
 
-    public static Matrix Multiply(ref Matrix left, Double right, out Matrix result)
+    public static Matrix Add(Matrix left, Matrix right)
     {
-      result.M11 = left.M11 * right;
-      result.M12 = left.M12 * right;
-      result.M13 = left.M13 * right;
-      result.M14 = left.M14 * right;
-      result.M21 = left.M21 * right;
-      result.M22 = left.M22 * right;
-      result.M23 = left.M23 * right;
-      result.M24 = left.M24 * right;
-      result.M31 = left.M31 * right;
-      result.M32 = left.M32 * right;
-      result.M33 = left.M33 * right;
-      result.M34 = left.M34 * right;
-      result.M41 = left.M41 * right;
-      result.M42 = left.M42 * right;
-      result.M43 = left.M43 * right;
-      result.M44 = left.M44 * right;
+      var result = default(Matrix);
+
+      return Add(left, right, ref result);
+    }
+
+    public static Matrix Add(Matrix left, Matrix right, ref Matrix result)
+    {
+      VerifyLeftAndRightAndResult(left, right, ref result, true);
+
+      for (var index = 0; index < result.Storage.Length; index++)
+      {
+        result[index] = left[index] + right[index];
+      }
 
       return result;
+    }
+
+    #endregion
+
+    #region Division
+    
+    #endregion
+
+    #region Multiplication
+
+    private static Double Multiply(Double left, Double right)
+    {
+      return left * right;
+    }
+
+    public static Matrix Multiply(Matrix left, Double right)
+    {
+      var result = default(Matrix);
+
+      return Multiply(left, right, ref result);
+    }
+
+    public static Matrix Multiply(Matrix matrix, Double right, ref Matrix result)
+    {
+      VerifyMatrix(matrix);
+
+      return result = new Matrix(matrix.ColumnCount, matrix.RowCount, matrix.Select(value => value * right).ToArray());
     }
 
     public static Matrix Multiply(Matrix left, Matrix right)
     {
-      var result = new Matrix();
+      var result = default(Matrix);
 
-      return Multiply(ref left, ref right, out result);
+      return Multiply(left, right, ref result);
     }
 
-    public static Matrix Multiply(ref Matrix left, ref Matrix right)
+    public static Matrix Multiply(Matrix left, Matrix right, ref Matrix result)
     {
-      var result = new Matrix();
+      VerifyLeftAndRight(left, right);
 
-      return Multiply(ref left, ref right, out result);
-    }
+      if (left.RowCount != right.ColumnCount)
+      {
+        throw new ArgumentException("left-side matrix' row count must be equal to the right-side matrix' column count");
+      }
 
-    public static Matrix Multiply(ref Matrix left, ref Matrix right, out Matrix result)
-    {
-      result.M11 = left.M11 * right.M11 + left.M12 * right.M21 + left.M13 * right.M31 + left.M14 * right.M41;
-      result.M12 = left.M11 * right.M12 + left.M12 * right.M22 + left.M13 * right.M32 + left.M14 * right.M42;
-      result.M13 = left.M11 * right.M13 + left.M12 * right.M23 + left.M13 * right.M33 + left.M14 * right.M43;
-      result.M14 = left.M11 * right.M14 + left.M12 * right.M24 + left.M13 * right.M34 + left.M14 * right.M44;
-      result.M21 = left.M21 * right.M11 + left.M22 * right.M21 + left.M23 * right.M31 + left.M24 * right.M41;
-      result.M22 = left.M21 * right.M12 + left.M22 * right.M22 + left.M23 * right.M32 + left.M24 * right.M42;
-      result.M23 = left.M21 * right.M13 + left.M22 * right.M23 + left.M23 * right.M33 + left.M24 * right.M43;
-      result.M24 = left.M21 * right.M14 + left.M22 * right.M24 + left.M23 * right.M34 + left.M24 * right.M44;
-      result.M31 = left.M31 * right.M11 + left.M32 * right.M21 + left.M33 * right.M31 + left.M34 * right.M41;
-      result.M32 = left.M31 * right.M12 + left.M32 * right.M22 + left.M33 * right.M32 + left.M34 * right.M42;
-      result.M33 = left.M31 * right.M13 + left.M32 * right.M23 + left.M33 * right.M33 + left.M34 * right.M43;
-      result.M34 = left.M31 * right.M14 + left.M32 * right.M24 + left.M33 * right.M34 + left.M34 * right.M44;
-      result.M41 = left.M41 * right.M11 + left.M42 * right.M21 + left.M43 * right.M31 + left.M44 * right.M41;
-      result.M42 = left.M41 * right.M12 + left.M42 * right.M22 + left.M43 * right.M32 + left.M44 * right.M42;
-      result.M43 = left.M41 * right.M13 + left.M42 * right.M23 + left.M43 * right.M33 + left.M44 * right.M43;
-      result.M44 = left.M41 * right.M14 + left.M42 * right.M24 + left.M43 * right.M34 + left.M44 * right.M44;
+      if (result != null)
+      {
+        if (result.ColumnCount != right.ColumnCount || result.RowCount != left.RowCount)
+        {
+          throw new ArgumentException("result matrix must have the right-side matrix' column count and left-side matrix' row count");
+        }
+      }
+      else
+      {
+        result = new Matrix(right.ColumnCount, left.RowCount);
+      }
+
+      for (var rowIndex = 0; rowIndex < result.RowCount; rowIndex++)
+      {
+        for (var columnIndex = 0; columnIndex < result.ColumnCount; columnIndex++)
+        {
+          result[columnIndex, rowIndex] = Enumerable
+            .Zip(left.GetRow(rowIndex), right.GetColumn(columnIndex), Multiply)
+            .Sum();
+        }
+      }
 
       return result;
     }
 
-    public static Matrix operator *(Matrix left, Double right)
+    #endregion
+
+    #region Modulation
+    
+    #endregion
+
+    #region Subtraction
+
+    #endregion
+
+    #endregion
+
+
+    
+    private static void VerifyMatrix(IMatrix matrix)
     {
-      return Multiply(ref left, right);
+      if (matrix == null)
+      {
+        throw new ArgumentNullException("matrix");
+      }
     }
 
-    public static Matrix operator *(Matrix left, Matrix right)
+    private static void VerifyLeftAndRight(Matrix left, Matrix right, Boolean sameSize = false)
     {
-      return Multiply(ref left, ref right);
+      if (left == null)
+      {
+        throw new ArgumentNullException("left");
+      }
+
+      if (right == null)
+      {
+        throw new ArgumentNullException("right");
+      }
+
+      if (sameSize)
+      {
+        if (left.ColumnCount != right.ColumnCount)
+        {
+          throw new ArgumentException("left.ColumnCount != right.ColumnCount");
+        }
+
+        if (left.RowCount != right.RowCount)
+        {
+          throw new ArgumentException("left.RowCount != right.RowCount");
+        }
+      }
     }
 
-    public static implicit operator Double[] (Matrix matrix)
+    private static void VerifyLeftAndRightAndResult(Matrix left, Matrix right, ref Matrix result, Boolean sameSize = false)
     {
-      return matrix.ToArray();
-    }
+      if (left == null)
+      {
+        throw new ArgumentNullException("left");
+      }
 
-    public static implicit operator Single[] (Matrix matrix)
-    {
-      return matrix.Select(Convert.ToSingle).ToArray();
+      if (right == null)
+      {
+        throw new ArgumentNullException("right");
+      }
+
+      if (sameSize)
+      {
+        if (left.ColumnCount != right.ColumnCount)
+        {
+          throw new ArgumentException("left.ColumnCount != right.ColumnCount");
+        }
+
+        if (left.RowCount != right.RowCount)
+        {
+          throw new ArgumentException("left.RowCount != right.RowCount");
+        }
+
+        if (result != null)
+        {
+          if (left.ColumnCount != result.ColumnCount)
+          {
+            throw new ArgumentException("left.ColumnCount != right.ColumnCount");
+          }
+
+          if (left.RowCount != result.RowCount)
+          {
+            throw new ArgumentException("left.RowCount != right.RowCount");
+          }
+        }
+        else
+        {
+          result = new Matrix(left.ColumnCount, left.RowCount);
+        }
+      }
     }
   }
 }

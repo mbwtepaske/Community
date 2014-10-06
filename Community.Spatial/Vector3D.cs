@@ -2,14 +2,13 @@
 {
   using Linq;
 
-  public sealed class Vector4D : Vector
+  public sealed class Vector3D : Vector
   {
-    private const Int32 Count = 4;
+    private const Int32 Count = 3;
 
-    public static readonly Vector4D UnitX = new Vector4D(1D, 0D, 0D, 0D);
-    public static readonly Vector4D UnitY = new Vector4D(0D, 1D, 0D, 0D);
-    public static readonly Vector4D UnitZ = new Vector4D(0D, 0D, 1D, 0D);
-    public static readonly Vector4D UnitW = new Vector4D(0D, 0D, 0D, 1D);
+    public static readonly Vector3D UnitX = new Vector3D(1D, 0D, 0D);
+    public static readonly Vector3D UnitY = new Vector3D(0D, 1D, 0D);
+    public static readonly Vector3D UnitZ = new Vector3D(0D, 0D, 1D);
 
     public Double X
     {
@@ -47,29 +46,17 @@
       }
     }
 
-    public Double W
-    {
-      get
-      {
-        return this[3];
-      }
-      set
-      {
-        this[3] = value;
-      }
-    }
-
-    public Vector4D()
+    public Vector3D()
       : base(Count)
     {
     }
 
-    public Vector4D(Double x, Double y, Double z, Double w)
-      : base(x, y, z, w)
+    public Vector3D(Double x, Double y, Double z)
+      : base(x, y, z)
     {
     }
 
-    public Vector4D(IVector vector)
+    public Vector3D(IVector vector)
       : base(vector.Take(Count).ToArray())
     {
       if (vector == null)
@@ -81,6 +68,22 @@
       {
         throw new ArgumentException("vector size must be " + Count);
       }
+    }
+
+    public static Vector3D Cross(Vector3D left, Vector3D right, ref Vector3D result)
+    {
+      Verify(left, right);
+
+      if (result == null)
+      {
+        result = new Vector3D();
+      }
+
+      result.X = left.Y * right.Z - left.Z * right.Y;
+      result.Y = left.Z * right.X - left.X * right.Z;
+      result.Z = left.X * right.Y - left.Y * right.X;
+
+      return result;
     }
   }
 }

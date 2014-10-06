@@ -1,17 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community", "Community\Community.csproj", "{351B3B5A-13AB-40DB-AF74-E428166C75B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.Tests", "Community.Tests\Community.Tests.csproj", "{F5432ECB-CAA7-43BF-AB35-69DF2856B5A9}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D06389C3-5D92-4744-88A8-B4129F3A76D7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{D06389C3-5D92-4744-88A8-B4129F3A76D7}"
 	ProjectSection(SolutionItems) = preProject
-		Community.targets = Community.targets
 		LICENSE = LICENSE
-		README.md = README.md
+		README.markdown = README.markdown
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.Automation", "Community.Automation\Community.Automation.csproj", "{26A5B481-0C34-4B2D-867A-C9C21A2AC238}"
@@ -30,6 +29,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{95E14992-714C-488F-AD88-8C99F922EEF8}"
 	ProjectSection(SolutionItems) = preProject
 		Build.proj = Build.proj
+		Community.targets = Community.targets
 		.build\MSBuild.Community.Tasks.dll = .build\MSBuild.Community.Tasks.dll
 		.build\MSBuild.Community.Tasks.targets = .build\MSBuild.Community.Tasks.targets
 	EndProjectSection
@@ -117,8 +117,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E257A764-00D4-4C08-BB15-19EFFC61116A} = {6847AD30-10C8-43B6-8C46-EC2207DDC11A}
 		{F5432ECB-CAA7-43BF-AB35-69DF2856B5A9} = {6847AD30-10C8-43B6-8C46-EC2207DDC11A}
+		{E257A764-00D4-4C08-BB15-19EFFC61116A} = {6847AD30-10C8-43B6-8C46-EC2207DDC11A}
 		{CBF34CB8-D376-446F-B40F-8F04CFE27496} = {6847AD30-10C8-43B6-8C46-EC2207DDC11A}
 	EndGlobalSection
 EndGlobal

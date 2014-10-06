@@ -1,0 +1,9 @@
+<#@ template language="C#" #>
+<#@ output extension="cs" #>
+using System.Reflection;
+
+[assembly: AssemblyVersion("1.0.0.<#= this.revision.ToString() #>")]
+[assembly: AssemblyFileVersion("1.0.0.<#= this.revision.ToString() #>")]
+<#+
+  Int32 revision = (Int32)Math.Round((DateTime.UtcNow - new DateTime(2014, 1, 1)).TotalDays * 24D);
+#>

@@ -7,7 +7,7 @@
     /// <summary>
     /// Gets the amount of columns of this matrix.
     /// </summary>
-    Int32 Columns
+    Int32 ColumnCount
     {
       get;
     }
@@ -15,7 +15,7 @@
     /// <summary>
     /// Gets the amount of columns of this matrix.
     /// </summary>
-    Int32 Rows
+    Int32 RowCount
     {
       get;
     }
@@ -32,14 +32,14 @@
     /// <summary>
     /// Gets or sets the component at the specified column and row.
     /// </summary>
-    Double this[Int32 column, Int32 rows]
+    Double this[Int32 columnIndex, Int32 rows]
     {
       get;
       set;
     }
   }
 
-  public interface IMatrix<TMatrix> : IMatrix, IEquatable<TMatrix> where TMatrix : struct, IMatrix
+  public interface IMatrix<TMatrix> : IMatrix, IEquatable<TMatrix> where TMatrix : class, IMatrix
   {
     Boolean Equals(TMatrix other, Double tolerance);
   }
