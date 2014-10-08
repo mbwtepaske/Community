@@ -13,21 +13,21 @@ namespace System.IO
     /// Reads and returns a specified amount of bytes from the stream.
     /// </summary>
     [DebuggerStepThrough]
-    public static Byte[] Read(this Stream stream, Int32 length)
+    public static Byte[] Read(this Stream stream, Int32 count)
     {
       if (stream == null)
       {
         throw new NullReferenceException("stream");
       }
 
-      if (length < 0)
+      if (count < 0)
       {
-        throw new ArgumentOutOfRangeException(String.Format(Exceptions.ARGUMENT_LESS, "length", "zero"));
+        throw new ArgumentOutOfRangeException(String.Format(Exceptions.ARGUMENT_LESS, "count", "zero"));
       }
+      
+      var buffer = new Byte[count];
 
-      var buffer = new Byte[length];
-
-      stream.Read(buffer, 0, length);
+      stream.Read(buffer, 0, count);
 
       return buffer;
     }

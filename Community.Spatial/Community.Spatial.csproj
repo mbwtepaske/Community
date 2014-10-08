@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Box.cs" />
+    <Compile Include="Frustum.cs" />
     <Compile Include="IMatrix.cs" />
     <Compile Include="Interpolation.cs" />
     <Compile Include="IVector.cs" />
