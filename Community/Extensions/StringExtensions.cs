@@ -1,6 +1,8 @@
 ﻿namespace System
 {
   using Diagnostics;
+  using Text;
+  using Text.RegularExpressions;
 
   public static class StringExtensions
   {
@@ -53,12 +55,37 @@
     }
 
     /// <summary>
+    /// Returns true when the string matches the specified pattern.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static Boolean IsMatch(this String instance, String pattern, Boolean compile = true, Boolean ignoreCase = false)
+    {
+      Assert.ThrowIfNull<NullReferenceException>(instance);
+      Assert.ThrowIfNull<ArgumentNullException>(pattern);
+
+      var options = RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace;
+
+      if (compile)
+      {
+        options |= RegexOptions.Compiled;
+      }
+
+      if (ignoreCase)
+      {
+        options |= RegexOptions.IgnoreCase;
+      }
+
+      return Regex.IsMatch(instance, pattern, options);
+    }
+
+    /// <summary>
     /// Returns a String array that contains the substrings in this String that are delimited by elements of a specified Unicode character array. A parameter specifies whether to return empty array elements.
     /// </summary>
     [DebuggerStepThrough]
     public static String[] Split(this String instance, String separator, StringSplitOptions options = StringSplitOptions.RemoveEmptyEntries)
     {
       Assert.ThrowIfNull<NullReferenceException>(instance);
+      Assert.ThrowIfNull<ArgumentNullException>(separator);
       
       return instance.Split(new[] { separator }, options);
     }
