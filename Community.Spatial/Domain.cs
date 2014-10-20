@@ -20,13 +20,13 @@ namespace System.Spatial
     public Vector Maximum
     {
       get;
-      set;
+      private set;
     }
 
     public Vector Minimum
     {
       get;
-      set;
+      private set;
     }
 
     public Domain(Vector minimum, Vector maximum)

@@ -24,6 +24,12 @@ namespace System.Spatial
       }
     }
 
+    public Domain Domain
+    {
+      get;
+      private set;
+    }
+
     public Int32 Level
     {
       get
@@ -32,18 +38,6 @@ namespace System.Spatial
           ? Parent.Level + 1
           : 0;
       }
-    }
-
-    public Vector Maximum
-    {
-      get;
-      private set;
-    }
-
-    public Vector Minimum
-    {
-      get;
-      private set;
     }
 
     public IReadOnlyCollection<SpatialTreeNode<TValue>> Nodes
@@ -75,40 +69,25 @@ namespace System.Spatial
       get;
       set;
     }
-    
-    protected SpatialTreeNode(SpatialTree<TValue> tree, Vector minimum, Vector maximum) : this(tree, null, minimum, maximum)
+
+    protected SpatialTreeNode(SpatialTree<TValue> tree, Domain domain)
+      : this(tree, null, domain)
     {
     }
 
-    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
+    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Domain domain)
     {
       if (tree == null)
       {
         throw new ArgumentNullException("tree");
       }
 
-      if (minimum == null)
+      if (domain == null)
       {
-        throw new ArgumentNullException("minimum");
+        throw new ArgumentNullException("domain");
       }
-
-      if (minimum.Size != tree.Dimensions)
-      {
-        throw new ArgumentException("minimum size must be equal to the dimensions of the spatial tree");
-      }
-
-      if (maximum == null)
-      {
-        throw new ArgumentNullException("maximum");
-      }
-
-      if (maximum.Size != tree.Dimensions)
-      {
-        throw new ArgumentException("maximum size must be equal to the dimensions of the spatial tree");
-      }
-
-      Maximum = maximum;
-      Minimum = minimum;
+      
+      Domain = domain;
       NodeList = new Collection<SpatialTreeNode<TValue>>();
       Nodes = new ReadOnlyCollection<SpatialTreeNode<TValue>>(NodeList);
       Parent = parent;
@@ -222,13 +201,9 @@ namespace System.Spatial
           maximum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 1];
         }
 
-        var node = Tree.CreateNodeInternal(this
-          , Interpolation.Linear(Minimum, Maximum, minimum)
-          , Interpolation.Linear(Minimum, Maximum, maximum));
-
-        //NodeList.Add(node);
+        var domain = new Domain(Interpolation.Linear(Domain.Minimum, Domain.Maximum, minimum), Interpolation.Linear(Domain.Minimum, Domain.Maximum, maximum));
         
-        result.Add(node);
+        result.Add(Tree.CreateNodeInternal(this, domain));
       }
 
       return result.ToArray();
@@ -295,16 +270,16 @@ namespace System.Spatial
     public virtual IEnumerable<SpatialTreeNode<TValue>> Traverse(Vector position)
     {
       return Enumerate(current 
-        => current.Minimum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value <= 0)
-        && current.Maximum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value >= 0));
+        => current.Domain.Minimum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value <= 0)
+        && current.Domain.Maximum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value >= 0));
     }
 
     public override String ToString()
     {
       return String.Format("L{0}, [{1} - {2}], [{3}]"
         , Level
-        , Minimum
-        , Maximum
+        , Domain.Minimum
+        , Domain.Maximum
         , String.Join("-", Address));
     }
   }

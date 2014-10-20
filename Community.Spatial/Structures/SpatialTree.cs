@@ -14,30 +14,41 @@
       private set;
     }
 
-    public SpatialTree(Int32 dimensions, Vector minimum, Vector maximum)
+    public SpatialTree(Domain domain)
     {
-      if (dimensions < 1)
+      if (domain == null)
       {
-        throw new ArgumentException("dimensions must be greater than zero");
+        throw new ArgumentNullException("domain");
       }
 
-      if (minimum == null)
-      {
-        throw new ArgumentNullException("minimum");
-      }
-
-      if (maximum == null)
-      {
-        throw new ArgumentNullException("maximum");
-      }
-
-      Dimensions = dimensions;
-      Root = CreateNodeInternal(null, minimum, maximum);
+      Dimensions = domain.Center.Size;
+      Root = CreateNodeInternal(null, domain);
     }
 
-    internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
+    //public SpatialTree(Int32 dimensions, Vector minimum, Vector maximum)
+    //{
+    //  if (dimensions < 1)
+    //  {
+    //    throw new ArgumentException("dimensions must be greater than zero");
+    //  }
+
+    //  if (minimum == null)
+    //  {
+    //    throw new ArgumentNullException("minimum");
+    //  }
+
+    //  if (maximum == null)
+    //  {
+    //    throw new ArgumentNullException("maximum");
+    //  }
+
+    //  Dimensions = dimensions;
+    //  Root = CreateNodeInternal(null, minimum, maximum);
+    //}
+
+    internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Domain domain)
     {
-      var node = CreateNode(parent, minimum, maximum);
+      var node = CreateNode(parent, domain);
 
       if (parent != null)
       {
@@ -47,9 +58,9 @@
       return node;
     }
 
-    protected virtual SpatialTreeNode<TValue> CreateNode(SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
+    protected virtual SpatialTreeNode<TValue> CreateNode(SpatialTreeNode<TValue> parent, Domain domain)
     {
-      return new SpatialTreeNode<TValue>(this, parent, minimum, maximum);
+      return new SpatialTreeNode<TValue>(this, parent, domain);
     }
   }
 }
