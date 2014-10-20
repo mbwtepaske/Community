@@ -16,7 +16,7 @@ namespace System.Spatial
     {
       get
       {
-        return Math.Abs(GetLength() - 1D) <= Double.Epsilon;
+        return Utility.Equals(GetLength(), 1D);
       }
     }
 

@@ -7,16 +7,33 @@
 
   public partial class Matrix : IMatrix<Matrix>
   {
+    /// <summary>
+    /// Gets the column count of this matrix.
+    /// </summary>
     public Int32 ColumnCount
     {
       get;
       private set;
     }
 
+    /// <summary>
+    /// Gets the row count of this matrix.
+    /// </summary>
     public Int32 RowCount
     {
       get;
       private set;
+    }
+
+    /// <summary>
+    /// Gets whether this matrix is a square matrix.
+    /// </summary>
+    public Boolean IsSquare
+    {
+      get
+      {
+        return ColumnCount == RowCount;
+      }
     }
 
     protected Double[] Storage
@@ -90,11 +107,6 @@
       {
         yield return this[columnIndex, rowIndex];
       }
-    }
-
-    public Boolean IsSquare()
-    {
-      return ColumnCount == RowCount;
     }
 
     protected void Verify(Int32 columnCount, Int32 rowCount)

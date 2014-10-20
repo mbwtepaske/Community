@@ -30,10 +30,10 @@ namespace System.Spatial
 
       if (!planes.Same(plane => plane.Normal.Size))
       {
-        throw new ArgumentException("All planes ");
+        throw new ArgumentException("All planes must have the same dimension");
       }
-      var first
 
+      Planes = planes;
     }
 
     public Frustum(IEnumerable<Plane> planes) : this(planes.ToArray())
@@ -42,12 +42,12 @@ namespace System.Spatial
 
     IEnumerator<Plane> IEnumerable<Plane>.GetEnumerator()
     {
-      throw new NotImplementedException();
+      return Planes.AsEnumerable().GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      throw new NotImplementedException();
+      return Planes.GetEnumerator();
     }
   }
 }
