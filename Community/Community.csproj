@@ -38,6 +38,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.Company.cs">
+      <Link>Properties\AssemblyInfo.Company.cs</Link>
+    </Compile>
     <Compile Include="..\AssemblyInfo.Configuration.cs">
       <Link>Properties\AssemblyInfo.Configuration.cs</Link>
     </Compile>

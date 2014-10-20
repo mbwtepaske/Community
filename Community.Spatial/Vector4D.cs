@@ -10,6 +10,7 @@
     public static readonly Vector4D UnitY = new Vector4D(0D, 1D, 0D, 0D);
     public static readonly Vector4D UnitZ = new Vector4D(0D, 0D, 1D, 0D);
     public static readonly Vector4D UnitW = new Vector4D(0D, 0D, 0D, 1D);
+    public static readonly Vector4D Zero = new Vector4D();
 
     public Double X
     {

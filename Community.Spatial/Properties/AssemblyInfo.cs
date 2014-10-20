@@ -2,8 +2,8 @@
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Community.Spatial")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyProduct("Community.Spatial")]
+[assembly: AssemblyDescription("Community library containing spatial related functionality.")]
+[assembly: AssemblyProduct("Community Spatial Library")]
 
 [assembly: ComVisible(false)]
 
