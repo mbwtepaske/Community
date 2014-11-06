@@ -6,7 +6,10 @@ namespace System.Spatial
 {
   public class Plane
   {
-    public Double Constant
+    /// <summary>
+    /// Gets the distance of the plane from the origin.
+    /// </summary>
+    public Double Distance
     {
       get;
       private set;
@@ -20,8 +23,14 @@ namespace System.Spatial
 
     public Plane(Vector vector)
     {
-      Constant = -vector.GetLength();
+      Distance = -vector.GetLength();
       Normal = Vector.Normalize(vector);
+    }
+
+    public Plane(Vector point, Vector direction)
+    {
+      Normal = Vector.Normalize(direction);
+      Distance = -Vector.Dot(Normal , point);
     }
 
     public Double Dot(Vector vector)
@@ -37,7 +46,7 @@ namespace System.Spatial
       }
 
       return vector.IsNormal
-        ? Vector.Dot(Normal, vector) + Constant
+        ? Vector.Dot(Normal, vector) + Distance
         : Vector.Dot(Normal, vector);
     }
   }
