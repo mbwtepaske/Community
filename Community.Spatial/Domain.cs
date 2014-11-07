@@ -89,5 +89,10 @@ namespace System.Spatial
 
       return new Domain(center - radii, center + radii);
     }
+
+    public override String ToString()
+    {
+      return String.Format("[{0}] - [{1}]", Minimum, Maximum);
+    }
   }
 }

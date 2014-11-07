@@ -34,7 +34,7 @@ namespace System.Spatial
     public static Matrix Add(Matrix left, Matrix right, ref Matrix result)
     {
       VerifyLeftAndRightAndResult(left, right, ref result, true);
-
+      
       for (var index = 0; index < result.Storage.Length; index++)
       {
         result[index] = left[index] + right[index];
@@ -46,7 +46,40 @@ namespace System.Spatial
     #endregion
 
     #region Division
-    
+
+    public static Matrix Divide(Matrix left, Double right)
+    {
+      var result = default(Matrix);
+
+      return Divide(left, right, ref result);
+    }
+
+    public static Matrix Divide(Matrix matrix, Double right, ref Matrix result)
+    {
+      VerifyMatrix(matrix);
+
+      return result = new Matrix(matrix.ColumnCount, matrix.RowCount, matrix.Select(value => value / right).ToArray());
+    }
+
+    public static Matrix Divide(Matrix left, Matrix right)
+    {
+      var result = default(Matrix);
+
+      return Divide(left, right, ref result);
+    }
+
+    public static Matrix Divide(Matrix left, Matrix right, ref Matrix result)
+    {
+      VerifyLeftAndRightAndResult(left, right, ref result, true);
+
+      for (var index = 0; index < result.Storage.Length; index++)
+      {
+        result[index] = left[index] / right[index];
+      }
+
+      return result;
+    }
+
     #endregion
 
     #region Multiplication
@@ -114,16 +147,80 @@ namespace System.Spatial
     #endregion
 
     #region Modulation
-    
+
+    public static Matrix Modulo(Matrix left, Double right)
+    {
+      var result = default(Matrix);
+
+      return Subtract(left, right, ref result);
+    }
+
+    public static Matrix Modulo(Matrix matrix, Double right, ref Matrix result)
+    {
+      VerifyMatrix(matrix);
+
+      return result = new Matrix(matrix.ColumnCount, matrix.RowCount, matrix.Select(value => value % right).ToArray());
+    }
+
+    public static Matrix Modulo(Matrix left, Matrix right)
+    {
+      var result = default(Matrix);
+
+      return Modulo(left, right, ref result);
+    }
+
+    public static Matrix Modulo(Matrix left, Matrix right, ref Matrix result)
+    {
+      VerifyLeftAndRightAndResult(left, right, ref result, true);
+
+      for (var index = 0; index < result.Storage.Length; index++)
+      {
+        result[index] = left[index] % right[index];
+      }
+
+      return result;
+    }
+
     #endregion
 
     #region Subtraction
 
-    #endregion
+    public static Matrix Subtract(Matrix left, Double right)
+    {
+      var result = default(Matrix);
+
+      return Subtract(left, right, ref result);
+    }
+
+    public static Matrix Subtract(Matrix matrix, Double right, ref Matrix result)
+    {
+      VerifyMatrix(matrix);
+
+      return result = new Matrix(matrix.ColumnCount, matrix.RowCount, matrix.Select(value => value - right).ToArray());
+    }
+
+    public static Matrix Subtract(Matrix left, Matrix right)
+    {
+      var result = default(Matrix);
+
+      return Subtract(left, right, ref result);
+    }
+
+    public static Matrix Subtract(Matrix left, Matrix right, ref Matrix result)
+    {
+      VerifyLeftAndRightAndResult(left, right, ref result, true);
+
+      for (var index = 0; index < result.Storage.Length; index++)
+      {
+        result[index] = left[index] - right[index];
+      }
+
+      return result;
+    }
 
     #endregion
 
-
+    #endregion
     
     private static void VerifyMatrix(IMatrix matrix)
     {
