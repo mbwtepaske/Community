@@ -5,6 +5,9 @@
   using Globalization;
   using Linq;
 
+  /// <summary>
+  /// Represents a row-major matrix.
+  /// </summary>
   public partial class Matrix : IMatrix<Matrix>
   {
     /// <summary>
@@ -106,19 +109,6 @@
       for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
       {
         yield return this[columnIndex, rowIndex];
-      }
-    }
-
-    protected void Verify(Int32 columnCount, Int32 rowCount)
-    {
-      if (columnCount < 1)
-      {
-        throw new ArgumentException("columnCount");
-      }
-
-      if (rowCount < 1)
-      {
-        throw new ArgumentException("rowCount");
       }
     }
 
