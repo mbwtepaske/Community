@@ -89,6 +89,32 @@
       }
     }
 
+
+    /// <summary>
+    /// Invokes a specific action for each element in the collection.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static void Invoke<TElement>(this IEnumerable<TElement> source, Action<TElement, Int32> action)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source");
+      }
+
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
+
+      using (var enumerator = source.GetEnumerator())
+      {
+        for (var index = 0; enumerator.MoveNext(); index++)
+        {
+          action.Invoke(enumerator.Current, index);
+        }
+      }
+    }
+
     /// <summary>
     /// Prepends the specified elements before the source elements.
     /// </summary>
@@ -158,6 +184,54 @@
           yield return element;
         }
       }
+    }
+
+    /// <summary>
+    /// Determines whether all elements of a sequence yield the same value with the specified selector.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static Boolean Same<TElement, TValue>(this IEnumerable<TElement> source, Func<TElement, TValue> selector)
+    {
+      return Same(source, selector, null);
+    }
+
+    /// <summary>
+    /// Determines whether all elements of a sequence yield the same value with the specified selector.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static Boolean Same<TElement, TValue>(this IEnumerable<TElement> source, Func<TElement, TValue> selector, IEqualityComparer<TValue> comparer)
+    {
+      if (source == null)
+      {
+        throw new ArgumentNullException("source");
+      }
+
+      if (selector == null)
+      {
+        throw new ArgumentNullException("selector");
+      }
+
+      comparer = comparer ?? EqualityComparer<TValue>.Default;
+
+      using (var enumerator = source.GetEnumerator())
+      {
+        if (enumerator.MoveNext())
+        {
+          var firstValue = selector(enumerator.Current);
+
+          while (enumerator.MoveNext())
+          {
+            var currentValue = selector(enumerator.Current);
+
+            if (comparer.GetHashCode(firstValue) != comparer.GetHashCode(currentValue) && !comparer.Equals(firstValue, currentValue))
+            {
+              return false;
+            }
+          }
+        }
+      }
+
+      return true;
     }
   }
 }

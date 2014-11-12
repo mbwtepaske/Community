@@ -3,11 +3,12 @@
 namespace System
 {
   using Diagnostics;
+  using Diagnostics.CodeAnalysis;
 
   /// <summary>
   /// Represents an class that invokes the an action when the instance is disposed.
   /// </summary>
-  public class ActionDisposable : IDisposable
+  public sealed class ActionDisposable : IDisposable
   {
     /// <summary>
     /// Gets the action which is invoked when this instance is disposed.
@@ -31,6 +32,7 @@ namespace System
     /// Disposes the object.
     /// </summary>
     [DebuggerNonUserCode]
+    [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
     public void Dispose()
     {
       if (IsDisposed)

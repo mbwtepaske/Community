@@ -11,6 +11,7 @@
     <AssemblyName>Community.Spatial</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,14 +30,24 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Box.cs" />
+    <Compile Include="..\AssemblyInfo.Company.cs">
+      <Link>Properties\AssemblyInfo.Company.cs</Link>
+    </Compile>
+    <Compile Include="..\AssemblyInfo.Configuration.cs">
+      <Link>Properties\AssemblyInfo.Configuration.cs</Link>
+    </Compile>
+    <Compile Include="..\AssemblyInfo.Copyright.cs">
+      <Link>Properties\AssemblyInfo.Copyright.cs</Link>
+    </Compile>
+    <Compile Include="Domain.cs" />
+    <Compile Include="Frustum.cs" />
     <Compile Include="IMatrix.cs" />
     <Compile Include="Interpolation.cs" />
     <Compile Include="IVector.cs" />
@@ -46,11 +58,19 @@
     <Compile Include="Matrix.Operators.cs">
       <DependentUpon>Matrix.cs</DependentUpon>
     </Compile>
+    <Compile Include="Matrix3D.cs" />
+    <Compile Include="Matrix4D.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.Version.cs">
+      <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Quaternion.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Structures\SpatialTreeNode.cs" />
+    <Compile Include="Utility.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Vector.Operations.cs">
       <DependentUpon>Vector.cs</DependentUpon>
@@ -74,6 +94,12 @@
       <Project>{351b3b5a-13ab-40db-af74-e428166c75b5}</Project>
       <Name>Community</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AssemblyInfo.Version.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

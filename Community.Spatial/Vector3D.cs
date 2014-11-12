@@ -9,6 +9,7 @@
     public static readonly Vector3D UnitX = new Vector3D(1D, 0D, 0D);
     public static readonly Vector3D UnitY = new Vector3D(0D, 1D, 0D);
     public static readonly Vector3D UnitZ = new Vector3D(0D, 0D, 1D);
+    public static readonly Vector3D Zero = new Vector3D();
 
     public Double X
     {

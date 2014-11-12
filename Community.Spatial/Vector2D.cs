@@ -10,6 +10,7 @@ namespace System.Spatial
 
     public static readonly Vector2D UnitX = new Vector2D(1D, 0D);
     public static readonly Vector2D UnitY = new Vector2D(0D, 1D);
+    public static readonly Vector2D Zero = new Vector2D();
 
     public Double X
     {

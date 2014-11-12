@@ -5,18 +5,38 @@
   using Globalization;
   using Linq;
 
+  /// <summary>
+  /// Represents a row-major matrix.
+  /// </summary>
   public partial class Matrix : IMatrix<Matrix>
   {
+    /// <summary>
+    /// Gets the column count of this matrix.
+    /// </summary>
     public Int32 ColumnCount
     {
       get;
       private set;
     }
 
+    /// <summary>
+    /// Gets the row count of this matrix.
+    /// </summary>
     public Int32 RowCount
     {
       get;
       private set;
+    }
+
+    /// <summary>
+    /// Gets whether this matrix is a square matrix.
+    /// </summary>
+    public Boolean IsSquare
+    {
+      get
+      {
+        return ColumnCount == RowCount;
+      }
     }
 
     protected Double[] Storage
@@ -89,24 +109,6 @@
       for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
       {
         yield return this[columnIndex, rowIndex];
-      }
-    }
-
-    public Boolean IsSquare()
-    {
-      return ColumnCount == RowCount;
-    }
-
-    protected void Verify(Int32 columnCount, Int32 rowCount)
-    {
-      if (columnCount < 1)
-      {
-        throw new ArgumentException("columnCount");
-      }
-
-      if (rowCount < 1)
-      {
-        throw new ArgumentException("rowCount");
       }
     }
 

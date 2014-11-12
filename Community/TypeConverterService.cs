@@ -120,7 +120,7 @@
     /// <summary>
     /// Returns the default instance of the current <see cref="System.AppDomain"/>.
     /// </summary>
-    Object IServiceProvider.GetService(Type serviceType)
+    public Object GetService(Type serviceType)
     {
       if (serviceType == null)
       {
