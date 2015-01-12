@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
-  public class Plane
+  public class Plane<TVector> where TVector : Vector
   {
     /// <summary>
     /// Gets the distance of the plane from the origin.
@@ -15,22 +11,55 @@ namespace System.Spatial
       private set;
     }
 
-    public Vector Normal
+    /// <summary>
+    /// Gets the normal of the plane.
+    /// </summary>
+    public TVector Normal
     {
       get;
       private set;
     }
 
-    public Plane(Vector vector)
+    /// <summary>
+    /// Initializes a plane.
+    /// </summary>
+    /// <param name="direction">The direction of the plane normal.</param>
+    /// <param name="distance">The offset from the origin along the normal axis.</param>
+    public Plane(TVector direction, Double distance = 0D)
     {
-      Distance = -vector.GetLength();
-      Normal = Vector.Normalize(vector);
+      if (direction == null)
+      {
+        throw new ArgumentNullException("direction");
+      }
+
+      Distance = distance;
+      Normal = (TVector)Vector.Normalize(direction);
     }
 
+    /// <summary>
+    /// Initializes a plane.
+    /// </summary>
+    /// <param name="point">A point on the plane.</param>
+    /// <param name="direction">The direction of the plane normal.</param>
     public Plane(Vector point, Vector direction)
     {
-      Normal = Vector.Normalize(direction);
-      Distance = -Vector.Dot(Normal , point);
+      if (point == null)
+      {
+        throw new ArgumentNullException("point");
+      }
+
+      if (direction == null)
+      {
+        throw new ArgumentNullException("direction");
+      }
+
+      if (point.Count != direction.Count)
+      {
+        throw new ArgumentException("point and direction are different in size");
+      }
+
+      Distance = -Vector.Dot(direction, point);
+      Normal = (TVector)Vector.Normalize(direction);
     }
 
     public Double Dot(Vector vector)
@@ -40,7 +69,7 @@ namespace System.Spatial
         throw new ArgumentNullException("vector");
       }
 
-      if (Normal.Size != vector.Size)
+      if (Normal.Count != vector.Count)
       {
         throw new ArgumentException("vector must be the same dimension as the plane");
       }
@@ -48,6 +77,19 @@ namespace System.Spatial
       return vector.IsNormal
         ? Vector.Dot(Normal, vector) + Distance
         : Vector.Dot(Normal, vector);
+    }
+  }
+
+  public class Plane : Plane<Vector>
+  {
+    public Plane(Vector direction, double distance = 0)
+      : base(direction, distance)
+    {
+    }
+
+    public Plane(Vector point, Vector direction)
+      : base(point, direction)
+    {
     }
   }
 }

@@ -96,12 +96,9 @@ namespace System.Spatial
 
     public void Clear()
     {
-      foreach (var node in Enumerate().Reverse())
+      foreach (var node in Enumerate().Reverse().Where(node => node.NodeList.Any()))
       {
-        if (node.NodeList.Any())
-        {
-          NodeList.Clear();
-        }
+        node.NodeList.Clear();
       }
     }
 

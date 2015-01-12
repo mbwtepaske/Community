@@ -21,30 +21,9 @@
         throw new ArgumentNullException("domain");
       }
 
-      Dimensions = domain.Center.Size;
+      Dimensions = domain.Center.Count;
       Root = CreateNodeInternal(null, domain);
     }
-
-    //public SpatialTree(Int32 dimensions, Vector minimum, Vector maximum)
-    //{
-    //  if (dimensions < 1)
-    //  {
-    //    throw new ArgumentException("dimensions must be greater than zero");
-    //  }
-
-    //  if (minimum == null)
-    //  {
-    //    throw new ArgumentNullException("minimum");
-    //  }
-
-    //  if (maximum == null)
-    //  {
-    //    throw new ArgumentNullException("maximum");
-    //  }
-
-    //  Dimensions = dimensions;
-    //  Root = CreateNodeInternal(null, minimum, maximum);
-    //}
 
     internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Domain domain)
     {

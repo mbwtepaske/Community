@@ -1,4 +1,7 @@
-﻿namespace System.Spatial
+﻿using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+
+namespace System.Spatial
 {
   using Collections;
   using Collections.Generic;
@@ -6,28 +9,10 @@
   using Linq;
 
   /// <summary>
-  /// Represents a row-major matrix.
+  /// Represents a column-major matrix.
   /// </summary>
-  public partial class Matrix : IMatrix<Matrix>
+  public partial class Matrix : DenseMatrix //, IMatrix//<Matrix>
   {
-    /// <summary>
-    /// Gets the column count of this matrix.
-    /// </summary>
-    public Int32 ColumnCount
-    {
-      get;
-      private set;
-    }
-
-    /// <summary>
-    /// Gets the row count of this matrix.
-    /// </summary>
-    public Int32 RowCount
-    {
-      get;
-      private set;
-    }
-
     /// <summary>
     /// Gets whether this matrix is a square matrix.
     /// </summary>
@@ -39,54 +24,24 @@
       }
     }
 
-    protected Double[] Storage
-    {
-      get;
-      private set;
-    }
-
-    public Double this[Int32 index]
-    {
-      get
-      {
-        return Storage[index];
-      }
-      set
-      {
-        Storage[index] = value;
-      }
-    }
-   
-    public Double this[Int32 columnIndex, Int32 rowIndex]
-    {
-      get
-      {
-        return this[columnIndex + ColumnCount * rowIndex];
-      }
-      set
-      {
-        this[columnIndex + ColumnCount * rowIndex] = value;
-      }
-    }
-
     /// <summary>
     /// Initializes a new <see cref="T:Matrix"/>, specifying the column- and row count.
     /// </summary>
-    public Matrix(Int32 columnCount, Int32 rowCount, params Double[] values)
+    public Matrix(Int32 rows, Int32 columns, params Double[] values) : base(rows, columns, values.ToArray())
     {
-      Verify(columnCount, rowCount);
-
-      ColumnCount = columnCount;
-      RowCount = rowCount;
-      Storage = new Double[columnCount * rowCount];
-
-      Array.ConstrainedCopy(values, 0, Storage, 0, Math.Min(values.Length, Storage.Length));
     }
 
     /// <summary>
     /// Initializes a new <see cref="T:Matrix"/>, using a 2D-array.
     /// </summary>
     public Matrix(Double[,] values) : this(values.GetLength(1), values.GetLength(0), values.Cast<Double>().ToArray())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new <see cref="T:Matrix"/>, using a 2D-array.
+    /// </summary>
+    public Matrix(Matrix<Double> matrix) : base(matrix.RowCount, matrix.ColumnCount, matrix.ToRowWiseArray())
     {
     }
 
@@ -114,60 +69,53 @@
 
     #region Enumeration
 
-    public IEnumerator<Double> GetEnumerator()
-    {
-      foreach (var value in Storage)
-      {
-        yield return value;
-      }
-    }
+    //public IEnumerator<Double> GetEnumerator()
+    //{
+    //  return Storage.Enumerate().GetEnumerator();
+    //}
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return GetEnumerator();
-    }
+    //IEnumerator IEnumerable.GetEnumerator()
+    //{
+    //  return GetEnumerator();
+    //}
 
     #endregion
 
     #region Equatability
 
-    public Boolean Equals(Matrix other)
-    {
-      return Equals(other, 0D);
-    }
+    //public Boolean Equals(Matrix other)
+    //{
+    //  return Equals(other, 0D);
+    //}
 
-    public Boolean Equals(Matrix other, Double tolerance)
-    {
-      if (ColumnCount == other.ColumnCount || RowCount == other.RowCount)
-      {
-        return Storage.Zip(other.Storage, (left, right) => Math.Abs(left - right)).All(value => value <= tolerance);
-      }
+    //public Boolean Equals(Matrix other, Double tolerance)
+    //{
+    //  if (ColumnCount == other.ColumnCount || RowCount == other.RowCount)
+    //  {
+    //    return Values.Zip(other.Values, (left, right) => Math.Abs(left - right)).All(value => value <= tolerance);
+    //  }
       
-      return false;
-    }
+    //  return false;
+    //}
 
-    public override Int32 GetHashCode()
-    {
-      return Storage.Select(value => value.GetHashCode()).Aggregate((aggregation, current) => aggregation ^ current);
-    }
+    //public override Int32 GetHashCode()
+    //{
+    //  base.GetHashCode()
+    //  return Values.Select(value => value.GetHashCode()).Aggregate((aggregation, current) => aggregation ^ current);
+    //}
 
     #endregion
 
     #region Formatability
     
-    public override String ToString()
-    {
-      return ToString("F6", CultureInfo.CurrentUICulture);
-    }
-
     public String ToString(String format)
     {
       return ToString(format, CultureInfo.CurrentUICulture);
     }
 
-    public String ToString(String format, IFormatProvider formatProvider)
+    public new String ToString(String format, IFormatProvider formatProvider)
     {
-      return String.Join(", ", Storage.Select((value, index) => String.Format("M{0}{1}: {2}"
+      return String.Join(", ", Values.Select((value, index) => String.Format("M{0}{1}: {2}"
         , (index / ColumnCount) + 1
         , (index % ColumnCount) + 1
         , value.ToString(format, formatProvider))));

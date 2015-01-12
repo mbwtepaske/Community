@@ -28,7 +28,7 @@ namespace System.Spatial
         throw new ArgumentException("The amount of planes must be even");
       }
 
-      if (!planes.Same(plane => plane.Normal.Size))
+      if (!planes.Same(plane => plane.Normal.Count))
       {
         throw new ArgumentException("All planes must have the same dimension");
       }

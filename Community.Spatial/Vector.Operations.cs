@@ -171,17 +171,17 @@ namespace System.Spatial
         throw new ArgumentNullException("right");
       }
 
-      if (left.Size != right.ColumnCount)
+      if (left.Count != right.ColumnCount)
       {
         throw new ArgumentException("column count of the matrix must match the size of the vector");
       }
 
-      if (left.Size != right.RowCount)
+      if (left.Count != right.RowCount)
       {
         throw new ArgumentException("row count of the matrix must match the size of the vector");
       }
 
-      for (var index = 0; index < left.Size; index++)
+      for (var index = 0; index < left.Count; index++)
       {
         result[index] = left.Zip(right.GetRow(index), Multiply).Sum();
       }
@@ -191,18 +191,18 @@ namespace System.Spatial
 
     #endregion
 
-    private static Vector Operation(Vector vector, Double value, Func<Double, Double, Double> operation)
+    protected static Vector Operation(Vector vector, Double value, Func<Double, Double, Double> operation)
     {
       var result = default(Vector);
 
       return Operation(vector, value, ref result, operation);
     }
 
-    private static Vector Operation(Vector vector, Double value, ref Vector result, Func<Double, Double, Double> operation)
+    protected static Vector Operation(Vector vector, Double value, ref Vector result, Func<Double, Double, Double> operation)
     {
       Verify(vector, ref result);
 
-      for (var index = 0; index < result.Size; index++)
+      for (var index = 0; index < result.Count; index++)
       {
         result[index] = operation(vector[index], value);
       }
@@ -210,18 +210,18 @@ namespace System.Spatial
       return result;
     }
 
-    private static Vector Operation(Vector left, Vector right, Func<Double, Double, Double> operation)
+    protected static Vector Operation(Vector left, Vector right, Func<Double, Double, Double> operation)
     {
       var result = default(Vector);
 
       return Operation(left, right, ref result, operation);
     }
 
-    private static Vector Operation(Vector left, Vector right, ref Vector result, Func<Double, Double, Double> operation)
+    protected static Vector Operation(Vector left, Vector right, ref Vector result, Func<Double, Double, Double> operation)
     {
       Verify(left, right, ref result);
       
-      for (var index = 0; index < result.Size; index++)
+      for (var index = 0; index < result.Count; index++)
       {
         result[index] = operation(left[index], right[index]);
       }
@@ -253,7 +253,7 @@ namespace System.Spatial
 
       var length = vector.GetLength();
 
-      if (length.Equals(0D))
+      if (Utility.Equals(length, 0D))
       {
         throw new ArgumentException("vector length must be greater than zero");
       }
@@ -265,6 +265,34 @@ namespace System.Spatial
 
     #region Verification
 
+    protected static void Verify<TVector>(TVector vector) where TVector : Vector
+    {
+      if (vector == null)
+      {
+        throw new ArgumentNullException("vector");
+      }
+    }
+
+    protected static void Verify<TVector>(TVector vector, ref TVector result) where TVector : Vector, new()
+    {
+      if (vector == null)
+      {
+        throw new ArgumentNullException("vector");
+      }
+
+      if (result != null)
+      {
+        if (result.Count != vector.Count)
+        {
+          throw new ArgumentException("the size of result vector must be " + vector.Count);
+        }
+      }
+      else
+      {
+        vector = new TVector();
+      }
+    }
+
     protected static void Verify(Vector vector, ref Vector result)
     {
       if (vector == null)
@@ -272,10 +300,10 @@ namespace System.Spatial
         throw new ArgumentNullException("vector");
       }
 
-      VerifyOrCreateResult(vector.Size, ref result);
+      VerifyOrCreateResult(vector.Count, ref result);
     }
-
-    protected static void Verify(Vector left, Vector right)
+    
+    protected static void Verify<TVector>(TVector left, TVector right) where TVector : Vector
     {
       if (left == null)
       {
@@ -287,7 +315,7 @@ namespace System.Spatial
         throw new ArgumentNullException("right");
       }
 
-      if (left.Size != right.Size)
+      if (left.Count != right.Count)
       {
         throw new ArgumentException("vector left and right are not equal in size");
       }
@@ -296,21 +324,43 @@ namespace System.Spatial
     protected static void Verify(Vector left, Vector right, ref Vector result)
     {
       Verify(left, right);
-      VerifyOrCreateResult(left.Size, ref result);
+      VerifyOrCreateResult(left.Count, ref result);
+    }
+
+    protected static void Verify<TVector>(TVector left, TVector right, ref TVector result) where TVector : Vector, new()
+    {
+      Verify(left, right);
+      VerifyOrCreateResult(left.Count, ref result);
     }
 
     protected static void VerifyOrCreateResult(Int32 size, ref Vector result)
     {
       if (result != null)
       {
-        if (result.Size != size)
+        if (result.Count != size)
         {
           throw new ArgumentException("the size of result vector must be " + size);
         }
       }
       else
       {
+        result.Clone();
         result = new Vector(size);
+      }
+    }
+
+    protected static void VerifyOrCreateResult<TVector>(Int32 size, ref TVector result) where TVector : Vector, new()
+    {
+      if (result != null)
+      {
+        if (result.Count != size)
+        {
+          throw new ArgumentException("the size of result vector must be " + size);
+        }
+      }
+      else
+      {
+        result = new TVector();
       }
     }
 

@@ -41,7 +41,7 @@ namespace System.Spatial
         throw new ArgumentNullException("maximum");
       }
 
-      if (minimum.Size != maximum.Size)
+      if (minimum.Count != maximum.Count)
       {
         throw new ArgumentException("minimum and maximum size must be the same");
       }
@@ -77,7 +77,7 @@ namespace System.Spatial
         throw new ArgumentNullException("radii");
       }
 
-      if (center.Size != radii.Size)
+      if (center.Count != radii.Count)
       {
         throw new ArgumentException("center and radii size must be the same");
       }

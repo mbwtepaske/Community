@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace System.Spatial
 {
+  #pragma warning disable 660,661
+
   public partial class Vector
   {
     public static implicit operator Vector(Single[] values)
@@ -18,12 +20,17 @@ namespace System.Spatial
 
     public static implicit operator Single[](Vector vector)
     {
-      return vector.Storage.Select(Convert.ToSingle).ToArray();
+      if (vector == null)
+      {
+        throw new ArgumentNullException("vector");
+      }
+
+      return vector.Values.Select(Convert.ToSingle).ToArray();
     }
 
     public static implicit operator Double[](Vector vector)
     {
-      return vector.Storage.ToArray();
+      return vector.Values;
     }
 
     public static Vector operator +(Vector left, Double right)

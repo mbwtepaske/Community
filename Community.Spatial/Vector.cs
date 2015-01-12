@@ -5,47 +5,21 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+
 namespace System.Spatial
 {
   /// <summary>
   /// Represents a double-precision vector.
   /// </summary>
-  public partial class Vector : IVector<Vector>
+  public partial class Vector : DenseVector
   {
     public Boolean IsNormal
     {
       get
       {
         return Utility.Equals(GetLength(), 1D);
-      }
-    }
-
-    /// <summary>
-    /// Gets the number of components this vector contains.
-    /// </summary>
-    public Int32 Size
-    {
-      get
-      {
-        return Storage.Length;
-      }
-    }
-
-    protected Double[] Storage
-    {
-      get;
-      private set;
-    }
-
-    public Double this[Int32 index]
-    {
-      get
-      {
-        return Storage[index];
-      }
-      set
-      {
-        Storage[index] = value;
       }
     }
 
@@ -58,14 +32,8 @@ namespace System.Spatial
     /// <param name="value">
     /// The initial value for each element in the vector.
     /// </param>
-    public Vector(Int32 size, Double value = 0D)
+    public Vector(Int32 size, Double value = 0D) : base(Enumerable.Repeat(value, size).ToArray())
     {
-      if (size < 1)
-      {
-        throw new ArgumentException(@"size must be greater than zero", "size");
-      }
-
-      Storage = Enumerable.Repeat(value, size).ToArray();
     }
 
     /// <summary>
@@ -74,11 +42,14 @@ namespace System.Spatial
     /// <param name="values">
     /// The values of the vector. The length of the array must be greater than zero.
     /// </param>
-    public Vector(params Double[] values) : this(values.Length)
+    public Vector(params Double[] values) : base(values)
     {
-      values.CopyTo(Storage, 0);
     }
-    
+
+    public Vector(Vector<Double> vector) : base(vector.ToArray())
+    {
+    }
+
     public Double GetLength()
     {
       return Math.Sqrt(GetLengthSquare());
@@ -86,7 +57,7 @@ namespace System.Spatial
 
     public Double GetLengthSquare()
     {
-      return Storage.Sum(value => value * value);
+      return Values.Sum(value => value * value);
     }
 
     public Vector Normalize()
@@ -98,73 +69,61 @@ namespace System.Spatial
 
     #region Cloning
 
-    public Vector Clone()
+    public new Vector Clone()
     {
-      return new Vector(Storage);
-    }
-
-    Object ICloneable.Clone()
-    {
-      return Clone();
+      return new Vector(Values);
     }
 
     #endregion
     
     #region Enumeration
 
-    public IEnumerator<Double> GetEnumerator()
-    {
-      return Storage.AsEnumerable().GetEnumerator();
-    }
+    //public IEnumerator<Double> GetEnumerator()
+    //{
+    //  return Values.Cast<Double>().GetEnumerator();
+    //}
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return Storage.GetEnumerator();
-    }
+    //IEnumerator IEnumerable.GetEnumerator()
+    //{
+    //  return Values.GetEnumerator();
+    //}
 
     #endregion
 
     #region Equation
 
-    public Boolean Equals(Vector other)
-    {
-      return Equals(other, 0D);
-    }
+    //public Boolean Equals(Vector other)
+    //{
+    //  return Equals(other, 0D);
+    //}
 
-    public Boolean Equals(Vector other, Double tolerance)
-    {
-      return !ReferenceEquals(other, null) && (ReferenceEquals(this, other) || Storage.Zip(other.Storage, (left, right) => Math.Abs(left - right)).All(value => value <= tolerance));
-    }
+    //public Boolean Equals(Vector other, Double tolerance)
+    //{
+    //  return !ReferenceEquals(other, null) && (ReferenceEquals(this, other) || Values.Zip(other.Values, (left, right) => Math.Abs(left - right)).All(value => value <= tolerance));
+    //}
 
-    public override Boolean Equals(Object other)
-    {
-      return !ReferenceEquals(other, null) && GetType() == other.GetType() && Equals(other as Vector);
-    }
+    //Boolean IEquatable<Vector>.Equals(Vector other)
+    //{
+    //  return Equals(other);
+    //}
 
-    public override Int32 GetHashCode()
-    {
-      return Storage
-        .Select(scalar => scalar.GetHashCode())
-        .Aggregate((result, current) => result ^ current);
-    }
+    //bool IVector<Vector>.Equals(Vector other, double tolerance)
+    //{
+    //  return Equals(other, tolerance);
+    //}
 
     #endregion
 
     #region Formatting
     
-    public override String ToString()
-    {
-      return ToString("G", null);
-    }
-
     public String ToString(String format)
     {
       return ToString(format, null);
     }
 
-    public String ToString(String format, IFormatProvider formatProvider)
+    public new String ToString(String format, IFormatProvider formatProvider)
     {
-      return String.Join(", ", Storage.Select(scalar => scalar.ToString(format, formatProvider)));
+      return String.Join(", ", Values.Select(scalar => scalar.ToString(format, formatProvider)));
     }
 
     #endregion

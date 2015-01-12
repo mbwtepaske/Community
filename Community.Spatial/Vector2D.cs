@@ -6,11 +6,11 @@ namespace System.Spatial
 {
   public sealed class Vector2D : Vector
   {
-    private const Int32 Count = 2;
+    private const Int32 Size = 2;
 
     public static readonly Vector2D UnitX = new Vector2D(1D, 0D);
     public static readonly Vector2D UnitY = new Vector2D(0D, 1D);
-    public static readonly Vector2D Zero = new Vector2D();
+    public new static readonly Vector2D Zero = new Vector2D();
 
     public Double X
     {
@@ -37,7 +37,7 @@ namespace System.Spatial
     }
 
     public Vector2D()
-      : base(Count)
+      : base(Size)
     {
     }
 
@@ -46,17 +46,12 @@ namespace System.Spatial
     {
     }
 
-    public Vector2D(IVector vector)
-      : base(vector.Take(Count).ToArray())
+    public Vector2D(params Double[] values)
+      : base(values.Take(Size).ToArray())
     {
-      if (vector == null)
+      if (values.Length != Size)
       {
-        throw new ArgumentNullException("vector");
-      }
-
-      if (vector.Size != 2)
-      {
-        throw new ArgumentException("vector size must be 2");
+        throw new ArgumentException("vector size must be " + Size);
       }
     }
   }

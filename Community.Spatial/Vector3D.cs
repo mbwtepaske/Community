@@ -4,12 +4,12 @@
 
   public sealed class Vector3D : Vector
   {
-    private const Int32 Count = 3;
+    private const Int32 Size = 3;
 
     public static readonly Vector3D UnitX = new Vector3D(1D, 0D, 0D);
     public static readonly Vector3D UnitY = new Vector3D(0D, 1D, 0D);
     public static readonly Vector3D UnitZ = new Vector3D(0D, 0D, 1D);
-    public static readonly Vector3D Zero = new Vector3D();
+    public new static readonly Vector3D Zero = new Vector3D();
 
     public Double X
     {
@@ -48,7 +48,7 @@
     }
 
     public Vector3D()
-      : base(Count)
+      : base(Size)
     {
     }
 
@@ -57,18 +57,20 @@
     {
     }
 
-    public Vector3D(IVector vector)
-      : base(vector.Take(Count).ToArray())
+    public Vector3D(params Double[] values)
+      : base(values.Take(Size).ToArray())
     {
-      if (vector == null)
+      if (values.Length != Size)
       {
-        throw new ArgumentNullException("vector");
+        throw new ArgumentException("vector size must be " + Size);
       }
+    }
 
-      if (vector.Size != Count)
-      {
-        throw new ArgumentException("vector size must be " + Count);
-      }
+    public static Vector3D Cross(Vector3D left, Vector3D right)
+    {
+      var result = default(Vector3D);
+
+      return Cross(left, right, ref result);
     }
 
     public static Vector3D Cross(Vector3D left, Vector3D right, ref Vector3D result)
@@ -86,5 +88,32 @@
 
       return result;
     }
+
+    //public static Vector3D Divide(Vector3D left, Double right, Vector3D result)
+    //{
+    //  Verify(left, result);
+
+    //  return result;
+    //}
+    
+    //public static Vector3D Normalize(Vector3D vector, ref Vector3D result)
+    //{
+    //  Verify(vector, ref result);
+
+    //  return Divide(vector, vector.GetLength(), ref result);
+    //}
+
+    //private static void Verify(Vector3D vector, ref Vector3D result)
+    //{
+    //  if (vector == null)
+    //  {
+    //    throw new ArgumentNullException("vector");
+    //  }
+
+    //  if (result == null)
+    //  {
+    //    result = new Vector3D();
+    //  }
+    //}
   }
 }

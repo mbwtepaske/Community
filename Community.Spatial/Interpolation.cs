@@ -32,7 +32,7 @@ namespace System.Spatial
         throw new ArgumentNullException("right");
       }
       
-      if (left.Size != right.Size)
+      if (left.Count != right.Count)
       {
         throw new ArgumentException("left and right vectors must have the same size");
       }
@@ -57,13 +57,13 @@ namespace System.Spatial
         throw new ArgumentNullException("values");
       }
 
-      if (left.Size != right.Size || left.Size != values.Size)
+      if (left.Count != right.Count || left.Count != values.Count)
       {
         throw new ArgumentException("all the specified vectors must have the same size");
       }
 
       return (TVector)Enumerable
-        .Range(0, values.Size)
+        .Range(0, values.Count)
         .Select(index => Linear(left[index], right[index], values[index]))
         .ToArray();
     }

@@ -4,13 +4,13 @@
 
   public sealed class Vector4D : Vector
   {
-    private const Int32 Count = 4;
+    private const Int32 Size = 4;
 
     public static readonly Vector4D UnitX = new Vector4D(1D, 0D, 0D, 0D);
     public static readonly Vector4D UnitY = new Vector4D(0D, 1D, 0D, 0D);
     public static readonly Vector4D UnitZ = new Vector4D(0D, 0D, 1D, 0D);
     public static readonly Vector4D UnitW = new Vector4D(0D, 0D, 0D, 1D);
-    public static readonly Vector4D Zero = new Vector4D();
+    public new static readonly Vector4D Zero = new Vector4D();
 
     public Double X
     {
@@ -61,7 +61,7 @@
     }
 
     public Vector4D()
-      : base(Count)
+      : base(Size)
     {
     }
 
@@ -70,17 +70,12 @@
     {
     }
 
-    public Vector4D(IVector vector)
-      : base(vector.Take(Count).ToArray())
+    public Vector4D(params Double[] values)
+      : base(values.Take(Size).ToArray())
     {
-      if (vector == null)
+      if (values.Length != Size)
       {
-        throw new ArgumentNullException("vector");
-      }
-
-      if (vector.Size != Count)
-      {
-        throw new ArgumentException("vector size must be " + Count);
+        throw new ArgumentException("vector size must be " + Size);
       }
     }
   }

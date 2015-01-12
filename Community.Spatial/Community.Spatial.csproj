@@ -33,8 +33,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MathNet.Numerics">
+      <HintPath>..\packages\MathNet.Numerics.3.2.3\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.Company.cs">
@@ -47,20 +51,17 @@
       <Link>Properties\AssemblyInfo.Copyright.cs</Link>
     </Compile>
     <Compile Include="Domain.cs" />
+    <Compile Include="Extensions\MatrixBuilderExtensions.cs" />
     <Compile Include="Frustum.cs" />
-    <Compile Include="IMatrix.cs" />
     <Compile Include="Interpolation.cs" />
-    <Compile Include="IVector.cs" />
     <Compile Include="Matrix.cs" />
-    <Compile Include="Matrix.Operations.cs">
-      <DependentUpon>Matrix.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Matrix.Operators.cs">
-      <DependentUpon>Matrix.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Matrix2D.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Matrix4D.cs" />
     <Compile Include="Plane.cs" />
+    <Compile Include="Plane2D.cs" />
+    <Compile Include="Plane3D.cs" />
+    <Compile Include="Plane4D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Version.cs">
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
@@ -83,7 +84,6 @@
     <Compile Include="Vector4D.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <Folder Include="Geometry\" />
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +96,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\AssemblyInfo.Version.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
