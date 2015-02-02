@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+
 namespace System.Spatial
 {
   public static class Interpolation
@@ -20,7 +22,7 @@ namespace System.Spatial
       return left + (right - left) * value;
     }
 
-    public static TVector Linear<TVector>(TVector left, TVector right, Double value) where TVector : Vector
+    public static Vector Linear(Vector left, Vector right, Double value)
     {
       if (left == null)
       {
@@ -37,10 +39,10 @@ namespace System.Spatial
         throw new ArgumentException("left and right vectors must have the same size");
       }
 
-      return (TVector)Enumerable.Zip(left, right, (l, r) => Linear(l, r, value)).ToArray();
+      return Vector.Build.Dense(Enumerable.Zip(left, right, (l, r) => Linear(l, r, value)).ToArray());
     }
 
-    public static TVector Linear<TVector>(TVector left, TVector right, TVector values) where TVector : Vector
+    public static Vector Linear(Vector left, Vector right, Vector values)
     {
       if (left == null)
       {
@@ -62,16 +64,16 @@ namespace System.Spatial
         throw new ArgumentException("all the specified vectors must have the same size");
       }
 
-      return (TVector)Enumerable
+      return Vector.Build.Dense(Enumerable
         .Range(0, values.Count)
         .Select(index => Linear(left[index], right[index], values[index]))
-        .ToArray();
+        .ToArray());
     }
 
-    public static Double Polynomic(Double left, Double right, Double value, params Double[] coefficients)
-    {
-      throw new NotImplementedException();
-    }
+    //public static Double Polynomic(Double left, Double right, Double value, params Double[] coefficients)
+    //{
+    //  throw new NotImplementedException();
+    //}
 
     public static Double Quadratic(Double left, Double controlLeft, Double controlRight, Double right, Double value)
     {
@@ -83,9 +85,9 @@ namespace System.Spatial
         + value * value * value * right;
     }
 
-    public static Double Spherical(Double left, Double right, Double value, Double radius)
-    {
-      throw new NotImplementedException();
-    }
+    //public static Double Spherical(Double left, Double right, Double value, Double radius)
+    //{
+    //  throw new NotImplementedException();
+    //}
   }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+
 namespace System.Spatial
 {
   /// <summary>

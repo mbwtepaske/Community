@@ -1,16 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
-namespace Community.Mathematics
+namespace MathNet.Numerics.LinearAlgebra
 {
+  using Matrix = Matrix<double>;
+  using Vector = Vector<double>;
+
   public static class VectorExtensions
   {
-    public static TScalar GetLengthSquare<TVector, TScalar>(this TVector vector)
-      where TVector : IVector<TScalar> 
-      where TScalar : IComparable<TScalar>, IConvertible, IFormattable
+    /// <summary>
+    /// Returns the length of the vector.
+    /// </summary>
+    public static double GetLength(this Vector vector)
     {
-      return (TScalar)Convert.ChangeType(vector.Cast<Double>().Sum(value => value * value), typeof(TScalar));
+      return Math.Sqrt(vector.GetLengthSquare());
+    }
+
+    /// <summary>
+    /// Returns the square length of the vector.
+    /// </summary>
+    public static double GetLengthSquare(this Vector vector)
+    {
+      return vector.Sum(value => value * value);
+    }
+
+    /// <summary>
+    /// Normalizes the vector and returns itself.
+    /// </summary>
+    public static TVector Normalize<TVector>(this TVector vector) where TVector : Vector
+    {
+      var length = vector.GetLength();
+
+      if (length.CompareTo(0D) != 0)
+      {
+        for (var index = 0; index < vector.Count; index++)
+        {
+          vector[index] /= length;
+        }
+      }
+
+      return vector;
     }
   }
 }

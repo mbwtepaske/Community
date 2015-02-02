@@ -33,9 +33,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics">
-      <HintPath>..\packages\MathNet.Numerics.3.2.3\lib\net40\MathNet.Numerics.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -51,10 +48,13 @@
       <Link>Properties\AssemblyInfo.Copyright.cs</Link>
     </Compile>
     <Compile Include="Domain.cs" />
+    <Compile Include="DoubleComparison.cs" />
     <Compile Include="Extensions\MatrixBuilderExtensions.cs" />
+    <Compile Include="Extensions\MatrixExtensions.cs" />
+    <Compile Include="Extensions\VectorBuilderExtensions.cs" />
+    <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Frustum.cs" />
     <Compile Include="Interpolation.cs" />
-    <Compile Include="Matrix.cs" />
     <Compile Include="Matrix2D.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Matrix4D.cs" />
@@ -71,14 +71,6 @@
     <Compile Include="Quaternion.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Structures\SpatialTreeNode.cs" />
-    <Compile Include="Utility.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Vector.Operations.cs">
-      <DependentUpon>Vector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Vector.Operators.cs">
-      <DependentUpon>Vector.cs</DependentUpon>
-    </Compile>
     <Compile Include="Vector2D.cs" />
     <Compile Include="Vector3D.cs" />
     <Compile Include="Vector4D.cs" />
@@ -90,13 +82,16 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Math.NET\Numerics\src\Numerics\Numerics.csproj">
+      <Project>{b7cae5f4-a23f-4438-b5be-41226618b695}</Project>
+      <Name>Numerics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Community\Community.csproj">
       <Project>{351b3b5a-13ab-40db-af74-e428166c75b5}</Project>
       <Name>Community</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Properties\AssemblyInfo.Version.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>

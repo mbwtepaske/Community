@@ -1,95 +1,93 @@
-﻿namespace System.Spatial
+﻿using System;
+using System.Linq;
+
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<System.Double>;
+
+namespace System.Spatial
 {
-  public class Plane<TVector> where TVector : Vector
+  public static class Plane
   {
-    /// <summary>
-    /// Gets the distance of the plane from the origin.
-    /// </summary>
-    public Double Distance
-    {
-      get;
-      private set;
-    }
+    ///// <summary>
+    ///// Gets the distance of the plane from the origin.
+    ///// </summary>
+    //public Double Distance
+    //{
+    //  get
+    //  {
+    //    return Storage.At(Storage.Length - 1);
+    //  }
+    //}
 
-    /// <summary>
-    /// Gets the normal of the plane.
-    /// </summary>
-    public TVector Normal
-    {
-      get;
-      private set;
-    }
+    ///// <summary>
+    ///// Gets the normal of the plane.
+    ///// </summary>
+    //public Vector Normal
+    //{
+    //  get
+    //  {
+    //    return new Vector(Storage.Enumerate().Take(Storage.Length - 2)).Normalize();
+    //  }
+    //}
 
-    /// <summary>
-    /// Initializes a plane.
-    /// </summary>
-    /// <param name="direction">The direction of the plane normal.</param>
-    /// <param name="distance">The offset from the origin along the normal axis.</param>
-    public Plane(TVector direction, Double distance = 0D)
-    {
-      if (direction == null)
-      {
-        throw new ArgumentNullException("direction");
-      }
+    ///// <summary>
+    ///// Initializes a plane.
+    ///// </summary>
+    //public Plane(params Double[] values) : base(values)
+    //{
+    //}
 
-      Distance = distance;
-      Normal = (TVector)Vector.Normalize(direction);
-    }
+    ///// <summary>
+    ///// Initializes a plane.
+    ///// </summary>
+    ///// <param name="direction">The direction of the plane normal.</param>
+    ///// <param name="distance">The offset from the origin along the normal axis.</param>
+    //public Plane(Vector direction, Double distance = 0D) : base(direction, distance)
+    //{
+    //}
+    
+    //public static Double Dot(Vector plane, Vector vector)
+    //{
+    //  if (vector == null)
+    //  {
+    //    throw new ArgumentNullException("vector");
+    //  }
 
-    /// <summary>
-    /// Initializes a plane.
-    /// </summary>
-    /// <param name="point">A point on the plane.</param>
-    /// <param name="direction">The direction of the plane normal.</param>
-    public Plane(Vector point, Vector direction)
-    {
-      if (point == null)
-      {
-        throw new ArgumentNullException("point");
-      }
+    //  if (plane.Count != vector.Count)
+    //  {
+    //    throw new ArgumentException("vector must be the same dimension as the plane");
+    //  }
 
-      if (direction == null)
-      {
-        throw new ArgumentNullException("direction");
-      }
+    //  return Utility.Equals(1D, vector.GetLengthSquare())
+    //    ? Normal.DotProduct(vector) + Distance
+    //    : Normal.DotProduct(vector);
+    //}
 
-      if (point.Count != direction.Count)
-      {
-        throw new ArgumentException("point and direction are different in size");
-      }
+    //public Double DotCoordinate(Vector<Double> vector)
+    //{
+    //  if (vector == null)
+    //  {
+    //    throw new ArgumentNullException("vector");
+    //  }
 
-      Distance = -Vector.Dot(direction, point);
-      Normal = (TVector)Vector.Normalize(direction);
-    }
+    //  if (vector.Count != Count - 1)
+    //  {
+    //    throw new ArgumentException("vector must be the same dimension as the plane");
+    //  }
 
-    public Double Dot(Vector vector)
-    {
-      if (vector == null)
-      {
-        throw new ArgumentNullException("vector");
-      }
+      
+    //}
+    
+    //public override String ToString()
+    //{
+    //  return ToString("E", null);
+    //}
 
-      if (Normal.Count != vector.Count)
-      {
-        throw new ArgumentException("vector must be the same dimension as the plane");
-      }
-
-      return vector.IsNormal
-        ? Vector.Dot(Normal, vector) + Distance
-        : Vector.Dot(Normal, vector);
-    }
-  }
-
-  public class Plane : Plane<Vector>
-  {
-    public Plane(Vector direction, double distance = 0)
-      : base(direction, distance)
-    {
-    }
-
-    public Plane(Vector point, Vector direction)
-      : base(point, direction)
-    {
-    }
+    //public String ToString(String format, IFormatProvider formatProvider)
+    //{
+    //  return String.Join(", ", Normal.Append(Distance).Select((value, index) => Convert.ToChar('A' + index) + ": " + value.ToString(format, formatProvider)));
+    //}
   }
 }

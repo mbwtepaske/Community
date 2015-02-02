@@ -1,26 +1,30 @@
-﻿using System.Collections;
-using System.Runtime.CompilerServices;
+﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
+  using Collections;
   using Collections.Generic;
   using Collections.ObjectModel;
   using Linq;
 
   public class SpatialTreeNode<TValue>
   {
-    public Int32[] Address
+    /// <summary>
+    /// Gets the indices where the 
+    /// </summary>
+    public Int32[] Indices
     {
       get
       {
-        var address = new List<Int32>(Level);
-
+        var indices = new Int32[Level];
+        var currentIndex = indices.Length - 1;
+        
         for (var current = this; current.Parent != null; current = current.Parent)
         {
-          address.Insert(0, current.Parent.Nodes.Indices(current).Single());
+          indices[currentIndex--] = current.Parent.Nodes.Indices(current).Single();
         }
 
-        return address.ToArray();
+        return indices.ToArray();
       }
     }
 
@@ -94,7 +98,17 @@ namespace System.Spatial
       Tree = tree;
     }
 
-    public void Clear()
+    public IEnumerable<SpatialTreeNode<TValue>> Ancestry()
+    {
+      var current = this;
+
+      while (current != null)
+      {
+        yield return current = current.Parent;
+      }
+    }
+
+    public virtual void Clear()
     {
       foreach (var node in Enumerate().Reverse().Where(node => node.NodeList.Any()))
       {
@@ -189,8 +203,8 @@ namespace System.Spatial
           }
         }
 
-        var minimum = new Vector(Tree.Dimensions);
-        var maximum = new Vector(Tree.Dimensions);
+        var minimum = Vector.Build.Dense(Tree.Dimensions);
+        var maximum = Vector.Build.Dense(Tree.Dimensions);
 
         for (var dimensionIndex = 0; dimensionIndex < Tree.Dimensions; dimensionIndex++)
         {
@@ -204,6 +218,14 @@ namespace System.Spatial
       }
 
       return result.ToArray();
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
+    public virtual SpatialTreeNode<TValue>[] Split(params Vector[] divisionsPerDimension)
+    {
+      return Split(Enumerable.Range(0, Tree.Dimensions).Select(index => index < divisionsPerDimension.Length ? divisionsPerDimension[index].ToArray() : new Double[0]).ToArray());
     }
 
     /// <summary>
@@ -277,7 +299,7 @@ namespace System.Spatial
         , Level
         , Domain.Minimum
         , Domain.Maximum
-        , String.Join("-", Address));
+        , String.Join("-", Indices));
     }
   }
 }

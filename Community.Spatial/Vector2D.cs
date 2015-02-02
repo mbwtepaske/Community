@@ -1,58 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
-  public sealed class Vector2D : Vector
+  using Linq;
+
+  /// <summary>
+  /// Operations and constants for <see cref="T:Vector"/>s that only contain 2 dimensions.
+  /// </summary>
+  public static class Vector2D
   {
-    private const Int32 Size = 2;
+    public const Int32 Size = 2;
 
-    public static readonly Vector2D UnitX = new Vector2D(1D, 0D);
-    public static readonly Vector2D UnitY = new Vector2D(0D, 1D);
-    public new static readonly Vector2D Zero = new Vector2D();
+    public static readonly Vector UnitX = Create(1D, 0D);
+    public static readonly Vector UnitY = Create(0D, 1D);
+    public static readonly Vector Zero = Create();
 
-    public Double X
+    /// <summary>
+    /// Returns a 2D-vector using the specified value for each component.
+    /// </summary>
+    public static Vector Create(Double value = 0D)
     {
-      get
-      {
-        return this[0];
-      }
-      set
-      {
-        this[0] = value;
-      }
+      return Vector.Build.DenseOfEnumerable(Enumerable.Repeat(value, Size));
     }
 
-    public Double Y
+    /// <summary>
+    /// Returns a 2D-vector using the specified values for as components.
+    /// </summary>
+    public static Vector Create(Double x, Double y)
     {
-      get
-      {
-        return this[1];
-      }
-      set
-      {
-        this[1] = value;
-      }
-    }
-
-    public Vector2D()
-      : base(Size)
-    {
-    }
-
-    public Vector2D(Double x, Double y)
-      : base(x, y)
-    {
-    }
-
-    public Vector2D(params Double[] values)
-      : base(values.Take(Size).ToArray())
-    {
-      if (values.Length != Size)
-      {
-        throw new ArgumentException("vector size must be " + Size);
-      }
+      return Vector.Build.Dense(new [] { x, y });
     }
   }
 }

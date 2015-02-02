@@ -3,51 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+
 namespace System.Spatial
 {
-  public class Frustum : IEnumerable<Plane>
+  public static class Frustum
   {
-    /// <summary>
-    /// Gets the planes describing the frustum.
-    /// </summary>
-    public Plane[] Planes
-    {
-      get;
-      private set;
-    }
-
-    public Frustum(params Plane[] planes)
+    public static Boolean Contains(IEnumerable<Vector> planes, Vector vector)
     {
       if (planes == null)
       {
         throw new ArgumentNullException("planes");
       }
 
-      if (planes.Length % 2 != 0)
+      if (vector == null)
       {
-        throw new ArgumentException("The amount of planes must be even");
+        throw new ArgumentNullException("vector");
       }
-
-      if (!planes.Same(plane => plane.Normal.Count))
-      {
-        throw new ArgumentException("All planes must have the same dimension");
-      }
-
-      Planes = planes;
-    }
-
-    public Frustum(IEnumerable<Plane> planes) : this(planes.ToArray())
-    {
-    }
-
-    IEnumerator<Plane> IEnumerable<Plane>.GetEnumerator()
-    {
-      return Planes.AsEnumerable().GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return Planes.GetEnumerator();
+      
+      return planes.All(plane => plane.DotProduct(vector) >= 0);
     }
   }
 }

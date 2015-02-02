@@ -1,82 +1,28 @@
-﻿namespace System.Spatial
+﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+
+namespace System.Spatial
 {
-  using Linq;
-
-  public sealed class Vector4D : Vector
+  /// <summary>
+  /// Operations and constants for <see cref="T:Vector"/>s that only contain 4 dimensions.
+  /// </summary>
+  public static class Vector4D
   {
-    private const Int32 Size = 4;
+    public const Int32 Size = 4;
 
-    public static readonly Vector4D UnitX = new Vector4D(1D, 0D, 0D, 0D);
-    public static readonly Vector4D UnitY = new Vector4D(0D, 1D, 0D, 0D);
-    public static readonly Vector4D UnitZ = new Vector4D(0D, 0D, 1D, 0D);
-    public static readonly Vector4D UnitW = new Vector4D(0D, 0D, 0D, 1D);
-    public new static readonly Vector4D Zero = new Vector4D();
+    public static readonly Vector UnitX = Create(1D, 0D, 0D, 0D);
+    public static readonly Vector UnitY = Create(0D, 1D, 0D, 0D);
+    public static readonly Vector UnitZ = Create(0D, 0D, 1D, 0D);
+    public static readonly Vector UnitW = Create(0D, 0D, 0D, 1D);
+    public static readonly Vector Zero = Create();
 
-    public Double X
+    public static Vector Create(Double defaultValue = 0D)
     {
-      get
-      {
-        return this[0];
-      }
-      set
-      {
-        this[0] = value;
-      }
+      return Vector.Build.Dense(Size, defaultValue);
     }
 
-    public Double Y
+    public static Vector Create(Double x, Double y, Double z, Double w)
     {
-      get
-      {
-        return this[1];
-      }
-      set
-      {
-        this[1] = value;
-      }
-    }
-
-    public Double Z
-    {
-      get
-      {
-        return this[2];
-      }
-      set
-      {
-        this[2] = value;
-      }
-    }
-
-    public Double W
-    {
-      get
-      {
-        return this[3];
-      }
-      set
-      {
-        this[3] = value;
-      }
-    }
-
-    public Vector4D()
-      : base(Size)
-    {
-    }
-
-    public Vector4D(Double x, Double y, Double z, Double w)
-      : base(x, y, z, w)
-    {
-    }
-
-    public Vector4D(params Double[] values)
-      : base(values.Take(Size).ToArray())
-    {
-      if (values.Length != Size)
-      {
-        throw new ArgumentException("vector size must be " + Size);
-      }
+      return Vector.Build.Dense(new [] { x, y, z, w });
     }
   }
 }

@@ -1,7 +1,8 @@
-﻿namespace System.Collections.Generic
+﻿
+namespace System.Linq
 {
+  using Collections.Generic;
   using Diagnostics;
-  using Linq;
 
   /// <summary>
   /// Provides a set of static methods for querying objects that implement <see cref="T:System.Collections.Generic.IEnumerable`1" />.
@@ -30,6 +31,43 @@
     }
 
     /// <summary>
+    /// Returns the element at a specified index in a sequence or a specified default value if the index is out of range.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static TSource ElementAtOrDefault<TSource>(this IEnumerable<TSource> source, Int32 index, TSource defaultValue)
+    {
+      Assert.ThrowIfNull<NullReferenceException>(source, "source");
+      
+      if (index >= 0)
+      {
+        var list = source as IList<TSource>;
+
+        if (list != null)
+        {
+          if (index < list.Count)
+          {
+            return list[index];
+          }
+        }
+        else
+        {
+          using (var enumerator = source.GetEnumerator())
+          {
+            while (enumerator.MoveNext())
+            {
+              if (index-- == 0)
+              {
+                return enumerator.Current;
+              }
+            }
+          }
+        }
+      }
+
+      return defaultValue;
+    }
+
+    /// <summary>
     /// Formats the specified elements before the source elements.
     /// </summary>
     [DebuggerStepThrough]
@@ -54,16 +92,15 @@
         throw new ArgumentNullException("source");
       }
 
-      var index = 0;
-
-      foreach (var item in source)
+      using (var enumerator = source.GetEnumerator())
       {
-        if (ReferenceEquals(item, element))
+        for (var index = 0; enumerator.MoveNext(); index++)
         {
-          yield return index;
+          if (ReferenceEquals(enumerator.Current, element))
+          {
+            yield return index;
+          }
         }
-
-        index++;
       }
     }
 
@@ -88,7 +125,6 @@
         action.Invoke(element);
       }
     }
-
 
     /// <summary>
     /// Invokes a specific action for each element in the collection.
