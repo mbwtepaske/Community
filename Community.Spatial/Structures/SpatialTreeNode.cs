@@ -148,6 +148,19 @@ namespace System.Spatial
     /// <summary>
     /// Splits the node into the specified divisions.
     /// </summary>
+    public virtual IEnumerable<SpatialTreeNode<TValue>> Split(params Int32[] divisionsPerDimensions)
+    {
+      if (divisionsPerDimensions.Length != Tree.Dimensions)
+      {
+        throw new ArgumentOutOfRangeException("divisionsPerDimensions");
+      }
+
+      return Split(divisionsPerDimensions.Select(division => Enumerable.Range(1, division).Select(index => index / Convert.ToDouble(division)).Take(division - 1).ToArray()).ToArray());
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
     public virtual IEnumerable<SpatialTreeNode<TValue>> Split(params Double[] divisions)
     {
       return Split(Enumerable.Repeat(divisions, Tree.Dimensions).ToArray());

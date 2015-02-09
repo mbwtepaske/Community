@@ -49,6 +49,7 @@
     </Compile>
     <Compile Include="Domain.cs" />
     <Compile Include="DoubleComparison.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\MatrixBuilderExtensions.cs" />
     <Compile Include="Extensions\MatrixExtensions.cs" />
     <Compile Include="Extensions\VectorBuilderExtensions.cs" />

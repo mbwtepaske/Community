@@ -9,17 +9,17 @@ namespace MathNet.Numerics.LinearAlgebra
   public static class VectorExtensions
   {
     /// <summary>
-    /// Returns the length of the vector.
+    /// Returns the magnitude of the vector.
     /// </summary>
-    public static double GetLength(this Vector vector)
+    public static double Magnitude(this Vector vector)
     {
-      return Math.Sqrt(vector.GetLengthSquare());
+      return Math.Sqrt(vector.MagnitudeSquare());
     }
 
     /// <summary>
-    /// Returns the square length of the vector.
+    /// Returns the square magnitude length of the vector.
     /// </summary>
-    public static double GetLengthSquare(this Vector vector)
+    public static double MagnitudeSquare(this Vector vector)
     {
       return vector.Sum(value => value * value);
     }
@@ -27,19 +27,13 @@ namespace MathNet.Numerics.LinearAlgebra
     /// <summary>
     /// Normalizes the vector and returns itself.
     /// </summary>
-    public static TVector Normalize<TVector>(this TVector vector) where TVector : Vector
+    public static Vector Normalize(this Vector vector)
     {
-      var length = vector.GetLength();
+      var length = vector.Magnitude();
 
-      if (length.CompareTo(0D) != 0)
-      {
-        for (var index = 0; index < vector.Count; index++)
-        {
-          vector[index] /= length;
-        }
-      }
-
-      return vector;
+      return length.CompareTo(0D) != 0
+        ? vector.Divide(length)
+        : vector;
     }
   }
 }

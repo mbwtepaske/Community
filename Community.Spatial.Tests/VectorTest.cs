@@ -4,6 +4,8 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using MathNet.Numerics.LinearAlgebra;
+
 using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial.Tests
@@ -16,11 +18,10 @@ namespace System.Spatial.Tests
     [TestMethod]
     public void TransformCoordinateTest()
     {
-      var transform = Matrix4D.Rotate(Vector3D.UnitY, Math.PI / 4D) * Matrix4D.Rotate(Vector3D.UnitZ, Math.PI);
-      var result = Vector3D.TransformCoordinate(Vector3D.UnitX, transform);
-      var normal = Vector3D.One / Vector3D.One.L1Norm();
+      var result = Vector3D.TransformCoordinate(Vector3D.UnitX, Matrix4D.Rotate(Vector3D.UnitZ, Math.PI / 4D));
+      var normal = Vector3D.Create(1D, 1D, 0D).Normalize();
 
-      Assert.Equals(result, normal);
+      Assert.IsTrue(result.Zip(normal, (left, right) => Math.Abs(left - right)).All(value => DoubleComparison.Nano.Equals(value, 0D)));
     }
   }
 }
