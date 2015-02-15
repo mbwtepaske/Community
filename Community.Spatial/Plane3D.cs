@@ -62,7 +62,7 @@ namespace System.Spatial
         throw new InvalidOperationException("point and normal are not equal in size");
       }
 
-      return normal.Append(-normal.DotProduct(point)).ToVector();
+      return Vector.Build.DenseOfEnumerable(normal.Append(-normal.DotProduct(point)));
     }
 
     private static Double Multiply(Double left, Double right)

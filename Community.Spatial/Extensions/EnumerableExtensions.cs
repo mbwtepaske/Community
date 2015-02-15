@@ -45,10 +45,5 @@ namespace System.Linq
         throw new ArgumentException("collection contains no elements");
       }
     }
-
-    public static Vector ToVector(this IEnumerable<Double> source)
-    {
-      return Vector.Build.DenseOfEnumerable(source);
-    }
   }
 }

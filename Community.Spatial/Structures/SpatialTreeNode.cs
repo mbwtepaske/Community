@@ -28,7 +28,7 @@ namespace System.Spatial
       }
     }
 
-    public Domain Domain
+    public Box Box
     {
       get;
       private set;
@@ -74,24 +74,24 @@ namespace System.Spatial
       set;
     }
 
-    protected SpatialTreeNode(SpatialTree<TValue> tree, Domain domain)
-      : this(tree, null, domain)
+    protected SpatialTreeNode(SpatialTree<TValue> tree, Box box)
+      : this(tree, null, box)
     {
     }
 
-    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Domain domain)
+    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Box box)
     {
       if (tree == null)
       {
         throw new ArgumentNullException("tree");
       }
 
-      if (domain == null)
+      if (box == null)
       {
-        throw new ArgumentNullException("domain");
+        throw new ArgumentNullException("box");
       }
       
-      Domain = domain;
+      Box = box;
       NodeList = new Collection<SpatialTreeNode<TValue>>();
       Nodes = new ReadOnlyCollection<SpatialTreeNode<TValue>>(NodeList);
       Parent = parent;
@@ -121,7 +121,7 @@ namespace System.Spatial
       return Enumerate(node => true);
     }
 
-    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate)
+    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, Boolean includeSelf = true)
     {
       if (continuationPredicate == null)
       {
@@ -130,9 +130,16 @@ namespace System.Spatial
 
       var queue = new Queue<SpatialTreeNode<TValue>>();
 
-      if (continuationPredicate(this))
+      if (includeSelf)
       {
-        queue.Enqueue(this);
+        if (continuationPredicate(this))
+        {
+          queue.Enqueue(this);
+        }
+      }
+      else if (NodeList != null)
+      {
+        NodeList.Where(continuationPredicate).Invoke(queue.Enqueue);
       }
 
       while (queue.Count > 0)
@@ -225,7 +232,7 @@ namespace System.Spatial
           maximum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 1];
         }
 
-        var domain = new Domain(Interpolation.Linear(Domain.Minimum, Domain.Maximum, minimum), Interpolation.Linear(Domain.Minimum, Domain.Maximum, maximum));
+        var domain = new Box(Interpolation.Linear(Box.Minimum, Box.Maximum, minimum), Interpolation.Linear(Box.Minimum, Box.Maximum, maximum));
         
         result.Add(Tree.CreateNodeInternal(this, domain));
       }
@@ -301,17 +308,15 @@ namespace System.Spatial
 
     public virtual IEnumerable<SpatialTreeNode<TValue>> Traverse(Vector position)
     {
-      return Enumerate(current 
-        => current.Domain.Minimum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value <= 0)
-        && current.Domain.Maximum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value >= 0));
+      return Enumerate(current => Collision.Contains(current.Box, position));
     }
-
+    
     public override String ToString()
     {
       return String.Format("L{0}, [{1} - {2}], [{3}]"
         , Level
-        , Domain.Minimum
-        , Domain.Maximum
+        , Box.Minimum
+        , Box.Maximum
         , String.Join("-", Indices));
     }
   }

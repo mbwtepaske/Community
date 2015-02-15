@@ -1,14 +1,22 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
-  public static class Frustum
+  using Collections.Generic;
+  using Linq;
+
+  /// <summary>
+  /// Represents a frustum volume, that is defined by a collection of half-spaces (plane). 
+  /// </summary>
+  public class Frustum : Volume
   {
+    public readonly Vector[] Planes;
+
+    public Frustum(params Vector[] planes)
+    {
+      Planes = planes;
+    }
+
     public static Boolean Contains(IEnumerable<Vector> planes, Vector vector)
     {
       if (planes == null)

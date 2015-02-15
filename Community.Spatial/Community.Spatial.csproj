@@ -47,7 +47,10 @@
     <Compile Include="..\AssemblyInfo.Copyright.cs">
       <Link>Properties\AssemblyInfo.Copyright.cs</Link>
     </Compile>
-    <Compile Include="Domain.cs" />
+    <Compile Include="Collision.cs" />
+    <Compile Include="Box.cs" />
+    <Compile Include="CollisionType.cs" />
+    <Compile Include="DimensionMismatchException.cs" />
     <Compile Include="DoubleComparison.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\MatrixBuilderExtensions.cs" />
@@ -59,10 +62,10 @@
     <Compile Include="Matrix2D.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Matrix4D.cs" />
-    <Compile Include="Plane.cs" />
     <Compile Include="Plane2D.cs" />
     <Compile Include="Plane3D.cs" />
     <Compile Include="Plane4D.cs" />
+    <Compile Include="PlaneIntersection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Version.cs">
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
@@ -70,15 +73,16 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Quaternion.cs" />
+    <Compile Include="Ray.cs" />
+    <Compile Include="Sphere.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Structures\SpatialTreeNode.cs" />
     <Compile Include="Vector2D.cs" />
     <Compile Include="Vector3D.cs" />
     <Compile Include="Vector4D.cs" />
+    <Compile Include="Volume.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Geometry\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

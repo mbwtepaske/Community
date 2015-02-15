@@ -191,7 +191,7 @@ namespace System.Spatial
 
     public static Matrix View(Vector position, Vector forward, Vector upward)
     {
-      var axisZ = forward.Clone().Normalize();
+      var axisZ = forward.Normalize();
       var axisX = Vector3D.Cross(upward, axisZ).Normalize();
       var axisY = Vector3D.Cross(axisZ, axisX);
 
