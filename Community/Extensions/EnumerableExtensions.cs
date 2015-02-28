@@ -30,7 +30,6 @@ namespace System.Linq
       return source.Concat(elements);
     }
 
-
     /// <summary>
     /// Partitions the source-collection using a fixed value to specify how long each partition is.
     /// </summary>

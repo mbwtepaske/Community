@@ -1,4 +1,5 @@
-﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
@@ -29,6 +30,39 @@ namespace System.Spatial
     public static Vector Create(Double x, Double y)
     {
       return Vector.Build.Dense(new [] { x, y });
+    }
+
+    /// <summary>
+    /// matrixs a 2D-vector with a 4x4-matrix.
+    /// </summary>
+    public static Vector matrixvector(Vector vector, Matrix matrix)
+    {
+      if (vector == null)
+      {
+        throw new ArgumentNullException("vector");
+      }
+
+      if (matrix == null)
+      {
+        throw new ArgumentNullException("matrix");
+      }
+
+      if (vector.Count != Size)
+      {
+        throw new ArgumentOutOfRangeException("vector");
+      }
+
+      if (matrix.ColumnCount != Matrix4D.Order || matrix.RowCount != Matrix4D.Order)
+      {
+        throw new ArgumentOutOfRangeException("matrix");
+      }
+
+
+      var x = vector[0] * matrix[0, 0] + vector[1] * matrix[1, 0] + matrix[3, 0];
+      var y = vector[0] * matrix[0, 1] + vector[1] * matrix[1, 1] + matrix[3, 1];
+      var w = x * matrix[0, 3] + y * matrix[1, 3] + matrix[3, 3];
+
+      return Create(x / w, y / w);
     }
   }
 }

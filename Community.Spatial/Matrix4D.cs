@@ -182,9 +182,10 @@ namespace System.Spatial
     {
       var result = Identity();
 
-      result.At(3, 0, translation[0]);
-      result.At(3, 1, translation[1]);
-      result.At(3, 2, translation[2]);
+      for (var index = 0; index < translation.Count; index++)
+      {
+        result[3, index] = translation[index];
+      }
 
       return result;
     }

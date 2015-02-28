@@ -143,7 +143,7 @@ namespace System.Spatial
         ? PlaneIntersection.Back
         : PlaneIntersection.Intersecting;
     }
-
+    
     /// <summary>
     /// Determines whether there is an intersection between a ray and a plane.
     /// </summary>
@@ -175,20 +175,13 @@ namespace System.Spatial
     /// <summary>
     /// Determines whether there is an intersection between a ray and a plane.
     /// </summary>
-    public static Boolean Intersects(Ray ray, ref Vector plane, out Vector point)
+    public static Vector Intersects(Ray ray, Vector plane)
     {
       var distance = 0D;
 
-      if (!Intersects(ray, plane, out distance))
-      {
-        point = null;
-
-        return false;
-      }
-      
-      point = ray.Position + ray.Direction * distance;
-     
-      return true;
+      return Intersects(ray, plane, out distance)
+        ? ray.Position + ray.Direction * distance
+        : null;
     }
   }
 }

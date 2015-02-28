@@ -30,6 +30,11 @@ namespace System.Spatial
       Direction = direction;
     }
 
+    public override String ToString()
+    {
+      return String.Format("Position: {0}, Direction: {1}", Position.ToString("N6"), Direction.ToString("N6"));
+    }
+
     public static Ray FromPositionAndTarget(Vector position, Vector target)
     {
       return new Ray(position, target.Subtract(position).Normalize());

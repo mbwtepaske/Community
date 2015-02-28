@@ -123,12 +123,19 @@ namespace System.Spatial
         throw new ArgumentOutOfRangeException("matrix");
       }
 
-      var values = Enumerable
-        .Range(0, matrix.ColumnCount)
-        .Select(index => vector.Zip(matrix.Column(index), (left, right) => left * right).Sum() + matrix[index, Size])
-        .ToArray();
+      var x = vector[0] * matrix[0, 0] + vector[1] * matrix[1, 0] + vector[2] * matrix[2, 0] + matrix[3, 0];
+      var y = vector[0] * matrix[0, 1] + vector[1] * matrix[1, 1] + vector[2] * matrix[2, 1] + matrix[3, 1];
+      var z = vector[0] * matrix[0, 2] + vector[1] * matrix[1, 2] + vector[2] * matrix[2, 2] + matrix[3, 2];
+      var w = x * matrix[0, 3] + y * matrix[1, 3] + z * matrix[2, 3] + matrix[3, 3];
 
-      return Create(values.Take(Size)).Multiply(1D / values.Last()); // (x, y, z) * (w ^ -1)
+      return Create(x / w, y / w, z / w);
+
+      //var values = Enumerable
+      //  .Range(0, matrix.ColumnCount)
+      //  .Select(index => vector.Zip(matrix.Column(index), (left, right) => left * right).Sum() + matrix[index, matrix.ColumnCount - 1])
+      //  .ToArray();
+      //
+      //return Create(values.Take(Size)).Multiply(1D / values.Last()); // (x, y, z) * (w ^ -1)
     }
   }
 }

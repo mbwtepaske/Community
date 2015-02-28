@@ -74,6 +74,7 @@
     <Compile Include="Extensions\XPathNavigatorExtensions.cs" />
     <Compile Include="IHideObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Range.cs" />
     <Compile Include="TypeConverterService.cs" />
   </ItemGroup>
   <ItemGroup>

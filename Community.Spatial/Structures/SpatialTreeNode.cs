@@ -116,9 +116,9 @@ namespace System.Spatial
       }
     }
 
-    public IEnumerable<SpatialTreeNode<TValue>> Enumerate()
+    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Boolean includeSelf = true)
     {
-      return Enumerate(node => true);
+      return Enumerate(node => true, includeSelf);
     }
 
     public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, Boolean includeSelf = true)
