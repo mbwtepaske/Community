@@ -4,12 +4,7 @@ using System.Linq;
 
 namespace System.Spatial
 {
-  public sealed class Quaternion : Vector
+  public static class Quaternion
   {
-
-
-    public Quaternion(Double x, Double y, Double z, Double w) : base(x, y, z, w)
-    {
-    }
   }
 }

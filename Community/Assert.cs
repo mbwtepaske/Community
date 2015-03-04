@@ -8,7 +8,7 @@
   public static class Assert
   {
     /// <summary>
-    /// Throws a <typeparamref name="TException"/> when the <param name="predicate" /> returns true.
+    /// Throws a <typeparamref name="TException"/> when the predicate returns true.
     /// </summary>
     [DebuggerNonUserCode]
     public static void Throw<TException, TObject>(TObject instance, Predicate<TObject> predicate, params Object[] arguments)
@@ -17,6 +17,18 @@
       if (predicate(instance))
       {
         throw (Exception)Activator.CreateInstance(typeof(TException), arguments);
+      }
+    }
+
+    /// <summary>
+    /// Throws a <see cref="T:ArgumentException"/> when the predicate returns true.
+    /// </summary>
+    [DebuggerNonUserCode]
+    public static void ThrowArgument<TObject>(TObject instance, Predicate<TObject> predicate, String message = null, String parameterName = null)
+    {
+      if (predicate(instance))
+      {
+        throw new ArgumentException(message, parameterName);
       }
     }
 

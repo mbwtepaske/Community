@@ -1,30 +1,34 @@
-﻿using System.Collections;
-using System.Runtime.CompilerServices;
+﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
+  using Collections;
   using Collections.Generic;
   using Collections.ObjectModel;
   using Linq;
 
   public class SpatialTreeNode<TValue>
   {
-    public Int32[] Address
+    /// <summary>
+    /// Gets the indices where the 
+    /// </summary>
+    public Int32[] Indices
     {
       get
       {
-        var address = new List<Int32>(Level);
-
+        var indices = new Int32[Level];
+        var currentIndex = indices.Length - 1;
+        
         for (var current = this; current.Parent != null; current = current.Parent)
         {
-          address.Insert(0, current.Parent.Nodes.Indices(current).Single());
+          indices[currentIndex--] = current.Parent.Nodes.Indices(current).Single();
         }
 
-        return address.ToArray();
+        return indices.ToArray();
       }
     }
 
-    public Domain Domain
+    public Box Box
     {
       get;
       private set;
@@ -70,47 +74,54 @@ namespace System.Spatial
       set;
     }
 
-    protected SpatialTreeNode(SpatialTree<TValue> tree, Domain domain)
-      : this(tree, null, domain)
+    protected SpatialTreeNode(SpatialTree<TValue> tree, Box box)
+      : this(tree, null, box)
     {
     }
 
-    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Domain domain)
+    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Box box)
     {
       if (tree == null)
       {
         throw new ArgumentNullException("tree");
       }
 
-      if (domain == null)
+      if (box == null)
       {
-        throw new ArgumentNullException("domain");
+        throw new ArgumentNullException("box");
       }
       
-      Domain = domain;
+      Box = box;
       NodeList = new Collection<SpatialTreeNode<TValue>>();
       Nodes = new ReadOnlyCollection<SpatialTreeNode<TValue>>(NodeList);
       Parent = parent;
       Tree = tree;
     }
 
-    public void Clear()
+    public IEnumerable<SpatialTreeNode<TValue>> Ancestry()
     {
-      foreach (var node in Enumerate().Reverse())
+      var current = this;
+
+      while (current != null)
       {
-        if (node.NodeList.Any())
-        {
-          NodeList.Clear();
-        }
+        yield return current = current.Parent;
       }
     }
 
-    public IEnumerable<SpatialTreeNode<TValue>> Enumerate()
+    public virtual void Clear()
     {
-      return Enumerate(node => true);
+      foreach (var node in Enumerate().Reverse().Where(node => node.NodeList.Any()))
+      {
+        node.NodeList.Clear();
+      }
     }
 
-    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate)
+    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Boolean includeSelf = true)
+    {
+      return Enumerate(node => true, includeSelf);
+    }
+
+    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, Boolean includeSelf = true)
     {
       if (continuationPredicate == null)
       {
@@ -119,9 +130,16 @@ namespace System.Spatial
 
       var queue = new Queue<SpatialTreeNode<TValue>>();
 
-      if (continuationPredicate(this))
+      if (includeSelf)
       {
-        queue.Enqueue(this);
+        if (continuationPredicate(this))
+        {
+          queue.Enqueue(this);
+        }
+      }
+      else if (NodeList != null)
+      {
+        NodeList.Where(continuationPredicate).Invoke(queue.Enqueue);
       }
 
       while (queue.Count > 0)
@@ -132,6 +150,19 @@ namespace System.Spatial
 
         current.NodeList.Where(continuationPredicate).Invoke(queue.Enqueue);
       }
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
+    public virtual IEnumerable<SpatialTreeNode<TValue>> Split(params Int32[] divisionsPerDimensions)
+    {
+      if (divisionsPerDimensions.Length != Tree.Dimensions)
+      {
+        throw new ArgumentOutOfRangeException("divisionsPerDimensions");
+      }
+
+      return Split(divisionsPerDimensions.Select(division => Enumerable.Range(1, division).Select(index => index / Convert.ToDouble(division)).Take(division - 1).ToArray()).ToArray());
     }
 
     /// <summary>
@@ -192,8 +223,8 @@ namespace System.Spatial
           }
         }
 
-        var minimum = new Vector(Tree.Dimensions);
-        var maximum = new Vector(Tree.Dimensions);
+        var minimum = Vector.Build.Dense(Tree.Dimensions);
+        var maximum = Vector.Build.Dense(Tree.Dimensions);
 
         for (var dimensionIndex = 0; dimensionIndex < Tree.Dimensions; dimensionIndex++)
         {
@@ -201,12 +232,20 @@ namespace System.Spatial
           maximum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 1];
         }
 
-        var domain = new Domain(Interpolation.Linear(Domain.Minimum, Domain.Maximum, minimum), Interpolation.Linear(Domain.Minimum, Domain.Maximum, maximum));
+        var domain = new Box(Interpolation.Linear(Box.Minimum, Box.Maximum, minimum), Interpolation.Linear(Box.Minimum, Box.Maximum, maximum));
         
         result.Add(Tree.CreateNodeInternal(this, domain));
       }
 
       return result.ToArray();
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
+    public virtual SpatialTreeNode<TValue>[] Split(params Vector[] divisionsPerDimension)
+    {
+      return Split(Enumerable.Range(0, Tree.Dimensions).Select(index => index < divisionsPerDimension.Length ? divisionsPerDimension[index].ToArray() : new Double[0]).ToArray());
     }
 
     /// <summary>
@@ -269,18 +308,16 @@ namespace System.Spatial
 
     public virtual IEnumerable<SpatialTreeNode<TValue>> Traverse(Vector position)
     {
-      return Enumerate(current 
-        => current.Domain.Minimum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value <= 0)
-        && current.Domain.Maximum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value >= 0));
+      return Enumerate(current => Collision.Contains(current.Box, position));
     }
-
+    
     public override String ToString()
     {
       return String.Format("L{0}, [{1} - {2}], [{3}]"
         , Level
-        , Domain.Minimum
-        , Domain.Maximum
-        , String.Join("-", Address));
+        , Box.Minimum
+        , Box.Maximum
+        , String.Join("-", Indices));
     }
   }
 }

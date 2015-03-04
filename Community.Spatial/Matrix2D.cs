@@ -2,15 +2,12 @@
 
 namespace System.Spatial
 {
-  /// <summary>
-  /// Represents a 3 x 3 matrix.
-  /// </summary>
-  public static class Matrix3D
+  public static class Matrix2D
   {
-    public const Int32 Order = 3;
+    public const Int32 Order = 2;
 
     /// <summary>
-    /// Creates a 3 x 3 identity-matrix.
+    /// Creates a 2 x 2 identity-matrix.
     /// </summary>
     public static Matrix Identity()
     {

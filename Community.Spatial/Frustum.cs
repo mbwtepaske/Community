@@ -1,53 +1,35 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
-  public class Frustum : IEnumerable<Plane>
+  using Collections.Generic;
+  using Linq;
+
+  /// <summary>
+  /// Represents a frustum volume, that is defined by a collection of half-spaces (plane). 
+  /// </summary>
+  public class Frustum : Volume
   {
-    /// <summary>
-    /// Gets the planes describing the frustum.
-    /// </summary>
-    public Plane[] Planes
+    public readonly Vector[] Planes;
+
+    public Frustum(params Vector[] planes)
     {
-      get;
-      private set;
+      Planes = planes;
     }
 
-    public Frustum(params Plane[] planes)
+    public static Boolean Contains(IEnumerable<Vector> planes, Vector vector)
     {
       if (planes == null)
       {
         throw new ArgumentNullException("planes");
       }
 
-      if (planes.Length % 2 != 0)
+      if (vector == null)
       {
-        throw new ArgumentException("The amount of planes must be even");
+        throw new ArgumentNullException("vector");
       }
-
-      if (!planes.Same(plane => plane.Normal.Size))
-      {
-        throw new ArgumentException("All planes must have the same dimension");
-      }
-
-      Planes = planes;
-    }
-
-    public Frustum(IEnumerable<Plane> planes) : this(planes.ToArray())
-    {
-    }
-
-    IEnumerator<Plane> IEnumerable<Plane>.GetEnumerator()
-    {
-      return Planes.AsEnumerable().GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return Planes.GetEnumerator();
+      
+      return planes.All(plane => plane.DotProduct(vector) >= 0);
     }
   }
 }

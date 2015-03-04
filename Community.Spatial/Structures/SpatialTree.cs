@@ -14,41 +14,20 @@
       private set;
     }
 
-    public SpatialTree(Domain domain)
+    public SpatialTree(Box box)
     {
-      if (domain == null)
+      if (box == null)
       {
-        throw new ArgumentNullException("domain");
+        throw new ArgumentNullException("box");
       }
 
-      Dimensions = domain.Center.Size;
-      Root = CreateNodeInternal(null, domain);
+      Dimensions = box.Center.Count;
+      Root = CreateNodeInternal(null, box);
     }
 
-    //public SpatialTree(Int32 dimensions, Vector minimum, Vector maximum)
-    //{
-    //  if (dimensions < 1)
-    //  {
-    //    throw new ArgumentException("dimensions must be greater than zero");
-    //  }
-
-    //  if (minimum == null)
-    //  {
-    //    throw new ArgumentNullException("minimum");
-    //  }
-
-    //  if (maximum == null)
-    //  {
-    //    throw new ArgumentNullException("maximum");
-    //  }
-
-    //  Dimensions = dimensions;
-    //  Root = CreateNodeInternal(null, minimum, maximum);
-    //}
-
-    internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Domain domain)
+    internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Box box)
     {
-      var node = CreateNode(parent, domain);
+      var node = CreateNode(parent, box);
 
       if (parent != null)
       {
@@ -58,9 +37,9 @@
       return node;
     }
 
-    protected virtual SpatialTreeNode<TValue> CreateNode(SpatialTreeNode<TValue> parent, Domain domain)
+    protected virtual SpatialTreeNode<TValue> CreateNode(SpatialTreeNode<TValue> parent, Box box)
     {
-      return new SpatialTreeNode<TValue>(this, parent, domain);
+      return new SpatialTreeNode<TValue>(this, parent, box);
     }
   }
 }

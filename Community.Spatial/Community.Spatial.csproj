@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.Company.cs">
@@ -46,21 +47,25 @@
     <Compile Include="..\AssemblyInfo.Copyright.cs">
       <Link>Properties\AssemblyInfo.Copyright.cs</Link>
     </Compile>
-    <Compile Include="Domain.cs" />
+    <Compile Include="Collision.cs" />
+    <Compile Include="Box.cs" />
+    <Compile Include="CollisionType.cs" />
+    <Compile Include="DimensionMismatchException.cs" />
+    <Compile Include="DoubleComparison.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\MatrixBuilderExtensions.cs" />
+    <Compile Include="Extensions\MatrixExtensions.cs" />
+    <Compile Include="Extensions\VectorBuilderExtensions.cs" />
+    <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Frustum.cs" />
-    <Compile Include="IMatrix.cs" />
     <Compile Include="Interpolation.cs" />
-    <Compile Include="IVector.cs" />
-    <Compile Include="Matrix.cs" />
-    <Compile Include="Matrix.Operations.cs">
-      <DependentUpon>Matrix.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Matrix.Operators.cs">
-      <DependentUpon>Matrix.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Matrix2D.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Matrix4D.cs" />
-    <Compile Include="Plane.cs" />
+    <Compile Include="Plane2D.cs" />
+    <Compile Include="Plane3D.cs" />
+    <Compile Include="Plane4D.cs" />
+    <Compile Include="PlaneIntersection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Version.cs">
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
@@ -68,28 +73,24 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Quaternion.cs" />
+    <Compile Include="Ray.cs" />
+    <Compile Include="Sphere.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Structures\SpatialTreeNode.cs" />
-    <Compile Include="Utility.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Vector.Operations.cs">
-      <DependentUpon>Vector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Vector.Operators.cs">
-      <DependentUpon>Vector.cs</DependentUpon>
-    </Compile>
     <Compile Include="Vector2D.cs" />
     <Compile Include="Vector3D.cs" />
     <Compile Include="Vector4D.cs" />
+    <Compile Include="Volume.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Geometry\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Math.NET\Numerics\src\Numerics\Numerics.csproj">
+      <Project>{b7cae5f4-a23f-4438-b5be-41226618b695}</Project>
+      <Name>Numerics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Community\Community.csproj">
       <Project>{351b3b5a-13ab-40db-af74-e428166c75b5}</Project>
       <Name>Community</Name>
