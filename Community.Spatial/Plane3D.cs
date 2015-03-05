@@ -1,9 +1,7 @@
-﻿using System.Linq;
-
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
+  using Linq;
+
   public static class Plane3D
   {
     /// <summary>
@@ -62,7 +60,7 @@ namespace System.Spatial
         throw new InvalidOperationException("point and normal are not equal in size");
       }
 
-      return Vector.Build.DenseOfEnumerable(normal.Append(-normal.DotProduct(point)));
+      return new Vector(normal.Append(-normal.DotProduct(point)).ToArray());
     }
 
     private static Double Multiply(Double left, Double right)

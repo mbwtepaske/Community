@@ -37,7 +37,7 @@ namespace System
     {
       if (IsDisposed)
       {
-        throw new InvalidOperationException(Exceptions.OBJECT_ALREADY_DISPOSED);
+        throw new InvalidOperationException(Exceptions.ObjectAlreadyDisposed);
       }
 
       try

@@ -1,8 +1,3 @@
-using MathNet.Numerics.LinearAlgebra;
-
-using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
 namespace System.Spatial
 {
   using Linq;
@@ -26,14 +21,14 @@ namespace System.Spatial
         throw new ArgumentException("matrix is not a 4 x 4 matrix");
       }
 
-      var columns = Enumerable.Range(0, Order).Select(matrix.Column).ToArray();
+      var columns = Enumerable.Range(0, Order).Select(matrix.GetColumn).ToArray();
       
-      var minimumX = Vector.Build.DenseOfVector((columns[3] + columns[0])).Normalize();
-      var maximumX = Vector.Build.DenseOfVector((columns[3] - columns[0])).Normalize();
-      var minimumY = Vector.Build.DenseOfVector((columns[3] + columns[1])).Normalize();
-      var maximumY = Vector.Build.DenseOfVector((columns[3] - columns[1])).Normalize();
-      var minimumZ = Vector.Build.DenseOfVector(columns[2]).Normalize();
-      var maximumZ = Vector.Build.DenseOfVector((columns[3] - columns[2])).Normalize();
+      var minimumX = new Vector((columns[3] + columns[0])).Normalize();
+      var maximumX = new Vector((columns[3] - columns[0])).Normalize();
+      var minimumY = new Vector((columns[3] + columns[1])).Normalize();
+      var maximumY = new Vector((columns[3] - columns[1])).Normalize();
+      var minimumZ = new Vector(columns[2]).Normalize();
+      var maximumZ = new Vector((columns[3] - columns[2])).Normalize();
 
       return new[]
       { 
@@ -48,7 +43,7 @@ namespace System.Spatial
     /// </summary>
     public static Matrix Identity()
     {
-      return Matrix.Build.DenseIdentity(Order);
+      return new Matrix(Order, Order, (columnIndex, rowIndex) => columnIndex == rowIndex ? 1D : 0D);
     }
     
     /// <summary>
@@ -71,13 +66,13 @@ namespace System.Spatial
         throw new ArgumentOutOfRangeException("frontPlaneDistance");
       }
 
-      var result = Matrix.Build.Dense(Order, Order);
+      var result = new Matrix(Order, Order);
       
       result[0, 0] = 2D * frontPlaneDistance / frontPlaneWidth;
       result[1, 1] = 2D * frontPlaneDistance / frontPlaneHeight;
       result[2, 2] = backPlaneDistance / (backPlaneDistance - frontPlaneDistance);
-      result[2, 3] = 1D;
-      result[3, 2] = frontPlaneDistance * backPlaneDistance / (frontPlaneDistance - backPlaneDistance);
+      result[2, 3] = frontPlaneDistance * backPlaneDistance / (frontPlaneDistance - backPlaneDistance);
+      result[3, 2] = 1D;
 
       return result;
     }
@@ -101,17 +96,17 @@ namespace System.Spatial
 
       var result = Identity();
 
-      result.At(0, 0, xx + cos * (1D - xx));
-      result.At(0, 1, xy - cos * xy + sin * z);
-      result.At(0, 2, xz - cos * xz - sin * y);
+      result[0, 0] = xx + cos * (1D - xx);
+      result[1, 0] = xy - cos * xy + sin * z;
+      result[2, 0] = xz - cos * xz - sin * y;
 
-      result.At(1, 0, xy - cos * xy - sin * z);
-      result.At(1, 1, yy + cos * (1D - yy));
-      result.At(1, 2, yz - cos * yz + sin * x);
+      result[0, 1] = xy - cos * xy - sin * z;
+      result[1, 1] = yy + cos * (1D - yy);
+      result[2, 1] = yz - cos * yz + sin * x;
 
-      result.At(2, 0, xz - cos * xz + sin * y);
-      result.At(2, 1, yz - cos * yz - sin * x);
-      result.At(2, 2, zz + cos * (1D - zz));
+      result[0, 2] = xz - cos * xz + sin * y;
+      result[1, 2] = yz - cos * yz - sin * x;
+      result[2, 2] = zz + cos * (1D - zz);
 
       return result;
     }
@@ -133,15 +128,15 @@ namespace System.Spatial
 
       var result = Identity();
 
-      result.At(0, 0, 1D - 2D * (yy + zz));
-      result.At(0, 1, 2D * (xy + zw));
-      result.At(0, 2, 2D * (zx - yw));
-      result.At(1, 0, 2D * (xy - zw));
-      result.At(1, 1, 1D - 2D * (zz + xx));
-      result.At(1, 2, 2D * (yz + xw));
-      result.At(2, 0, 2D * (zx + yw));
-      result.At(2, 1, 2D * (yz - xw));
-      result.At(2, 2, 1D - 2D * (yy + xx));
+      result[0, 0] = 1D - 2D * (yy + zz);
+      result[1, 0] = 2D * (xy + zw);
+      result[2, 0] = 2D * (zx - yw);
+      result[0, 1] = 2D * (xy - zw);
+      result[1, 1] = 1D - 2D * (zz + xx);
+      result[2, 1] = 2D * (yz + xw);
+      result[0, 2] = 2D * (zx + yw);
+      result[1, 2] = 2D * (yz - xw);
+      result[2, 2] = 1D - 2D * (yy + xx);
 
       return result;
     }
@@ -159,18 +154,21 @@ namespace System.Spatial
     /// </summary>
     public static Matrix Scale(Vector scale)
     {
-      Assert.ThrowIfNull(scale, "scale");
-      Assert.ThrowArgument(scale, s => s.Count != Vector3D.Size);
+      if (scale == null)
+      {
+        throw new ArgumentNullException("scale");
+      }
 
-      var scaleX = scale[0];
-      var scaleY = scale[1];
-      var scaleZ = scale[2];
+      if (scale.Count != Vector3D.Size)
+      {
+        throw new ArgumentDimensionMismatchException("scale", Vector3D.Size);
+      }
 
       var result = Identity();
 
-      result.At(0, 0, scaleX);
-      result.At(1, 1, scaleY);
-      result.At(2, 2, scaleZ);
+      result[0, 0] = scale[0];
+      result[1, 1] = scale[1];
+      result[2, 2] = scale[2];
 
       return result;
     }
@@ -184,7 +182,7 @@ namespace System.Spatial
 
       for (var index = 0; index < translation.Count; index++)
       {
-        result[3, index] = translation[index];
+        result[index, Vector3D.Size] = translation[index];
       }
 
       return result;
@@ -199,17 +197,17 @@ namespace System.Spatial
       var result = Identity();
 
       result[0, 0] = axisX[0];
-      result[0, 1] = axisY[0];
-      result[0, 2] = axisZ[0];
-      result[1, 0] = axisX[1];
+      result[1, 0] = axisY[0];
+      result[2, 0] = axisZ[0];
+      result[0, 1] = axisX[1];
       result[1, 1] = axisY[1];
-      result[1, 2] = axisZ[1];
-      result[2, 0] = axisX[2];
-      result[2, 1] = axisY[2];
+      result[2, 1] = axisZ[1];
+      result[0, 2] = axisX[2];
+      result[1, 2] = axisY[2];
       result[2, 2] = axisZ[2];
-      result[3, 0] = -axisX.DotProduct(position);
-      result[3, 1] = -axisY.DotProduct(position);
-      result[3, 2] = -axisZ.DotProduct(position);
+      result[0, 3] = -axisX.DotProduct(position);
+      result[1, 3] = -axisY.DotProduct(position);
+      result[2, 3] = -axisZ.DotProduct(position);
 
       return result;
     }

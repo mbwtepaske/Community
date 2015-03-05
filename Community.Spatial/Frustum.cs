@@ -1,6 +1,4 @@
-﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   using Collections.Generic;
   using Linq;

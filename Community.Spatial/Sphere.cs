@@ -1,6 +1,4 @@
-﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   /// <summary>
   /// Represents a spherical volume.
@@ -10,7 +8,8 @@ namespace System.Spatial
     public readonly Vector Center;
     public readonly Vector Radii;
 
-    public Sphere(Vector center, Double radius = 1D) : this(center, center != null ? Vector.Build.Dense(center.Count, radius) : null)
+    public Sphere(Vector center, Double radius = 1D) 
+      : this(center, center != null ? new Vector(center.Count, radius) : null)
     {
     }
 

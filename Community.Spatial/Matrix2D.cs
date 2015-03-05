@@ -1,6 +1,4 @@
-﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   public static class Matrix2D
   {
@@ -11,7 +9,7 @@ namespace System.Spatial
     /// </summary>
     public static Matrix Identity()
     {
-      return Matrix.Build.DenseIdentity(Order);
+      return new Matrix(Order, Order, (columnIndex, rowIndex) => columnIndex == rowIndex ? 1D : 0D);
     }
   }
 }
