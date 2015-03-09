@@ -35,7 +35,7 @@
     /// <summary>
     /// Returns a 3D-vector using the specified values for the first components and the defaultValue for the remainder.
     /// </summary>
-    public static Vector Create(IEnumerable<double> values, Double defaultValue = 0D)
+    public static Vector Create(IEnumerable<Double> values, Double defaultValue = 0D)
     {
       if (values == null)
       {

@@ -9,6 +9,11 @@ namespace System.Spatial
   {
     public const Int32 Order = 4;
 
+    /// <summary>
+    /// A 4 x 4 identity-matrix.
+    /// </summary>
+    public static readonly Matrix Identity = new Matrix(Order, Order, (columnIndex, rowIndex) => columnIndex == rowIndex ? 1D : 0D, true);
+
     public static Vector[] Frustum(Matrix matrix)
     {
       if (matrix == null)
@@ -38,14 +43,6 @@ namespace System.Spatial
       };
     }
 
-    /// <summary>
-    /// Creates a 4 x 4 identity-matrix.
-    /// </summary>
-    public static Matrix Identity()
-    {
-      return new Matrix(Order, Order, (columnIndex, rowIndex) => columnIndex == rowIndex ? 1D : 0D);
-    }
-    
     /// <summary>
     /// Creates a 4 x 4 left-handed projection matrix.
     /// </summary>
@@ -94,7 +91,7 @@ namespace System.Spatial
       var xz = x * z;
       var yz = y * z;
 
-      var result = Identity();
+      var result = Identity.Clone();
 
       result[0, 0] = xx + cos * (1D - xx);
       result[1, 0] = xy - cos * xy + sin * z;
@@ -126,7 +123,7 @@ namespace System.Spatial
       var zz = quaternion[2] * quaternion[2];
       var zw = quaternion[2] * quaternion[3];
 
-      var result = Identity();
+      var result = Identity.Clone();
 
       result[0, 0] = 1D - 2D * (yy + zz);
       result[1, 0] = 2D * (xy + zw);
@@ -164,7 +161,7 @@ namespace System.Spatial
         throw new ArgumentDimensionMismatchException("scale", Vector3D.Size);
       }
 
-      var result = Identity();
+      var result = Identity.Clone();
 
       result[0, 0] = scale[0];
       result[1, 1] = scale[1];
@@ -178,7 +175,7 @@ namespace System.Spatial
     /// </summary>
     public static Matrix Translate(Vector translation)
     {
-      var result = Identity();
+      var result = Identity.Clone();
 
       for (var index = 0; index < translation.Count; index++)
       {
@@ -194,7 +191,7 @@ namespace System.Spatial
       var axisX = Vector3D.Cross(upward, axisZ).Normalize();
       var axisY = Vector3D.Cross(axisZ, axisX);
 
-      var result = Identity();
+      var result = Identity.Clone();
 
       result[0, 0] = axisX[0];
       result[1, 0] = axisY[0];

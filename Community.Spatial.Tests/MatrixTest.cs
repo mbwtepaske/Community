@@ -8,5 +8,10 @@ namespace System.Spatial.Tests
   [TestClass]
   public class MatrixTest
   {
+    [TestMethod]
+    public void MultiplyWithMatrix()
+    {
+      var 
+    }
   }
 }

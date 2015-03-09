@@ -234,7 +234,7 @@
         throw new ArgumentDimensionMismatchException("right.RowCount", Count);
       }
 
-      return new Vector(Count, index => DotProduct(right.GetColumn(index)));
+      return new Vector(right.ColumnCount, index => DotProduct(right.GetColumn(index)));
     }
 
     public virtual Vector Multiply(Vector right)
@@ -341,6 +341,11 @@
     }
 
     public static Vector operator *(Vector left, Vector right)
+    {
+      return left.Multiply(right);
+    }
+
+    public static Vector operator *(Vector left, Matrix right)
     {
       return left.Multiply(right);
     }

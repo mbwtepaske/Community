@@ -5,12 +5,8 @@ using System.Text;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
 namespace System.Spatial.Tests
 {
-  using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
-
   [TestClass]
   public class FrustumTest
   {

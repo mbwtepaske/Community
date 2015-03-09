@@ -1,4 +1,6 @@
-﻿namespace System.Spatial
+﻿using System.Collections.ObjectModel;
+
+namespace System.Spatial
 {
   using Collections;
   using Collections.Generic;
@@ -47,12 +49,12 @@
     {
     }
 
-    public MatrixStorage(Int32 columnCount, Int32 rowCount, IEnumerable<Double> data)
-      : this(columnCount, rowCount, data.ToArray())
+    public MatrixStorage(Int32 columnCount, Int32 rowCount, IEnumerable<Double> data, Boolean isReadOnly = false)
+      : this(columnCount, rowCount, data.ToArray(), isReadOnly)
     {
     }
 
-    public MatrixStorage(Int32 columnCount, Int32 rowCount, IList<Double> data)
+    public MatrixStorage(Int32 columnCount, Int32 rowCount, IList<Double> data, Boolean isReadOnly = false)
     {
       if (columnCount < 1)
       {
@@ -72,7 +74,9 @@
       ColumnCount = columnCount;
       RowCount = rowCount;
 
-      Data = data;
+      Data = isReadOnly 
+        ? new ReadOnlyCollection<Double>(data) 
+        : data;
     }
 
     #region Cloning

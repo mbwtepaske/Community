@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.ObjectModel;
+using System.Text;
 
 namespace System.Spatial
 {
@@ -51,19 +52,34 @@ namespace System.Spatial
     }
 
     #region Initialization
-    
+
+    public Matrix(Int32 order, Double defaultValue = 0D)
+      : this(new MatrixStorage(order, order, Enumerable.Repeat(defaultValue, order * order).ToArray()))
+    {
+    }
+
+    public Matrix(Int32 order, Func<Int32, Double> valueFactory, Boolean isReadOnly = false)
+      : this(new MatrixStorage(order, order, Enumerable.Range(0, order * order).Select(valueFactory).ToArray(), isReadOnly))
+    {
+    }
+
+    public Matrix(Int32 order, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+      : this(CreateMatrixStorage(order, order, valueFactory, isReadOnly))
+    {
+    }
+
     public Matrix(Int32 columnCount, Int32 rowCount, Double defaultValue = 0D)
       : this(new MatrixStorage(columnCount, rowCount, Enumerable.Repeat(defaultValue, columnCount * rowCount).ToArray()))
     {
     }
 
-    public Matrix(Int32 columnCount, Int32 rowCount, Func<Int32, Double> valueFactory)
-      : this(new MatrixStorage(columnCount, rowCount, Enumerable.Range(0, columnCount * rowCount).Select(valueFactory).ToArray()))
+    public Matrix(Int32 columnCount, Int32 rowCount, Func<Int32, Double> valueFactory, Boolean isReadOnly = false)
+      : this(new MatrixStorage(columnCount, rowCount, Enumerable.Range(0, columnCount * rowCount).Select(valueFactory).ToArray(), isReadOnly))
     {
     }
 
-    public Matrix(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory)
-      : this(CreateMatrixStorage(columnCount, rowCount, valueFactory))
+    public Matrix(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+      : this(CreateMatrixStorage(columnCount, rowCount, valueFactory, isReadOnly))
     {
     }
 
@@ -77,7 +93,7 @@ namespace System.Spatial
       Storage = storage;
     }
 
-    private static MatrixStorage CreateMatrixStorage(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory)
+    private static MatrixStorage CreateMatrixStorage(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
     {
       var data = new Double[columnCount * rowCount];
 
@@ -89,7 +105,7 @@ namespace System.Spatial
         }
       }
 
-      return new MatrixStorage(columnCount, rowCount, data);
+      return new MatrixStorage(columnCount, rowCount, data, isReadOnly);
     }
 
     #endregion
