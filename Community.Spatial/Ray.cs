@@ -13,12 +13,12 @@ namespace System.Spatial
     {
       if (position == null)
       {
-        throw new ArgumentNullException("position");
+        throw new ArgumentNullException(nameof(position));
       }
 
       if (direction == null)
       {
-        throw new ArgumentNullException("direction");
+        throw new ArgumentNullException(nameof(direction));
       }
 
       if (position.Count != direction.Count)

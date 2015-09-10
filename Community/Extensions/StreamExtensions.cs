@@ -94,7 +94,7 @@ namespace System.IO
 
       if (offset < 0)
       {
-        throw new ArgumentOutOfRangeException("offset");
+        throw new ArgumentOutOfRangeException(nameof(offset));
       }
 
       return stream.Seek(offset, SeekOrigin.Begin);
@@ -127,7 +127,7 @@ namespace System.IO
 
       if (offset > 0)
       {
-        throw new ArgumentOutOfRangeException("offset");
+        throw new ArgumentOutOfRangeException(nameof(offset));
       }
 
       return stream.Seek(-offset, SeekOrigin.End);

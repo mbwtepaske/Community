@@ -40,7 +40,7 @@ namespace System.Linq
 
       if (partitionSize < 1)
       {
-        throw new ArgumentOutOfRangeException("partitionSize");
+        throw new ArgumentOutOfRangeException(nameof(partitionSize));
       }
 
       var list = new List<TSource>(partitionSize);
@@ -147,7 +147,7 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       using (var enumerator = source.GetEnumerator())
@@ -170,12 +170,12 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       if (action == null)
       {
-        throw new ArgumentNullException("action");
+        throw new ArgumentNullException(nameof(action));
       }
 
       foreach (var element in source)
@@ -192,12 +192,12 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       if (action == null)
       {
-        throw new ArgumentNullException("action");
+        throw new ArgumentNullException(nameof(action));
       }
 
       using (var enumerator = source.GetEnumerator())
@@ -333,12 +333,12 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       if (selector == null)
       {
-        throw new ArgumentNullException("selector");
+        throw new ArgumentNullException(nameof(selector));
       }
 
       comparer = comparer ?? EqualityComparer<TValue>.Default;

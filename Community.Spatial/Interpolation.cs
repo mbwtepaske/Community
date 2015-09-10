@@ -26,12 +26,12 @@ namespace System.Spatial
     {
       if (left == null)
       {
-        throw new ArgumentNullException("left");
+        throw new ArgumentNullException(nameof(left));
       }
 
       if (right == null)
       {
-        throw new ArgumentNullException("right");
+        throw new ArgumentNullException(nameof(right));
       }
       
       if (left.Count != right.Count)
@@ -46,17 +46,17 @@ namespace System.Spatial
     {
       if (left == null)
       {
-        throw new ArgumentNullException("left");
+        throw new ArgumentNullException(nameof(left));
       }
 
       if (right == null)
       {
-        throw new ArgumentNullException("right");
+        throw new ArgumentNullException(nameof(right));
       }
 
       if (values == null)
       {
-        throw new ArgumentNullException("values");
+        throw new ArgumentNullException(nameof(values));
       }
 
       if (left.Count != right.Count || left.Count != values.Count)
@@ -70,10 +70,58 @@ namespace System.Spatial
         .ToArray());
     }
 
-    //public static Double Polynomic(Double left, Double right, Double value, params Double[] coefficients)
-    //{
-    //  throw new NotImplementedException();
-    //}
+    public static Double Logarithmic(Double left, Double right, Double value)
+    {
+      return Math.Pow(right, value) * Math.Pow(left, 1D - value);
+    }
+
+    public static Vector Logarithmic(Vector left, Vector right, Double value)
+    {
+      if (left == null)
+      {
+        throw new ArgumentNullException(nameof(left));
+      }
+
+      if (right == null)
+      {
+        throw new ArgumentNullException(nameof(right));
+      }
+
+      if (left.Count != right.Count)
+      {
+        throw new ArgumentException("left and right vectors must have the same size");
+      }
+
+      return Vector.Build.Dense(Enumerable.Zip(left, right, (l, r) => Logarithmic(l, r, value)).ToArray());
+    }
+
+    public static Vector Logarithmic(Vector left, Vector right, Vector values)
+    {
+      if (left == null)
+      {
+        throw new ArgumentNullException(nameof(left));
+      }
+
+      if (right == null)
+      {
+        throw new ArgumentNullException(nameof(right));
+      }
+
+      if (values == null)
+      {
+        throw new ArgumentNullException(nameof(values));
+      }
+
+      if (left.Count != right.Count || left.Count != values.Count)
+      {
+        throw new ArgumentException("all the specified vectors must have the same size");
+      }
+
+      return Vector.Build.Dense(Enumerable
+        .Range(0, values.Count)
+        .Select(index => Logarithmic(left[index], right[index], values[index]))
+        .ToArray());
+    }
 
     public static Double Quadratic(Double left, Double controlLeft, Double controlRight, Double right, Double value)
     {

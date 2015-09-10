@@ -35,26 +35,26 @@ namespace System.Spatial
     /// <summary>
     /// matrixs a 2D-vector with a 4x4-matrix.
     /// </summary>
-    public static Vector matrixvector(Vector vector, Matrix matrix)
+    public static Vector Transform(Vector vector, Matrix matrix)
     {
       if (vector == null)
       {
-        throw new ArgumentNullException("vector");
+        throw new ArgumentNullException(nameof(vector));
       }
 
       if (matrix == null)
       {
-        throw new ArgumentNullException("matrix");
+        throw new ArgumentNullException(nameof(matrix));
       }
 
       if (vector.Count != Size)
       {
-        throw new ArgumentOutOfRangeException("vector");
+        throw new ArgumentOutOfRangeException(nameof(vector));
       }
 
       if (matrix.ColumnCount != Matrix4D.Order || matrix.RowCount != Matrix4D.Order)
       {
-        throw new ArgumentOutOfRangeException("matrix");
+        throw new ArgumentOutOfRangeException(nameof(matrix));
       }
 
 

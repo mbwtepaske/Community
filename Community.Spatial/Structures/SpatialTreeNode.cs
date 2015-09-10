@@ -44,6 +44,9 @@ namespace System.Spatial
       }
     }
 
+    /// <summary>
+    /// Gets a read-only collection containing the child <see cref="T:SpatialTreeNode"/>s of this instance.
+    /// </summary>
     public IReadOnlyCollection<SpatialTreeNode<TValue>> Nodes
     {
       get;
@@ -83,12 +86,12 @@ namespace System.Spatial
     {
       if (tree == null)
       {
-        throw new ArgumentNullException("tree");
+        throw new ArgumentNullException(nameof(tree));
       }
 
       if (box == null)
       {
-        throw new ArgumentNullException("box");
+        throw new ArgumentNullException(nameof(box));
       }
       
       Box = box;
@@ -108,24 +111,21 @@ namespace System.Spatial
       }
     }
 
-    public virtual void Clear()
+    public IEnumerable<TValue> Enumerate(Func<TValue, Boolean> continuationPredicate, Boolean includeSelf = true)
     {
-      foreach (var node in Enumerate().Reverse().Where(node => node.NodeList.Any()))
+      if (continuationPredicate == null)
       {
-        node.NodeList.Clear();
+        throw new ArgumentNullException(nameof(continuationPredicate));
       }
-    }
 
-    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Boolean includeSelf = true)
-    {
-      return Enumerate(node => true, includeSelf);
+      return Enumerate(node => continuationPredicate(node.Value), includeSelf).Select(node => node.Value);
     }
 
     public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, Boolean includeSelf = true)
     {
       if (continuationPredicate == null)
       {
-        throw new ArgumentNullException("continuationPredicate");
+        throw new ArgumentNullException(nameof(continuationPredicate));
       }
 
       var queue = new Queue<SpatialTreeNode<TValue>>();
@@ -159,7 +159,7 @@ namespace System.Spatial
     {
       if (divisionsPerDimensions.Length != Tree.Dimensions)
       {
-        throw new ArgumentOutOfRangeException("divisionsPerDimensions");
+        throw new ArgumentOutOfRangeException(nameof(divisionsPerDimensions));
       }
 
       return Split(divisionsPerDimensions.Select(division => Enumerable.Range(1, division).Select(index => index / Convert.ToDouble(division)).Take(division - 1).ToArray()).ToArray());
@@ -271,12 +271,12 @@ namespace System.Spatial
     {
       if (continuationPredicate == null)
       {
-        throw new ArgumentNullException("continuationPredicate");
+        throw new ArgumentNullException(nameof(continuationPredicate));
       }
 
       if (divisionsPerDimensionsProvider == null)
       {
-        throw new ArgumentNullException("divisionsPerDimensionsProvider");
+        throw new ArgumentNullException(nameof(divisionsPerDimensionsProvider));
       }
 
       var queue = new Queue<SpatialTreeNode<TValue>>();
@@ -318,6 +318,11 @@ namespace System.Spatial
         , Box.Minimum
         , Box.Maximum
         , String.Join("-", Indices));
+    }
+
+    public static  implicit operator TValue(SpatialTreeNode<TValue> treeNode)
+    {
+      return treeNode.Value;
     }
   }
 }

@@ -16,7 +16,6 @@ namespace System
     public Action Action
     {
       get;
-      private set;
     }
 
     /// <summary>
@@ -42,10 +41,7 @@ namespace System
 
       try
       {
-        if (Action != null)
-        {
-          Action.Invoke();
-        }
+        Action?.Invoke();
       }
       finally
       {
@@ -54,7 +50,7 @@ namespace System
     }
 
     /// <summary>
-    /// Initializes an instance of <see cref="System.ActionDisposable"/>.
+    /// Initializes an instance of <see cref="T:System.ActionDisposable"/>.
     /// </summary>
     /// <param name="action">
     /// An action which is invoked when this instance is disposed, this can be null.
@@ -64,5 +60,10 @@ namespace System
     {
       Action = action;
     }
+  }
+
+  public static class IDisposableExtensions
+  {
+    public static Action AsAction(this IDisposable disposable) => disposable.Dispose;
   }
 }

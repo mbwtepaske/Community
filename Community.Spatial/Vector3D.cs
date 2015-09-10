@@ -42,7 +42,7 @@ namespace System.Spatial
     {
       if (values == null)
       {
-        throw new ArgumentNullException("values");
+        throw new ArgumentNullException(nameof(values));
       }
 
       var result = Create(defaultValue);
@@ -66,12 +66,12 @@ namespace System.Spatial
     {
       if (left == null)
       {
-        throw new ArgumentNullException("left");
+        throw new ArgumentNullException(nameof(left));
       }
 
       if (right == null)
       {
-        throw new ArgumentNullException("right");
+        throw new ArgumentNullException(nameof(right));
       }
 
       if (left.Count != right.Count)
@@ -97,7 +97,27 @@ namespace System.Spatial
 
       return result;
     }
-    
+
+    /// <summary>
+    /// Returns the Euclidean distance between the two given points.
+    /// </summary>
+    public static Double Distance(Vector left, Vector right)
+    {
+      return Math.Sqrt(DistanceSquared(left, right));
+    }
+
+    /// <summary>
+    /// Returns the Euclidean distance squared between the two given points. This method is faster than <see cref="T:Vector3D.Distance"/>.
+    /// </summary>
+    public static Double DistanceSquared(Vector left, Vector right)
+    {
+      var x = left[0] - right[0];
+      var y = left[1] - right[1];
+      var z = left[2] - right[2];
+
+      return x * x + y * y + z * z;
+    }
+
     /// <summary>
     /// Transforms a 3D-coordinate with a 4x4-matrix.
     /// </summary>
@@ -105,22 +125,22 @@ namespace System.Spatial
     {
       if (vector == null)
       {
-        throw new ArgumentNullException("vector");
+        throw new ArgumentNullException(nameof(vector));
       }
 
       if (matrix == null)
       {
-        throw new ArgumentNullException("matrix");
+        throw new ArgumentNullException(nameof(matrix));
       }
 
       if (vector.Count != Size)
       {
-        throw new ArgumentOutOfRangeException("vector");
+        throw new ArgumentOutOfRangeException(nameof(vector));
       }
 
       if (matrix.ColumnCount != Matrix4D.Order || matrix.RowCount != Matrix4D.Order)
       {
-        throw new ArgumentOutOfRangeException("matrix");
+        throw new ArgumentOutOfRangeException(nameof(matrix));
       }
 
       var x = vector[0] * matrix[0, 0] + vector[1] * matrix[1, 0] + vector[2] * matrix[2, 0] + matrix[3, 0];

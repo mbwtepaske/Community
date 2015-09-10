@@ -36,6 +36,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\..\seTools\SpatialWorkshop3D\packages\System.Numerics.Vectors.4.0.0\lib\portable-net45+win8+wpa81\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.Company.cs">
@@ -53,15 +57,15 @@
     <Compile Include="DimensionMismatchException.cs" />
     <Compile Include="DoubleComparison.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\MatrixBuilderExtensions.cs" />
     <Compile Include="Extensions\MatrixExtensions.cs" />
-    <Compile Include="Extensions\VectorBuilderExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Frustum.cs" />
+    <Compile Include="ICollidable.cs" />
     <Compile Include="Interpolation.cs" />
     <Compile Include="Matrix2D.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Matrix4D.cs" />
+    <Compile Include="Plane.cs" />
     <Compile Include="Plane2D.cs" />
     <Compile Include="Plane3D.cs" />
     <Compile Include="Plane4D.cs" />
@@ -97,6 +101,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\AssemblyInfo.Version.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>

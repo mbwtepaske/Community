@@ -14,11 +14,16 @@ namespace System.Spatial
   {
     public const Int32 Order = 4;
 
-    public static Vector[] Frustum(Matrix matrix)
+    public static Matrix Create(Func<Int32, Int32, Double> valueFactory)
+    {
+      return Matrix.Build.Dense(Order, Order, valueFactory);
+    }
+
+    public static Plane[] Frustum(Matrix matrix)
     {
       if (matrix == null)
       {
-        throw new ArgumentNullException("matrix");
+        throw new ArgumentNullException(nameof(matrix));
       }
 
       if (matrix.ColumnCount != Order || matrix.RowCount != Order)
@@ -28,12 +33,12 @@ namespace System.Spatial
 
       var columns = Enumerable.Range(0, Order).Select(matrix.Column).ToArray();
       
-      var minimumX = Vector.Build.DenseOfVector((columns[3] + columns[0])).Normalize();
-      var maximumX = Vector.Build.DenseOfVector((columns[3] - columns[0])).Normalize();
-      var minimumY = Vector.Build.DenseOfVector((columns[3] + columns[1])).Normalize();
-      var maximumY = Vector.Build.DenseOfVector((columns[3] - columns[1])).Normalize();
-      var minimumZ = Vector.Build.DenseOfVector(columns[2]).Normalize();
-      var maximumZ = Vector.Build.DenseOfVector((columns[3] - columns[2])).Normalize();
+      var minimumX = new Plane((columns[3] + columns[0]).ToArray()).Normalize();  // Left-plane
+      var maximumX = new Plane((columns[3] - columns[0]).ToArray()).Normalize();  // Right-plane
+      var minimumY = new Plane((columns[3] + columns[1]).ToArray()).Normalize();  // Bottom-plane
+      var maximumY = new Plane((columns[3] - columns[1]).ToArray()).Normalize();  // Top-plane
+      var minimumZ = new Plane(columns[2].ToArray()).Normalize();                 // Near-plane
+      var maximumZ = new Plane((columns[3] - columns[2]).ToArray()).Normalize();  // Far-plane
 
       return new[]
       { 
@@ -43,6 +48,31 @@ namespace System.Spatial
       };
     }
 
+    public static Double Determinant(Matrix matrix)
+    {
+      if (matrix == null)
+      {
+        throw new ArgumentNullException(nameof(matrix));
+      }
+
+      if (matrix.ColumnCount != Order || matrix.RowCount != Order)
+      {
+        throw new DimensionMismatchException();
+      }
+
+      var num1 = (matrix[2, 2] * matrix[3, 3] - matrix[2, 3] * matrix[3, 2]);
+      var num2 = (matrix[2, 1] * matrix[3, 3] - matrix[2, 3] * matrix[3, 1]);
+      var num3 = (matrix[2, 1] * matrix[3, 2] - matrix[2, 2] * matrix[3, 1]);
+      var num4 = (matrix[2, 0] * matrix[3, 3] - matrix[2, 3] * matrix[3, 0]);
+      var num5 = (matrix[2, 0] * matrix[3, 2] - matrix[2, 2] * matrix[3, 0]);
+      var num6 = (matrix[2, 0] * matrix[3, 1] - matrix[2, 1] * matrix[3, 0]);
+
+      return  matrix[0, 0] * (matrix[1, 1] * num1 - matrix[1, 2] * num2 + matrix[1, 3] * num3) 
+        -     matrix[0, 1] * (matrix[1, 0] * num1 - matrix[1, 2] * num4 + matrix[1, 3] * num5) 
+        +     matrix[0, 2] * (matrix[1, 0] * num2 - matrix[1, 1] * num4 + matrix[1, 3] * num6) 
+        -     matrix[0, 3] * (matrix[1, 0] * num3 - matrix[1, 1] * num5 + matrix[1, 2] * num6);
+    }
+
     /// <summary>
     /// Creates a 4 x 4 identity-matrix.
     /// </summary>
@@ -50,7 +80,113 @@ namespace System.Spatial
     {
       return Matrix.Build.DenseIdentity(Order);
     }
-    
+
+    public static Matrix Inverse(Matrix matrix)
+    {
+      if (matrix == null)
+      {
+        throw new ArgumentNullException(nameof(matrix));
+      }
+
+      if (matrix.ColumnCount != Order || matrix.RowCount != Order)
+      {
+        throw new DimensionMismatchException();
+      }
+
+      var num1 = (matrix[2, 0] * matrix[3, 1] - matrix[2, 1] * matrix[3, 0]);
+      var num2 = (matrix[2, 0] * matrix[3, 2] - matrix[2, 2] * matrix[3, 0]);
+      var num3 = (matrix[2, 3] * matrix[3, 0] - matrix[2, 0] * matrix[3, 3]);
+      var num4 = (matrix[2, 1] * matrix[3, 2] - matrix[2, 2] * matrix[3, 1]);
+      var num5 = (matrix[2, 3] * matrix[3, 1] - matrix[2, 1] * matrix[3, 3]);
+      var num6 = (matrix[2, 2] * matrix[3, 3] - matrix[2, 3] * matrix[3, 2]);
+      var num7 = (matrix[1, 1] * num6 + matrix[1, 2] * num5 + matrix[1, 3] * num4);
+      var num8 = (matrix[1, 0] * num6 + matrix[1, 2] * num3 + matrix[1, 3] * num2);
+      var num9 = (matrix[1, 0] * -num5 + matrix[1, 1] * num3 + matrix[1, 3] * num1);
+      var num10 = (matrix[1, 0] * num4 + matrix[1, 1] * -num2 + matrix[1, 2] * num1);
+      var num11 = (matrix[0, 0] * num7 - matrix[0, 1] * num8 + matrix[0, 2] * num9 - matrix[0, 3] * num10);
+      
+      if (Math.Abs(num11).CompareTo(0D) == 0)
+      {
+        return Matrix.Build.Dense(Order, Order);
+      }
+
+      var result = Matrix.Build.SameAs(matrix);
+
+      var num12 = 1D / num11;
+      var num13 = (matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]);
+      var num14 = (matrix[0, 0] * matrix[1, 2] - matrix[0, 2] * matrix[1, 0]);
+      var num15 = (matrix[0, 3] * matrix[1, 0] - matrix[0, 0] * matrix[1, 3]);
+      var num16 = (matrix[0, 1] * matrix[1, 2] - matrix[0, 2] * matrix[1, 1]);
+      var num17 = (matrix[0, 3] * matrix[1, 1] - matrix[0, 1] * matrix[1, 3]);
+      var num18 = (matrix[0, 2] * matrix[1, 3] - matrix[0, 3] * matrix[1, 2]);
+      var num19 = (matrix[0, 1] * num6 + matrix[0, 2] * num5 + matrix[0, 3] * num4);
+      var num20 = (matrix[0, 0] * num6 + matrix[0, 2] * num3 + matrix[0, 3] * num2);
+      var num21 = (matrix[0, 0] * -num5 + matrix[0, 1] * num3 + matrix[0, 3] * num1);
+      var num22 = (matrix[0, 0] * num4 + matrix[0, 1] * -num2 + matrix[0, 2] * num1);
+      var num23 = (matrix[3, 1] * num18 + matrix[3, 2] * num17 + matrix[3, 3] * num16);
+      var num24 = (matrix[3, 0] * num18 + matrix[3, 2] * num15 + matrix[3, 3] * num14);
+      var num25 = (matrix[3, 0] * -num17 + matrix[3, 1] * num15 + matrix[3, 3] * num13);
+      var num26 = (matrix[3, 0] * num16 + matrix[3, 1] * -num14 + matrix[3, 2] * num13);
+      var num27 = (matrix[2, 1] * num18 + matrix[2, 2] * num17 + matrix[2, 3] * num16);
+      var num28 = (matrix[2, 0] * num18 + matrix[2, 2] * num15 + matrix[2, 3] * num14);
+      var num29 = (matrix[2, 0] * -num17 + matrix[2, 1] * num15 + matrix[2, 3] * num13);
+      var num30 = (matrix[2, 0] * num16 + matrix[2, 1] * -num14 + matrix[2, 2] * num13);
+
+      result[0, 0] = num7 * num12;
+      result[0, 1] = -num19 * num12;
+      result[0, 2] = num23 * num12;
+      result[0, 3] = -num27 * num12;
+      result[1, 0] = -num8 * num12;
+      result[1, 1] = num20 * num12;
+      result[1, 2] = -num24 * num12;
+      result[1, 3] = num28 * num12;
+      result[2, 0] = num9 * num12;
+      result[2, 1] = -num21 * num12;
+      result[2, 2] = num25 * num12;
+      result[2, 3] = -num29 * num12;
+      result[3, 0] = -num10 * num12;
+      result[3, 1] = num22 * num12;
+      result[3, 2] = -num26 * num12;
+      result[3, 3] = num30 * num12;
+
+      return result;
+    }
+
+    public static Matrix PerspectiveFieldOfView(Double fieldOfView, Double aspectRatio, Double frontPlaneDistance, Double backPlaneDistance)
+    {
+      if (fieldOfView <= 0D || fieldOfView >= Math.PI)
+      {
+        throw new ArgumentOutOfRangeException(nameof(fieldOfView));
+      }
+
+      if (frontPlaneDistance <= 0D)
+      {
+        throw new ArgumentOutOfRangeException(nameof(frontPlaneDistance));
+      }
+
+      if (backPlaneDistance <= 0D)
+      {
+        throw new ArgumentOutOfRangeException(nameof(backPlaneDistance));
+      }
+
+      if (frontPlaneDistance >= backPlaneDistance)
+      {
+        throw new ArgumentOutOfRangeException(nameof(frontPlaneDistance));
+      }
+
+      var scaleY = 1D / Math.Tan(fieldOfView);
+
+      var result = Matrix.Build.Dense(Order, Order);
+
+      result[0, 0] = scaleY / aspectRatio;
+      result[1, 1] = scaleY;
+      result[2, 2] = backPlaneDistance / (backPlaneDistance - frontPlaneDistance);
+      result[2, 3] = 1D;
+      result[3, 2] = -frontPlaneDistance * backPlaneDistance / (backPlaneDistance - frontPlaneDistance);
+
+      return result;
+    }
+
     /// <summary>
     /// Creates a 4 x 4 left-handed projection matrix.
     /// </summary>
@@ -58,17 +194,17 @@ namespace System.Spatial
     {
       if (frontPlaneDistance <= 0D)
       {
-        throw new ArgumentOutOfRangeException("frontPlaneDistance");
+        throw new ArgumentOutOfRangeException(nameof(frontPlaneDistance));
       }
 
       if (backPlaneDistance <= 0D)
       {
-        throw new ArgumentOutOfRangeException("backPlaneDistance");
+        throw new ArgumentOutOfRangeException(nameof(backPlaneDistance));
       }
 
       if (frontPlaneDistance >= backPlaneDistance)
       {
-        throw new ArgumentOutOfRangeException("frontPlaneDistance");
+        throw new ArgumentOutOfRangeException(nameof(frontPlaneDistance));
       }
 
       var result = Matrix.Build.Dense(Order, Order);

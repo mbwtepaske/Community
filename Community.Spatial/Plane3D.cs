@@ -1,73 +1,15 @@
-﻿using System.Linq;
-
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
   public static class Plane3D
   {
-    /// <summary>
-    /// Returns the dot-product of the 3D-plane with a 3D-coordinate.
-    /// </summary>
-    public static Double DotCoordinate(Vector plane, Vector coordinate)
+    public static Vector Intersection(Plane plane1, Plane plane2, Plane plane3)
     {
-      return DotNormal(plane, coordinate) + plane.Last();
-    }
-
-    /// <summary>
-    /// Returns the dot-product of the 3D-plane with a 3D-normal.
-    /// </summary>
-    public static Double DotNormal(Vector plane, Vector coordinate)
-    {
-      if (plane == null)
-      {
-        throw new ArgumentNullException("plane");
-      }
-
-      if (plane.Count != Vector4D.Size)
-      {
-        throw new ArgumentOutOfRangeException("plane");
-      }
-
-      if (coordinate == null)
-      {
-        throw new ArgumentNullException("coordinate");
-      }
-
-      if (coordinate.Count != Vector3D.Size)
-      {
-        throw new ArgumentOutOfRangeException("coordinate");
-      }
-
-      return plane.Zip(coordinate, Multiply).Sum();
-    }
-
-    /// <summary>
-    /// Returns a vector representing a plane using a point and a normal.
-    /// </summary>
-    public static Vector FromPointAndNormal(Vector point, Vector normal)
-    {
-      if (point == null)
-      {
-        throw new ArgumentNullException("point");
-      }
-
-      if (normal == null)
-      {
-        throw new ArgumentNullException("normal");
-      }
-
-      if (point.Count != normal.Count)
-      {
-        throw new InvalidOperationException("point and normal are not equal in size");
-      }
-
-      return Vector.Build.DenseOfEnumerable(normal.Append(-normal.DotProduct(point)));
-    }
-
-    private static Double Multiply(Double left, Double right)
-    {
-      return left * right;
+      return 
+        -plane1.Distance * Vector3D.Cross(plane2.Normal, plane3.Normal) / plane1.Normal.DotProduct(Vector3D.Cross(plane2.Normal, plane3.Normal)) 
+        -plane2.Distance * Vector3D.Cross(plane3.Normal, plane1.Normal) / plane2.Normal.DotProduct(Vector3D.Cross(plane3.Normal, plane1.Normal)) 
+        -plane3.Distance * Vector3D.Cross(plane1.Normal, plane2.Normal) / plane3.Normal.DotProduct(Vector3D.Cross(plane1.Normal, plane2.Normal));
     }
   }
 }

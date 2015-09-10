@@ -55,5 +55,22 @@
     {
       return Maximum.GetHashCode() ^ Minimum.GetHashCode();
     }
+
+    public override Boolean Equals(Object other)
+    {
+      if (other is Range<TValue>)
+      {
+        var otherRange = (Range<TValue>) other;
+
+        return Maximum.Equals(otherRange.Maximum) && Minimum.Equals(otherRange.Minimum);
+      }
+
+      return false;
+    }
+
+    public override String ToString()
+    {
+      return String.Format("{0} - {1}", Minimum, Maximum);
+    }
   }
 }

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-
-namespace Community.Extensions
+﻿namespace System.Collections.ObjectModel
 {
+  using Linq;
+  using Specialized;
+  
   public static class ObservableCollectionExtensions
   {
     /// <summary>

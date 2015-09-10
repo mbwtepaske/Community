@@ -6,42 +6,31 @@ namespace System.Spatial
   using Linq;
 
   /// <summary>
-  /// Represents a box volume.
+  /// Represents a N-Dimensional axis-aligned bounding-box volume.
   /// </summary>
-  public class Box : Volume
+  public class Box : Volume, ICollidable<Box>, ICollidable<Sphere>
   {
     private readonly Lazy<Vector> _center;
     private readonly Lazy<Vector[]> _corners;
 
-    public Vector Center
-    {
-      get
-      {
-        return _center.Value;
-      }
-    }
+    public Vector Center => _center.Value;
 
-    public Vector[] Corners
-    {
-      get
-      {
-        return _corners.Value;
-      }
-    }
+    public Vector[] Corners => _corners.Value;
 
     public readonly Vector Maximum;
     public readonly Vector Minimum;
+    public readonly Matrix Transform;
 
-    public Box(Vector minimum, Vector maximum)
+    public Box(Vector minimum, Vector maximum, Matrix transform = null) : base(minimum.Count)
     {
       if (minimum == null)
       {
-        throw new ArgumentNullException("minimum");
+        throw new ArgumentNullException(nameof(minimum));
       }
 
       if (maximum == null)
       {
-        throw new ArgumentNullException("maximum");
+        throw new ArgumentNullException(nameof(maximum));
       }
 
       if (minimum.Count != maximum.Count)
@@ -54,12 +43,10 @@ namespace System.Spatial
 
       Minimum = minimum;
       Maximum = maximum;
+      Transform = transform;
     }
 
-    private Vector GetCenter()
-    {
-      return Interpolation.Linear(Minimum, Maximum, 0.5D);
-    }
+    private Vector GetCenter() => Interpolation.Linear(Minimum, Maximum, 0.5D);
 
     private Vector[] GetCorners()
     {
@@ -90,6 +77,52 @@ namespace System.Spatial
       return result;
     }
 
+    public override CollisionType Test(Vector point)
+    {
+      if (point == null)
+      {
+        throw new ArgumentNullException(nameof(point));
+      }
+
+      if (point.Count != Maximum.Count)
+      {
+        throw new DimensionMismatchException(nameof(point));
+      }
+
+      return point.Where((value, index) => value > Maximum[index] && value < Minimum[index]).Any() 
+        ? CollisionType.Disjoint 
+        : CollisionType.Contains;
+    }
+
+    public CollisionType Test(Sphere other)
+    {
+      throw new NotImplementedException();
+    }
+
+    public CollisionType Test(Box other)
+    {
+      if (other == null)
+      {
+        throw new ArgumentNullException(nameof(other));
+      }
+
+      if (Maximum.Count != other.Maximum.Count)
+      {
+        throw new DimensionMismatchException("other");
+      }
+
+      if (Maximum.Where((value, index) => value < other.Minimum[index] || Minimum[index] > other.Maximum[index]).Any())
+      {
+        return CollisionType.Disjoint;
+      }
+
+      return Maximum.Where((value, index) => Minimum[index] > other.Minimum[index] || value < other.Maximum[index]).Any() 
+        ? CollisionType.Intersects 
+        : CollisionType.Contains;
+    }
+
+    public override String ToString() => $"[{Minimum}] - [{Maximum}]";
+
     /// <summary>
     /// Returns a box specifying a center and size.
     /// </summary>
@@ -97,9 +130,9 @@ namespace System.Spatial
     {
       if (center == null)
       {
-        throw new ArgumentNullException("center");
+        throw new ArgumentNullException(nameof(center));
       }
-      
+
       return FromCenter(center, Vector.Build.Dense(center.Count, size));
     }
 
@@ -110,12 +143,12 @@ namespace System.Spatial
     {
       if (center == null)
       {
-        throw new ArgumentNullException("center");
+        throw new ArgumentNullException(nameof(center));
       }
 
       if (size == null)
       {
-        throw new ArgumentNullException("size");
+        throw new ArgumentNullException(nameof(size));
       }
 
       if (center.Count != size.Count)
@@ -128,12 +161,7 @@ namespace System.Spatial
         throw new ArgumentException("size elements must be zero or greater");
       }
 
-      return new Box(center - size * 0.5, center + size * 0.5);
-    }
-
-    public override String ToString()
-    {
-      return String.Format("[{0}] - [{1}]", Minimum, Maximum);
+      return new Box(center - size, center + size);
     }
   }
 }
