@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Linq
+﻿namespace System.Linq
 {
+  using Collections.Generic;
+  using Spatial;
+
   public static class EnumerableExtensions
   {
     public static Vector Average(this IEnumerable<Vector> source)
@@ -21,7 +19,7 @@ namespace System.Linq
         var reciprocal = 1D / collection.Count;
         var values = Enumerable.Range(0, collection.First().Count).Select(index => collection.Select(vector => vector[index]).Sum() * reciprocal).ToArray();
 
-        return Vector.Build.Dense(values);
+        return new Vector(values);
       }
 
       using (var enumerator = source.GetEnumerator())
@@ -31,7 +29,7 @@ namespace System.Linq
           var counter = 1;
           var values = enumerator.Current.ToArray();
 
-          for (; enumerator.MoveNext(); counter++)
+          while (enumerator.MoveNext())
           {
             for (var index = 0; index < enumerator.Current.Count; index++)
             {
@@ -39,7 +37,7 @@ namespace System.Linq
             }
           }
 
-          return Vector.Build.Dense(values).DivideByThis(counter);
+          return new Vector(values).Divide(counter++);
         }
         
         throw new ArgumentException("collection contains no elements");

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
+  using Linq;
+
   public static class Interpolation
   {
     public static Double Cubic(Double left, Double control, Double right, Double value)
@@ -39,7 +35,7 @@ namespace System.Spatial
         throw new ArgumentException("left and right vectors must have the same size");
       }
 
-      return Vector.Build.Dense(Enumerable.Zip(left, right, (l, r) => Linear(l, r, value)).ToArray());
+      return new Vector(Enumerable.Zip(left, right, (l, r) => Linear(l, r, value)).ToArray());
     }
 
     public static Vector Linear(Vector left, Vector right, Vector values)
@@ -64,7 +60,7 @@ namespace System.Spatial
         throw new ArgumentException("all the specified vectors must have the same size");
       }
 
-      return Vector.Build.Dense(Enumerable
+      return new Vector(Enumerable
         .Range(0, values.Count)
         .Select(index => Linear(left[index], right[index], values[index]))
         .ToArray());

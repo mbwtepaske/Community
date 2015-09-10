@@ -1,7 +1,7 @@
-﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
+  using Linq;
+
   public static class Plane3D
   {
     public static Vector Intersection(Plane plane1, Plane plane2, Plane plane3)

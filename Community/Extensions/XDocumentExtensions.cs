@@ -6,8 +6,10 @@
   {
     public static Boolean Validate(this XDocument document, XmlSchema schema, XmlSeverityType severity)
     {
-      Assert.ThrowIfNull<NullReferenceException>(document, "document");
-      Assert.ThrowIfNull<ArgumentNullException>(schema, "schema");
+      if (schema == null)
+      {
+        throw new ArgumentNullException("schema");
+      }
 
       var isValid = true;
 

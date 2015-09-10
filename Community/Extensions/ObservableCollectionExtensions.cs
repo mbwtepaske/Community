@@ -113,8 +113,15 @@
 
     private static void Validate<T>(ObservableCollection<T> collection, Delegate action)
     {
-      Assert.ThrowIfNull<NullReferenceException>(collection, "collection");
-      Assert.ThrowIfNull(action, "action");
+      if (collection == null)
+      {
+        throw new NullReferenceException("collection");
+      }
+
+      if (action == null)
+      {
+        throw new ArgumentNullException("action");
+      }
     }
   }
 }

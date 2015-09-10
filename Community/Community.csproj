@@ -7,7 +7,7 @@
     <ProjectGuid>{351B3B5A-13AB-40DB-AF74-E428166C75B5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Community</RootNamespace>
+    <RootNamespace>System</RootNamespace>
     <AssemblyName>Community</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -57,7 +57,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
     </Compile>
-    <Compile Include="Assert.cs" />
+    <None Include="Assert.cs" />
     <Compile Include="Exceptions.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

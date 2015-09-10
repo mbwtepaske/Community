@@ -46,4 +46,14 @@ namespace MathNet.Numerics.LinearAlgebra
       result.M41 = Convert.ToSingle(matrix[3, 0]);  result.M42 = Convert.ToSingle(matrix[3, 1]);  result.M43 = Convert.ToSingle(matrix[3, 2]);  result.M44 = Convert.ToSingle(matrix[3, 3]);
     }
   }
+  //public static class MatrixExtensions
+  //{
+  //  /// <summary>
+  //  /// Returns whether this matrix is a square matrix, where the column and row count are the same.
+  //  /// </summary>
+  //  public static Boolean IsSquare<T>(this Matrix<T> matrix) where T : struct, IEquatable<T>, IFormattable
+  //  {
+  //    return matrix.ColumnCount == matrix.RowCount;
+  //  }
+  //}
 }

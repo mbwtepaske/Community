@@ -1,7 +1,4 @@
-﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   using Collections.Generic;
   using Linq;
@@ -24,7 +21,7 @@ namespace System.Spatial
     /// </summary>
     public static Vector Create(Double defaultValue = 0D)
     {
-      return Vector.Build.Dense(Size, defaultValue);
+      return new Vector(Size, defaultValue);
     }
 
     /// <summary>
@@ -32,13 +29,13 @@ namespace System.Spatial
     /// </summary>
     public static Vector Create(Double x, Double y, Double z)
     {
-      return Vector.Build.Dense(new[] {x, y, z});
+      return new Vector(new[] {x, y, z});
     }
 
     /// <summary>
     /// Returns a 3D-vector using the specified values for the first components and the defaultValue for the remainder.
     /// </summary>
-    public static Vector Create(IEnumerable<double> values, Double defaultValue = 0D)
+    public static Vector Create(IEnumerable<Double> values, Double defaultValue = 0D)
     {
       if (values == null)
       {
@@ -81,7 +78,7 @@ namespace System.Spatial
 
       if (result == null)
       {
-        result = Vector.Build.Dense(left.Count);
+        result = new Vector(left.Count);
       }
       else
       {
@@ -143,19 +140,12 @@ namespace System.Spatial
         throw new ArgumentOutOfRangeException(nameof(matrix));
       }
 
-      var x = vector[0] * matrix[0, 0] + vector[1] * matrix[1, 0] + vector[2] * matrix[2, 0] + matrix[3, 0];
-      var y = vector[0] * matrix[0, 1] + vector[1] * matrix[1, 1] + vector[2] * matrix[2, 1] + matrix[3, 1];
-      var z = vector[0] * matrix[0, 2] + vector[1] * matrix[1, 2] + vector[2] * matrix[2, 2] + matrix[3, 2];
+      var x = vector[0] * matrix[0, 0] + vector[1] * matrix[0, 1] + vector[2] * matrix[0, 2] + matrix[0, 3];
+      var y = vector[0] * matrix[1, 0] + vector[1] * matrix[1, 1] + vector[2] * matrix[1, 2] + matrix[1, 3];
+      var z = vector[0] * matrix[2, 0] + vector[1] * matrix[2, 1] + vector[2] * matrix[2, 2] + matrix[2, 3];
       var w = x * matrix[0, 3] + y * matrix[1, 3] + z * matrix[2, 3] + matrix[3, 3];
 
       return Create(x / w, y / w, z / w);
-
-      //var values = Enumerable
-      //  .Range(0, matrix.ColumnCount)
-      //  .Select(index => vector.Zip(matrix.Column(index), (left, right) => left * right).Sum() + matrix[index, matrix.ColumnCount - 1])
-      //  .ToArray();
-      //
-      //return Create(values.Take(Size)).Multiply(1D / values.Last()); // (x, y, z) * (w ^ -1)
     }
   }
 }

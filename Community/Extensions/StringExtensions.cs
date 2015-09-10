@@ -31,8 +31,6 @@
     [DebuggerStepThrough]
     public static String FormatString(this String instance, IFormatProvider formatProvider, params Object[] arguments)
     {
-      Assert.ThrowIfNull<NullReferenceException>(instance);
-
       return String.Format(formatProvider, instance, arguments);
     }
 
@@ -60,8 +58,10 @@
     [DebuggerStepThrough]
     public static Boolean IsMatch(this String instance, String pattern, Boolean compile = true, Boolean ignoreCase = false)
     {
-      Assert.ThrowIfNull<NullReferenceException>(instance);
-      Assert.ThrowIfNull<ArgumentNullException>(pattern);
+      if (pattern == null)
+      {
+        throw new ArgumentNullException("pattern");
+      }
 
       var options = RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace;
 
@@ -84,8 +84,10 @@
     [DebuggerStepThrough]
     public static String[] Split(this String instance, String separator, StringSplitOptions options = StringSplitOptions.RemoveEmptyEntries)
     {
-      Assert.ThrowIfNull<NullReferenceException>(instance);
-      Assert.ThrowIfNull<ArgumentNullException>(separator);
+      if (separator == null)
+      {
+        throw new ArgumentNullException("separator");
+      }
       
       return instance.Split(new[] { separator }, options);
     }

@@ -1,8 +1,5 @@
-﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
-  using Collections;
   using Collections.Generic;
   using Collections.ObjectModel;
   using Linq;
@@ -223,15 +220,8 @@ namespace System.Spatial
           }
         }
 
-        var minimum = Vector.Build.Dense(Tree.Dimensions);
-        var maximum = Vector.Build.Dense(Tree.Dimensions);
-
-        for (var dimensionIndex = 0; dimensionIndex < Tree.Dimensions; dimensionIndex++)
-        {
-          minimum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 0];
-          maximum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 1];
-        }
-
+        var minimum = new Vector(Tree.Dimensions, dimensionIndex => values[dimensionIndex][offsets[dimensionIndex] + 0]);
+        var maximum = new Vector(Tree.Dimensions, dimensionIndex => values[dimensionIndex][offsets[dimensionIndex] + 1]);
         var domain = new Box(Interpolation.Linear(Box.Minimum, Box.Maximum, minimum), Interpolation.Linear(Box.Minimum, Box.Maximum, maximum));
         
         result.Add(Tree.CreateNodeInternal(this, domain));

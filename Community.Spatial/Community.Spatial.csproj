@@ -54,7 +54,7 @@
     <Compile Include="Collision.cs" />
     <Compile Include="Box.cs" />
     <Compile Include="CollisionType.cs" />
-    <Compile Include="DimensionMismatchException.cs" />
+    <Compile Include="ArgumentDimensionMismatchException.cs" />
     <Compile Include="DoubleComparison.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\MatrixExtensions.cs" />
@@ -62,6 +62,7 @@
     <Compile Include="Frustum.cs" />
     <Compile Include="ICollidable.cs" />
     <Compile Include="Interpolation.cs" />
+    <Compile Include="Matrix.cs" />
     <Compile Include="Matrix2D.cs" />
     <Compile Include="Matrix3D.cs" />
     <Compile Include="Matrix4D.cs" />
@@ -76,29 +77,32 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Exceptions.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Exceptions.resx</DependentUpon>
+    </Compile>
     <Compile Include="Quaternion.cs" />
     <Compile Include="Ray.cs" />
     <Compile Include="Sphere.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Structures\SpatialTreeNode.cs" />
+    <Compile Include="Vector.cs" />
     <Compile Include="Vector2D.cs" />
     <Compile Include="Vector3D.cs" />
     <Compile Include="Vector4D.cs" />
+    <Compile Include="VectorStorage.cs" />
     <Compile Include="Volume.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <EmbeddedResource Include="Exceptions.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Exceptions.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Math.NET\Numerics\src\Numerics\Numerics.csproj">
-      <Project>{b7cae5f4-a23f-4438-b5be-41226618b695}</Project>
-      <Name>Numerics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Community\Community.csproj">
-      <Project>{351b3b5a-13ab-40db-af74-e428166c75b5}</Project>
-      <Name>Community</Name>
-    </ProjectReference>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -106,6 +110,12 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Community\Community.csproj">
+      <Project>{351b3b5a-13ab-40db-af74-e428166c75b5}</Project>
+      <Name>Community</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,7 +1,4 @@
-﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   using Linq;
 
@@ -64,7 +61,7 @@ namespace System.Spatial
 
       for (var index = 0; index < result.Length; index++)
       {
-        result[index] = Vector.Build.Dense(dimensions);
+        result[index] = new Vector(dimensions);
 
         for (var dimension = 0; dimension < dimensions; dimension++)
         {
@@ -133,7 +130,7 @@ namespace System.Spatial
         throw new ArgumentNullException(nameof(center));
       }
 
-      return FromCenter(center, Vector.Build.Dense(center.Count, size));
+      return FromCenter(center, new Vector(center.Count, size));
     }
 
     /// <summary>

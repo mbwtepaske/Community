@@ -1,6 +1,4 @@
 ﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
 namespace System.Spatial
 {
   using Collections.Generic;
