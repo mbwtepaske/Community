@@ -1,6 +1,4 @@
-﻿using Community;
-
-namespace System.IO
+﻿namespace System.IO
 {
   using Diagnostics;
 

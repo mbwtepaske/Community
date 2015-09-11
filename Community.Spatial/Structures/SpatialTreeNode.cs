@@ -24,6 +24,8 @@ namespace System.Spatial
       }
     }
 
+    public Vector Center => Interpolation.Linear(Minimum, Maximum, 0.5D);
+
     public Int32 Level
     {
       get
@@ -46,7 +48,7 @@ namespace System.Spatial
       private set;
     }
 
-    public IReadOnlyCollection<SpatialTreeNode<TValue>> Nodes
+    public ICollection<SpatialTreeNode<TValue>> Nodes
     {
       get;
       private set;
@@ -115,7 +117,11 @@ namespace System.Spatial
       Tree = tree;
     }
 
-    public void Clear()
+    /// <summary>
+    /// Clears the node from its sub-nodes. 
+    /// </summary>
+    /// <returns></returns>
+    public SpatialTreeNode<TValue> Clear()
     {
       foreach (var node in Enumerate().Reverse())
       {
@@ -124,6 +130,8 @@ namespace System.Spatial
           NodeList.Clear();
         }
       }
+
+      return this;
     }
 
     public IEnumerable<SpatialTreeNode<TValue>> Enumerate()

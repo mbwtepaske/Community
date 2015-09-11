@@ -1,6 +1,4 @@
-﻿using Community;
-
-namespace System
+﻿namespace System
 {
   using Diagnostics;
 
@@ -15,7 +13,6 @@ namespace System
     public Action Action
     {
       get;
-      private set;
     }
 
     /// <summary>
@@ -40,10 +37,7 @@ namespace System
 
       try
       {
-        if (Action != null)
-        {
-          Action.Invoke();
-        }
+        Action?.Invoke();
       }
       finally
       {

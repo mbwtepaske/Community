@@ -132,4 +132,10 @@
   <data name="OBJECT_ALREADY_DISPOSED" xml:space="preserve">
     <value>object is already disposed</value>
   </data>
+  <data name="OBJECT_POOL_EMPTY" xml:space="preserve">
+    <value>The object pool is empty</value>
+  </data>
+  <data name="OBJECT_POOL_FULL" xml:space="preserve">
+    <value>The object pool is full</value>
+  </data>
 </root>
