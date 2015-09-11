@@ -63,45 +63,72 @@ namespace System {
         /// <summary>
         ///   Looks up a localized string similar to {0} is greater than {1}.
         /// </summary>
-        internal static string ARGUMENT_GREATER {
+        internal static string ArgumentOutOfRangeGreater {
             get {
-                return ResourceManager.GetString("ARGUMENT_GREATER", resourceCulture);
+                return ResourceManager.GetString("ArgumentOutOfRangeGreater", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} is greater or equal than {1}.
         /// </summary>
-        internal static string ARGUMENT_GREATER_OR_EQUAL {
+        internal static string ArgumentOutOfRangeGreaterOrEqual {
             get {
-                return ResourceManager.GetString("ARGUMENT_GREATER_OR_EQUAL", resourceCulture);
+                return ResourceManager.GetString("ArgumentOutOfRangeGreaterOrEqual", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} is less than {1}.
         /// </summary>
-        internal static string ARGUMENT_LESS {
+        internal static string ArgumentOutOfRangeLess {
             get {
-                return ResourceManager.GetString("ARGUMENT_LESS", resourceCulture);
+                return ResourceManager.GetString("ArgumentOutOfRangeLess", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to {0} is less or equal than {1}.
         /// </summary>
-        internal static string ARGUMENT_LESS_OR_EQUAL {
+        internal static string ArgumentOutOfRangeLessOrEqual {
             get {
-                return ResourceManager.GetString("ARGUMENT_LESS_OR_EQUAL", resourceCulture);
+                return ResourceManager.GetString("ArgumentOutOfRangeLessOrEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is too large..
+        /// </summary>
+        internal static string ArgumentOutOfRangeTooLarge {
+            get {
+                return ResourceManager.GetString("ArgumentOutOfRangeTooLarge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is too small..
+        /// </summary>
+        internal static string ArgumentOutOfRangeTooSmall {
+            get {
+                return ResourceManager.GetString("ArgumentOutOfRangeTooSmall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type mismatch..
+        /// </summary>
+        internal static string ArgumentTypeMismatch {
+            get {
+                return ResourceManager.GetString("ArgumentTypeMismatch", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to object is already disposed.
         /// </summary>
-        internal static string OBJECT_ALREADY_DISPOSED {
+        internal static string ObjectAlreadyDisposed {
             get {
-                return ResourceManager.GetString("OBJECT_ALREADY_DISPOSED", resourceCulture);
+                return ResourceManager.GetString("ObjectAlreadyDisposed", resourceCulture);
             }
         }
         

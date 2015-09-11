@@ -14,30 +14,20 @@
       private set;
     }
 
-    public SpatialTree(Int32 dimensions, Vector minimum, Vector maximum)
+    public SpatialTree(Box box)
     {
-      if (dimensions < 1)
+      if (box == null)
       {
-        throw new ArgumentException("dimensions must be greater than zero");
+        throw new ArgumentNullException(nameof(box));
       }
 
-      if (minimum == null)
-      {
-        throw new ArgumentNullException("minimum");
-      }
-
-      if (maximum == null)
-      {
-        throw new ArgumentNullException("maximum");
-      }
-
-      Dimensions = dimensions;
-      Root = CreateNodeInternal(null, minimum, maximum);
+      Dimensions = box.Center.Count;
+      Root = CreateNodeInternal(null, box);
     }
 
-    internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
+    internal SpatialTreeNode<TValue> CreateNodeInternal(SpatialTreeNode<TValue> parent, Box box)
     {
-      var node = CreateNode(parent, minimum, maximum);
+      var node = CreateNode(parent, box);
 
       if (parent != null)
       {
@@ -47,9 +37,9 @@
       return node;
     }
 
-    protected virtual SpatialTreeNode<TValue> CreateNode(SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
+    protected virtual SpatialTreeNode<TValue> CreateNode(SpatialTreeNode<TValue> parent, Box box)
     {
-      return new SpatialTreeNode<TValue>(this, parent, minimum, maximum);
+      return new SpatialTreeNode<TValue>(this, parent, box);
     }
   }
 }

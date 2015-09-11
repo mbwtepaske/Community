@@ -15,8 +15,10 @@
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
     public static String AttributeValue(this XElement element, String attributeName, String defaultValue = null)
     {
-      Assert.ThrowIfNull<NullReferenceException>(element, "element");
-      Assert.ThrowIfNull(attributeName, "attributeName");
+      if (attributeName == null)
+      {
+        throw new ArgumentNullException("attributeName");
+      }
 
       return AttributeValue<String>(element, attributeName, defaultValue);
     }
@@ -29,8 +31,10 @@
     /// <param name="attributeName">The name of the attribute.</param>
     public static TValue AttributeValue<TValue>(this XElement element, String attributeName)
     {
-      Assert.ThrowIfNull<NullReferenceException>(element, "element");
-      Assert.ThrowIfNull(attributeName, "attributeName");
+      if (attributeName == null)
+      {
+        throw new ArgumentNullException("attributeName");
+      }
 
       return AttributeValue(element, attributeName, default(TValue));
     }
@@ -44,8 +48,10 @@
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
     public static TValue AttributeValue<TValue>(this XElement element, String attributeName, TValue defaultValue)
     {
-      Assert.ThrowIfNull<NullReferenceException>(element, "element");
-      Assert.ThrowIfNull(attributeName, "attributeName");
+      if (attributeName == null)
+      {
+        throw new ArgumentNullException("attributeName");
+      }
 
       var attribute = element.Attribute(attributeName);
 
@@ -62,8 +68,10 @@
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
     public static String ElementValue(this XElement element, String elementName, String defaultValue = null)
     {
-      Assert.ThrowIfNull<NullReferenceException>(element, "element");
-      Assert.ThrowIfNull(elementName, "elementName");
+      if (elementName == null)
+      {
+        throw new ArgumentNullException("elementName");
+      }
 
       return ElementValue<String>(element, elementName, defaultValue);
     }
@@ -76,8 +84,10 @@
     /// <param name="elementPath"></param>
     public static TValue ElementValue<TValue>(this XElement element, String elementPath)
     {
-      Assert.ThrowIfNull<NullReferenceException>(element, "element");
-      Assert.ThrowIfNull(elementPath, "elementPath");
+      if (elementPath == null)
+      {
+        throw new ArgumentNullException("elementPath");
+      }
 
       return ElementValue(element, elementPath, default(TValue));
     }
@@ -91,8 +101,10 @@
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
     public static TValue ElementValue<TValue>(this XElement element, String elementPath, TValue defaultValue)
     {
-      Assert.ThrowIfNull<NullReferenceException>(element, "element");
-      Assert.ThrowIfNull(elementPath, "elementPath");
+      if (elementPath == null)
+      {
+        throw new ArgumentNullException("elementPath");
+      }
 
       var childNames = elementPath.Split("/");
       var childElement = element;

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Community.Spatial</id>
+        <version>0.1.0</version>
+        <title>Community Spatial Library</title>
+        <authors>M.B.W. te Paske</authors>
+        <owners>M.B.W. te Paske</owners>
+        <projectUrl>https://github.com/mbwtepaske/Community</projectUrl>
+        <iconUrl>http://files.softicons.com/download/social-media-icons/free-social-media-icons-by-aha-soft/png/32x32/Community.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Community Spatial library for commonly used functionality.</description>
+        <language>en-US</language>
+        <dependencies>
+            <dependency id="Community" version="1.0.2.6877" />
+        </dependencies>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System" targetFramework="" />
+            <frameworkAssembly assemblyName="System.Core" targetFramework="" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="bin\Release\Community.Spatial.dll" target="lib\net45\Community.Spatial.dll" />
+        <file src="bin\Release\Community.Spatial.pdb" target="lib\net45\Community.Spatial.pdb" />
+    </files>
+</package>

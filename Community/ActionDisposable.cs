@@ -1,11 +1,12 @@
 ﻿namespace System
 {
   using Diagnostics;
+  using Diagnostics.CodeAnalysis;
 
   /// <summary>
   /// Represents an class that invokes the an action when the instance is disposed.
   /// </summary>
-  public class ActionDisposable : IDisposable
+  public sealed class ActionDisposable : IDisposable
   {
     /// <summary>
     /// Gets the action which is invoked when this instance is disposed.
@@ -28,11 +29,12 @@
     /// Disposes the object.
     /// </summary>
     [DebuggerNonUserCode]
+    [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
     public void Dispose()
     {
       if (IsDisposed)
       {
-        throw new InvalidOperationException(Exceptions.OBJECT_ALREADY_DISPOSED);
+        throw new InvalidOperationException(Exceptions.ObjectAlreadyDisposed);
       }
 
       try
@@ -46,7 +48,7 @@
     }
 
     /// <summary>
-    /// Initializes an instance of <see cref="System.ActionDisposable"/>.
+    /// Initializes an instance of <see cref="T:System.ActionDisposable"/>.
     /// </summary>
     /// <param name="action">
     /// An action which is invoked when this instance is disposed, this can be null.
@@ -56,5 +58,10 @@
     {
       Action = action;
     }
+  }
+
+  public static class IDisposableExtensions
+  {
+    public static Action AsAction(this IDisposable disposable) => disposable.Dispose;
   }
 }

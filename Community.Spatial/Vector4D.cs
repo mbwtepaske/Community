@@ -1,86 +1,34 @@
-﻿namespace System.Spatial
+﻿using System.Linq;
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+
+namespace System.Spatial
 {
-  using Linq;
-
-  public sealed class Vector4D : Vector
+  /// <summary>
+  /// Operations and constants for <see cref="T:Vector"/>s that only contain 4 dimensions.
+  /// </summary>
+  public static class Vector4D
   {
-    private const Int32 Count = 4;
+    public const Int32 Size = 4;
 
-    public static readonly Vector4D UnitX = new Vector4D(1D, 0D, 0D, 0D);
-    public static readonly Vector4D UnitY = new Vector4D(0D, 1D, 0D, 0D);
-    public static readonly Vector4D UnitZ = new Vector4D(0D, 0D, 1D, 0D);
-    public static readonly Vector4D UnitW = new Vector4D(0D, 0D, 0D, 1D);
+    public static readonly Vector UnitX = Create(1D, 0D, 0D, 0D);
+    public static readonly Vector UnitY = Create(0D, 1D, 0D, 0D);
+    public static readonly Vector UnitZ = Create(0D, 0D, 1D, 0D);
+    public static readonly Vector UnitW = Create(0D, 0D, 0D, 1D);
+    public static readonly Vector Zero = Create();
 
-    public Double X
+    public static Vector Create(Double defaultValue = 0D)
     {
-      get
-      {
-        return this[0];
-      }
-      set
-      {
-        this[0] = value;
-      }
+      return new Vector(Size, defaultValue);
     }
 
-    public Double Y
+    public static Vector Create(Double x, Double y, Double z, Double w)
     {
-      get
-      {
-        return this[1];
-      }
-      set
-      {
-        this[1] = value;
-      }
+      return new Vector(new [] { x, y, z, w });
     }
 
-    public Double Z
+    public static Vector Create(Vector vector, params Double[] missingValues)
     {
-      get
-      {
-        return this[2];
-      }
-      set
-      {
-        this[2] = value;
-      }
-    }
-
-    public Double W
-    {
-      get
-      {
-        return this[3];
-      }
-      set
-      {
-        this[3] = value;
-      }
-    }
-
-    public Vector4D()
-      : base(Count)
-    {
-    }
-
-    public Vector4D(Double x, Double y, Double z, Double w)
-      : base(x, y, z, w)
-    {
-    }
-
-    public Vector4D(IVector vector)
-      : base(vector.Take(Count).ToArray())
-    {
-      if (vector == null)
-      {
-        throw new ArgumentNullException("vector");
-      }
-
-      if (vector.Size != Count)
-      {
-        throw new ArgumentException("vector size must be " + Count);
-      }
+      return Vector.Build.Dense(vector.Concat(missingValues).Concat(Zero).Take(Size).ToArray());
     }
   }
 }

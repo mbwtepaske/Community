@@ -9,8 +9,6 @@ namespace System.Threading.Tasks
     /// </summary>
     public static Task Then(this Task instance, params Action[] actions)
     {
-      Assert.ThrowIfNull<NullReferenceException>(instance, "instance");
-
       return instance.ContinueWith(task =>
       {
         if (task.IsCompleted)
@@ -25,14 +23,35 @@ namespace System.Threading.Tasks
     /// </summary>
     public static Task Then(this Task instance, Action action)
     {
-      Assert.ThrowIfNull<NullReferenceException>(instance, "instance");
-      Assert.ThrowIfNull<ArgumentNullException>(action, "action");
+      if (action == null)
+      {
+        throw new ArgumentNullException(nameof(action));
+      }
 
       return instance.ContinueWith(task =>
       {
         if (task.IsCompleted)
         {
           action.Invoke();
+        }
+      });
+    }
+
+    /// <summary>
+    /// Continues the completed task with another.
+    /// </summary>
+    public static Task Then<TResult>(this Task<TResult> instance, Action<TResult> action)
+    {
+      if (action == null)
+      {
+        throw new ArgumentNullException(nameof(action));
+      }
+
+      return instance.ContinueWith(delegate (Task<TResult> task)
+      {
+        if (task.IsCompleted)
+        {
+          action.Invoke(task.Result);
         }
       });
     }

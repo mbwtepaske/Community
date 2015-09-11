@@ -1,123 +1,134 @@
-﻿namespace System.Spatial
+﻿using System.Collections.ObjectModel;
+using System.Text;
+
+namespace System.Spatial
 {
   using Collections;
   using Collections.Generic;
-  using Globalization;
+  using Diagnostics;
   using Linq;
 
-  public partial class Matrix : IMatrix<Matrix>
+  public delegate Double MatrixValueFactory(Int32 columnIndex, Int32 rowIndex);
+
+  [DebuggerDisplay("{ToString(\"F5\", null)}")]
+  public class Matrix : ICloneable, IEnumerable<Double>, IEquatable<Matrix>, IFormattable
   {
+    public readonly MatrixStorage Storage;
+
     public Int32 ColumnCount
     {
-      get;
-      private set;
+      get
+      {
+        return Storage.ColumnCount;
+      }
     }
 
     public Int32 RowCount
     {
-      get;
-      private set;
+      get
+      {
+        return Storage.RowCount;
+      }
     }
 
-    protected Double[] Storage
-    {
-      get;
-      private set;
-    }
-
-    public Double this[Int32 index]
+    public Boolean IsSquare
     {
       get
       {
-        return Storage[index];
-      }
-      set
-      {
-        Storage[index] = value;
+        return Storage.ColumnCount == Storage.RowCount;
       }
     }
-   
+
     public Double this[Int32 columnIndex, Int32 rowIndex]
     {
       get
       {
-        return this[columnIndex + ColumnCount * rowIndex];
+        return Storage[columnIndex, rowIndex];
       }
       set
       {
-        this[columnIndex + ColumnCount * rowIndex] = value;
+        Storage[columnIndex, rowIndex] = value;
       }
     }
 
-    /// <summary>
-    /// Initializes a new <see cref="T:Matrix"/>, specifying the column- and row count.
-    /// </summary>
-    public Matrix(Int32 columnCount, Int32 rowCount, params Double[] values)
-    {
-      Verify(columnCount, rowCount);
+    #region Initialization
 
-      ColumnCount = columnCount;
-      RowCount = rowCount;
-      Storage = new Double[columnCount * rowCount];
-
-      Array.ConstrainedCopy(values, 0, Storage, 0, Math.Min(values.Length, Storage.Length));
-    }
-
-    /// <summary>
-    /// Initializes a new <see cref="T:Matrix"/>, using a 2D-array.
-    /// </summary>
-    public Matrix(Double[,] values) : this(values.GetLength(1), values.GetLength(0), values.Cast<Double>().ToArray())
+    public Matrix(Int32 order, Double defaultValue = 0D)
+      : this(new MatrixStorage(order, order, Enumerable.Repeat(defaultValue, order * order).ToArray()))
     {
     }
 
-    /// <summary>
-    /// Returns the values in the specific column of the matrix.
-    /// </summary>
-    public IEnumerable<Double> GetColumn(Int32 columnIndex)
+    public Matrix(Int32 order, Func<Int32, Double> valueFactory, Boolean isReadOnly = false)
+      : this(new MatrixStorage(order, order, Enumerable.Range(0, order * order).Select(valueFactory).ToArray(), isReadOnly))
     {
-      for (var rowIndex = 0; rowIndex < RowCount; rowIndex++)
+    }
+
+    public Matrix(Int32 order, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+      : this(CreateMatrixStorage(order, order, valueFactory, isReadOnly))
+    {
+    }
+
+    public Matrix(Int32 columnCount, Int32 rowCount, Double defaultValue = 0D)
+      : this(new MatrixStorage(columnCount, rowCount, Enumerable.Repeat(defaultValue, columnCount * rowCount).ToArray()))
+    {
+    }
+
+    public Matrix(Int32 columnCount, Int32 rowCount, Func<Int32, Double> valueFactory, Boolean isReadOnly = false)
+      : this(new MatrixStorage(columnCount, rowCount, Enumerable.Range(0, columnCount * rowCount).Select(valueFactory).ToArray(), isReadOnly))
+    {
+    }
+
+    public Matrix(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+      : this(CreateMatrixStorage(columnCount, rowCount, valueFactory, isReadOnly))
+    {
+    }
+
+    public Matrix(Matrix matrix)
+      : this(matrix.Storage.Clone())
+    {
+    }
+
+    public Matrix(MatrixStorage storage)
+    {
+      Storage = storage;
+    }
+
+    private static MatrixStorage CreateMatrixStorage(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+    {
+      var data = new Double[columnCount * rowCount];
+
+      for (var rowIndex = 0; rowIndex < rowCount; rowIndex++)
       {
-        yield return this[columnIndex, rowIndex];
+        for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
+        {
+          data[rowIndex * rowCount + columnIndex] = valueFactory(columnIndex, rowIndex);
+        }
       }
+
+      return new MatrixStorage(columnCount, rowCount, data, isReadOnly);
     }
 
-    /// <summary>
-    /// Returns the values in the specific row of the matrix.
-    /// </summary>
-    public IEnumerable<Double> GetRow(Int32 rowIndex)
+    #endregion
+
+    #region Cloning
+
+    Object ICloneable.Clone()
     {
-      for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
-      {
-        yield return this[columnIndex, rowIndex];
-      }
+      return Clone();
     }
 
-    public Boolean IsSquare()
+    public Matrix Clone()
     {
-      return ColumnCount == RowCount;
+      return new Matrix(Storage.Clone());
     }
 
-    protected void Verify(Int32 columnCount, Int32 rowCount)
-    {
-      if (columnCount < 1)
-      {
-        throw new ArgumentException("columnCount");
-      }
+    #endregion
 
-      if (rowCount < 1)
-      {
-        throw new ArgumentException("rowCount");
-      }
-    }
-
-    #region Enumeration
+    #region Enumerable
 
     public IEnumerator<Double> GetEnumerator()
     {
-      foreach (var value in Storage)
-      {
-        yield return value;
-      }
+      return Storage.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -125,50 +136,245 @@
       return GetEnumerator();
     }
 
+    public IEnumerable<Vector> EnumerateColumns()
+    {
+      for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
+      {
+        yield return GetColumn(columnIndex);
+      }
+    }
+
+    public IEnumerable<Vector> EnumerateRows()
+    {
+      for (var rowIndex = 0; rowIndex < RowCount; rowIndex++)
+      {
+        yield return GetRow(rowIndex);
+      }
+    }
+
     #endregion
 
-    #region Equatability
+    #region Equation
+
+    public override Boolean Equals(Object other)
+    {
+      return Equals(other as Matrix);
+    }
 
     public Boolean Equals(Matrix other)
     {
-      return Equals(other, 0D);
+      return Equals(other, EqualityComparer<Double>.Default);
     }
 
-    public Boolean Equals(Matrix other, Double tolerance)
+    public Boolean Equals(Matrix other, IEqualityComparer<Double> comparer)
     {
-      if (ColumnCount == other.ColumnCount || RowCount == other.RowCount)
+      if (comparer == null)
       {
-        return Storage.Zip(other.Storage, (left, right) => Math.Abs(left - right)).All(value => value <= tolerance);
+        throw new ArgumentNullException("comparer");
       }
-      
-      return false;
+
+      if (other == null || ColumnCount != other.ColumnCount || RowCount != other.RowCount)
+      {
+        return false;
+      }
+
+      if (!ReferenceEquals(this, other))
+      {
+        for (int index = 0, count = ColumnCount * RowCount; index < count; index++)
+        {
+          if (!comparer.Equals(Storage[index], other.Storage[index]))
+          {
+            return false;
+          }
+        }
+      }
+
+      return true;
     }
 
     public override Int32 GetHashCode()
     {
-      return Storage.Select(value => value.GetHashCode()).Aggregate((aggregation, current) => aggregation ^ current);
+      return Storage.Data.Select(value => value.GetHashCode()).Aggregate((left, right) => left ^ right);
     }
 
     #endregion
 
-    #region Formatability
-    
+    #region Formatting
+
     public override String ToString()
     {
-      return ToString("F6", CultureInfo.CurrentUICulture);
+      return ToString(null, null);
     }
 
     public String ToString(String format)
     {
-      return ToString(format, CultureInfo.CurrentUICulture);
+      return ToString(format, null);
     }
 
     public String ToString(String format, IFormatProvider formatProvider)
     {
-      return String.Join(", ", Storage.Select((value, index) => String.Format("M{0}{1}: {2}"
-        , (index / ColumnCount) + 1
-        , (index % ColumnCount) + 1
-        , value.ToString(format, formatProvider))));
+      return String.Join(" ", EnumerateRows().Select(row => row.ToString(format, formatProvider)));
+    }
+
+    #endregion
+
+    #region Operations
+
+    public virtual Matrix Addition(Matrix right)
+    {
+      Verify(right);
+
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] + right.Storage[index]);
+    }
+
+    public virtual Matrix Addition(Double right)
+    {
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] + right);
+    }
+
+    /// <summary>
+    /// Returns the column as a vector.
+    /// </summary>
+    public Vector GetColumn(Int32 columnIndex)
+    {
+      if (columnIndex < 0 || columnIndex >= ColumnCount)
+      {
+        throw new ArgumentOutOfRangeException("columnIndex");
+      }
+
+      return new Vector(RowCount, rowIndex => Storage[columnIndex, rowIndex]);
+    }
+
+    /// <summary>
+    /// Returns the row as a vector.
+    /// </summary>
+    public Vector GetRow(Int32 rowIndex)
+    {
+      if (rowIndex < 0 || rowIndex >= RowCount)
+      {
+        throw new ArgumentOutOfRangeException("rowIndex");
+      }
+
+      return new Vector(ColumnCount, columnIndex => Storage[columnIndex, rowIndex]);
+    }
+
+    public virtual Matrix Inverse()
+    {
+      if (ColumnCount != RowCount)
+      {
+        throw new ArgumentException(Exceptions.ArgumentMatrixSquare);
+      }
+
+      throw new NotImplementedException();
+    }
+
+    public virtual Matrix Multiply(Matrix right)
+    {
+      if (right == null)
+      {
+        throw new ArgumentNullException("right");
+      }
+
+      if (ColumnCount != right.RowCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.RowCount", ColumnCount);
+      }
+
+      if (RowCount != right.ColumnCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.ColumnCount", RowCount);
+      }
+
+      var result = new MatrixStorage(right.ColumnCount, RowCount);
+
+      for (var columnIndex = 0; columnIndex < right.ColumnCount; columnIndex++)
+      {
+        for (var rowIndex = 0; rowIndex < RowCount; rowIndex++)
+        {
+          result[columnIndex, rowIndex] = GetRow(rowIndex).DotProduct(right.GetColumn(columnIndex));
+        }
+      }
+
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] + right.Storage[index]);
+    }
+
+    public virtual Matrix Multiply(Double right)
+    {
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] * right);
+    }
+
+    public virtual Matrix Subtract(Matrix right)
+    {
+      Verify(right);
+
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] - right.Storage[index]);
+    }
+
+    public virtual Matrix Subtract(Double right)
+    {
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] - right);
+    }
+
+    public virtual Matrix Transpose()
+    {
+      return new Matrix(RowCount, ColumnCount, (columnIndex, rowIndex) => Storage[rowIndex, columnIndex]);
+    }
+
+    protected virtual void Verify(Matrix right)
+    {
+      if (right == null)
+      {
+        throw new ArgumentNullException("right");
+      }
+
+      if (ColumnCount != right.ColumnCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.ColumnCount", ColumnCount);
+      }
+
+      if (RowCount != right.RowCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.RowCount", RowCount);
+      }
+    }
+
+    #endregion
+
+    #region Operators
+
+    public static Matrix operator +(Matrix matrix)
+    {
+      return matrix.Clone();
+    }
+
+    public static Matrix operator +(Matrix left, Matrix right)
+    {
+      return left.Addition(right);
+    }
+
+    public static Matrix operator -(Matrix matrix)
+    {
+      return matrix.Multiply(-1D);
+    }
+
+    public static Matrix operator -(Matrix left, Matrix right)
+    {
+      return left.Subtract(right);
+    }
+
+    public static Matrix operator *(Matrix left, Double right)
+    {
+      return left.Multiply(right);
+    }
+
+    public static Matrix operator *(Double left, Matrix right)
+    {
+      return right.Multiply(left);
+    }
+
+    public static Matrix operator *(Matrix left, Matrix right)
+    {
+      return left.Multiply(right);
     }
 
     #endregion

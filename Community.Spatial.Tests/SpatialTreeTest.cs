@@ -21,7 +21,7 @@ namespace System.Spatial.Tests
     {
       for (var dimension = 1; dimension <= 4; dimension++)
       {
-        var spatialTree = new SpatialTree<Object>(dimension, new Vector(dimension, -1D), new Vector(dimension, 1D));
+        var spatialTree = new SpatialTree<Object>(new Box(new Vector(dimension, -1D), new Vector(dimension, 1D)));
 
         spatialTree.Root.Split(node => node.Level < TestLevelCount, TestDivisions);
 
@@ -41,7 +41,7 @@ namespace System.Spatial.Tests
     {
       for (var dimension = 1; dimension <= 4; dimension++)
       {
-        var spatialTree = new SpatialTree<Object>(dimension, new Vector(dimension, 1D), new Vector(dimension, 2D));
+        var spatialTree = new SpatialTree<Object>(new Box(new Vector(dimension, -1D), new Vector(dimension, 1D)));
 
         spatialTree.Root.Split(0.25D, 0.80D);
 

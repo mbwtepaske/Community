@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Runtime.CompilerServices;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   using Collections.Generic;
   using Collections.ObjectModel;
@@ -9,18 +6,22 @@ namespace System.Spatial
 
   public class SpatialTreeNode<TValue>
   {
-    public Int32[] Address
+    /// <summary>
+    /// Gets the indices where the 
+    /// </summary>
+    public Int32[] Indices
     {
       get
       {
-        var address = new List<Int32>(Level);
-
+        var indices = new Int32[Level];
+        var currentIndex = indices.Length - 1;
+        
         for (var current = this; current.Parent != null; current = current.Parent)
         {
-          address.Insert(0, current.Parent.Nodes.Indices(current).Single());
+          indices[currentIndex--] = current.Parent.Nodes.Indices(current).Single();
         }
 
-        return address.ToArray();
+        return indices.ToArray();
       }
     }
 
@@ -36,18 +37,9 @@ namespace System.Spatial
       }
     }
 
-    public Vector Maximum
-    {
-      get;
-      private set;
-    }
-
-    public Vector Minimum
-    {
-      get;
-      private set;
-    }
-
+    /// <summary>
+    /// Gets a read-only collection containing the child <see cref="T:SpatialTreeNode"/>s of this instance.
+    /// </summary>
     public ICollection<SpatialTreeNode<TValue>> Nodes
     {
       get;
@@ -77,40 +69,25 @@ namespace System.Spatial
       get;
       set;
     }
-    
-    protected SpatialTreeNode(SpatialTree<TValue> tree, Vector minimum, Vector maximum) : this(tree, null, minimum, maximum)
+
+    protected SpatialTreeNode(SpatialTree<TValue> tree, Box box)
+      : this(tree, null, box)
     {
     }
 
-    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Vector minimum, Vector maximum)
+    public SpatialTreeNode(SpatialTree<TValue> tree, SpatialTreeNode<TValue> parent, Box box)
     {
       if (tree == null)
       {
-        throw new ArgumentNullException("tree");
+        throw new ArgumentNullException(nameof(tree));
       }
 
-      if (minimum == null)
+      if (box == null)
       {
-        throw new ArgumentNullException("minimum");
+        throw new ArgumentNullException(nameof(box));
       }
-
-      if (minimum.Size != tree.Dimensions)
-      {
-        throw new ArgumentException("minimum size must be equal to the dimensions of the spatial tree");
-      }
-
-      if (maximum == null)
-      {
-        throw new ArgumentNullException("maximum");
-      }
-
-      if (maximum.Size != tree.Dimensions)
-      {
-        throw new ArgumentException("maximum size must be equal to the dimensions of the spatial tree");
-      }
-
-      Maximum = maximum;
-      Minimum = minimum;
+      
+      Box = box;
       NodeList = new Collection<SpatialTreeNode<TValue>>();
       Nodes = new ReadOnlyCollection<SpatialTreeNode<TValue>>(NodeList);
       Parent = parent;
@@ -123,34 +100,45 @@ namespace System.Spatial
     /// <returns></returns>
     public SpatialTreeNode<TValue> Clear()
     {
-      foreach (var node in Enumerate().Reverse())
+      var current = this;
+
+      while (current != null)
       {
-        if (node.NodeList.Any())
-        {
-          NodeList.Clear();
-        }
+        yield return current = current.Parent;
       }
 
       return this;
     }
 
-    public IEnumerable<SpatialTreeNode<TValue>> Enumerate()
-    {
-      return Enumerate(node => true);
-    }
-
-    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate)
+    public IEnumerable<TValue> Enumerate(Func<TValue, Boolean> continuationPredicate, Boolean includeSelf = true)
     {
       if (continuationPredicate == null)
       {
-        throw new ArgumentNullException("continuationPredicate");
+        throw new ArgumentNullException(nameof(continuationPredicate));
+      }
+
+      return Enumerate(node => continuationPredicate(node.Value), includeSelf).Select(node => node.Value);
+    }
+
+    public IEnumerable<SpatialTreeNode<TValue>> Enumerate(Func<SpatialTreeNode<TValue>, Boolean> continuationPredicate, Boolean includeSelf = true)
+    {
+      if (continuationPredicate == null)
+      {
+        throw new ArgumentNullException(nameof(continuationPredicate));
       }
 
       var queue = new Queue<SpatialTreeNode<TValue>>();
 
-      if (continuationPredicate(this))
+      if (includeSelf)
       {
-        queue.Enqueue(this);
+        if (continuationPredicate(this))
+        {
+          queue.Enqueue(this);
+        }
+      }
+      else if (NodeList != null)
+      {
+        NodeList.Where(continuationPredicate).Invoke(queue.Enqueue);
       }
 
       while (queue.Count > 0)
@@ -161,6 +149,19 @@ namespace System.Spatial
 
         current.NodeList.Where(continuationPredicate).Invoke(queue.Enqueue);
       }
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
+    public virtual IEnumerable<SpatialTreeNode<TValue>> Split(params Int32[] divisionsPerDimensions)
+    {
+      if (divisionsPerDimensions.Length != Tree.Dimensions)
+      {
+        throw new ArgumentOutOfRangeException(nameof(divisionsPerDimensions));
+      }
+
+      return Split(divisionsPerDimensions.Select(division => Enumerable.Range(1, division).Select(index => index / Convert.ToDouble(division)).Take(division - 1).ToArray()).ToArray());
     }
 
     /// <summary>
@@ -221,25 +222,22 @@ namespace System.Spatial
           }
         }
 
-        var minimum = new Vector(Tree.Dimensions);
-        var maximum = new Vector(Tree.Dimensions);
-
-        for (var dimensionIndex = 0; dimensionIndex < Tree.Dimensions; dimensionIndex++)
-        {
-          minimum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 0];
-          maximum[dimensionIndex] = values[dimensionIndex][offsets[dimensionIndex] + 1];
-        }
-
-        var node = Tree.CreateNodeInternal(this
-          , Interpolation.Linear(Minimum, Maximum, minimum)
-          , Interpolation.Linear(Minimum, Maximum, maximum));
-
-        //NodeList.Add(node);
+        var minimum = new Vector(Tree.Dimensions, dimensionIndex => values[dimensionIndex][offsets[dimensionIndex] + 0]);
+        var maximum = new Vector(Tree.Dimensions, dimensionIndex => values[dimensionIndex][offsets[dimensionIndex] + 1]);
+        var domain = new Box(Interpolation.Linear(Box.Minimum, Box.Maximum, minimum), Interpolation.Linear(Box.Minimum, Box.Maximum, maximum));
         
-        result.Add(node);
+        result.Add(Tree.CreateNodeInternal(this, domain));
       }
 
       return result.ToArray();
+    }
+
+    /// <summary>
+    /// Splits the node into the specified divisions.
+    /// </summary>
+    public virtual SpatialTreeNode<TValue>[] Split(params Vector[] divisionsPerDimension)
+    {
+      return Split(Enumerable.Range(0, Tree.Dimensions).Select(index => index < divisionsPerDimension.Length ? divisionsPerDimension[index].ToArray() : new Double[0]).ToArray());
     }
 
     /// <summary>
@@ -265,12 +263,12 @@ namespace System.Spatial
     {
       if (continuationPredicate == null)
       {
-        throw new ArgumentNullException("continuationPredicate");
+        throw new ArgumentNullException(nameof(continuationPredicate));
       }
 
       if (divisionsPerDimensionsProvider == null)
       {
-        throw new ArgumentNullException("divisionsPerDimensionsProvider");
+        throw new ArgumentNullException(nameof(divisionsPerDimensionsProvider));
       }
 
       var queue = new Queue<SpatialTreeNode<TValue>>();
@@ -302,18 +300,21 @@ namespace System.Spatial
 
     public virtual IEnumerable<SpatialTreeNode<TValue>> Traverse(Vector position)
     {
-      return Enumerate(current 
-        => current.Minimum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value <= 0)
-        && current.Maximum.Zip(position, (left, right) => left.CompareTo(right)).All(value => value >= 0));
+      return Enumerate(current => Collision.Contains(current.Box, position));
     }
-
+    
     public override String ToString()
     {
       return String.Format("L{0}, [{1} - {2}], [{3}]"
         , Level
-        , Minimum
-        , Maximum
-        , String.Join("-", Address));
+        , Box.Minimum
+        , Box.Maximum
+        , String.Join("-", Indices));
+    }
+
+    public static  implicit operator TValue(SpatialTreeNode<TValue> treeNode)
+    {
+      return treeNode.Value;
     }
   }
 }

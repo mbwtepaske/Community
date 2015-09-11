@@ -13,8 +13,6 @@
     [DebuggerNonUserCode]
     public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
     {
-      Assert.ThrowIfNull<NullReferenceException>(dictionary, "dictionary");
-       
       return dictionary.GetValueOrDefault(key, default(TValue));
     }
 
@@ -24,8 +22,6 @@
     [DebuggerNonUserCode]
     public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
     {
-      Assert.ThrowIfNull<NullReferenceException>(dictionary, "dictionary");
-
       TValue value;
 
       return dictionary.TryGetValue(key, out value) ? value : defaultValue;
@@ -37,8 +33,10 @@
     [DebuggerNonUserCode]
     public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> defaultValueFactory)
     {
-      Assert.ThrowIfNull<NullReferenceException>(dictionary, "dictionary");
-      Assert.ThrowIfNull<ArgumentNullException>(dictionary, "defaultValueFactory");
+      if (defaultValueFactory == null)
+      {
+        throw new ArgumentNullException("defaultValueFactory");
+      }
 
       TValue value;
 

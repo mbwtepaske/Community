@@ -11,21 +11,16 @@
     /// Reads and returns a specified amount of bytes from the stream.
     /// </summary>
     [DebuggerStepThrough]
-    public static Byte[] Read(this Stream stream, Int32 length)
+    public static Byte[] Read(this Stream stream, Int32 count)
     {
-      if (stream == null)
+      if (count < 0)
       {
-        throw new NullReferenceException("stream");
+        throw new ArgumentOutOfRangeLessException("count", "zero");
       }
+      
+      var buffer = new Byte[count];
 
-      if (length < 0)
-      {
-        throw new ArgumentOutOfRangeException(String.Format(Exceptions.ARGUMENT_LESS, "length", "zero"));
-      }
-
-      var buffer = new Byte[length];
-
-      stream.Read(buffer, 0, length);
+      stream.Read(buffer, 0, count);
 
       return buffer;
     }
@@ -35,11 +30,6 @@
     [DebuggerStepThrough]
     public static Byte[] ReadToEnd(this Stream stream)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       var buffer = new Byte[stream.Length - stream.Position];
 
       stream.Read(buffer, 0, buffer.Length);
@@ -55,11 +45,6 @@
     public static TStream Reset<TStream>(this TStream stream)
       where TStream : Stream
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       stream.SeekBegin();
 
       return stream;
@@ -71,11 +56,6 @@
     [DebuggerStepThrough]
     public static Int64 SeekBegin(this Stream stream)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       return SeekBegin(stream, 0);
     }
 
@@ -85,14 +65,9 @@
     [DebuggerStepThrough]
     public static Int64 SeekBegin(this Stream stream, Int64 offset)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       if (offset < 0)
       {
-        throw new ArgumentOutOfRangeException("offset");
+        throw new ArgumentOutOfRangeException(nameof(offset));
       }
 
       return stream.Seek(offset, SeekOrigin.Begin);
@@ -104,11 +79,6 @@
     [DebuggerStepThrough]
     public static Int64 SeekEnd(this Stream stream)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       return SeekEnd(stream, 0);
     }
 
@@ -118,17 +88,12 @@
     [DebuggerStepThrough]
     public static Int64 SeekEnd(this Stream stream, Int64 offset)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       if (offset > 0)
       {
-        throw new ArgumentOutOfRangeException("offset");
+        throw new ArgumentOutOfRangeException(nameof(offset));
       }
 
-      return stream.Seek(-offset, SeekOrigin.End);
+      return stream.Seek(offset, SeekOrigin.End);
     }
   }
 }

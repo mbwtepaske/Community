@@ -42,7 +42,7 @@
       {
         if (type == null)
         {
-          throw new ArgumentNullException("type");
+          throw new ArgumentNullException(nameof(type));
         }
 
         return Cache.GetOrAdd(type, delegate
@@ -59,12 +59,12 @@
     {
       if (type == null)
       {
-        throw new ArgumentNullException("type");
+        throw new ArgumentNullException(nameof(type));
       }
 
       if (value == null)
       {
-        throw new ArgumentNullException("value");
+        throw new ArgumentNullException(nameof(value));
       }
 
       return Default[type].ConvertFrom(null, culture, value);
@@ -77,7 +77,7 @@
     {
       if (value == null)
       {
-        throw new ArgumentNullException("value");
+        throw new ArgumentNullException(nameof(value));
       }
 
       return (TResult)ConvertFrom(typeof(TResult), value, culture);
@@ -98,7 +98,7 @@
     {
       if (value == null)
       {
-        throw new ArgumentNullException("value");
+        throw new ArgumentNullException(nameof(value));
       }
 
       return (TResult)ConvertFromString(typeof(TResult), value, culture);
@@ -111,7 +111,7 @@
     {
       if (value == null)
       {
-        throw new ArgumentNullException("value");
+        throw new ArgumentNullException(nameof(value));
       }
 
       return Default[value.GetType()].ConvertToString(null, culture, value);
@@ -120,11 +120,11 @@
     /// <summary>
     /// Returns the default instance of the current <see cref="System.AppDomain"/>.
     /// </summary>
-    Object IServiceProvider.GetService(Type serviceType)
+    public Object GetService(Type serviceType)
     {
       if (serviceType == null)
       {
-        throw new ArgumentNullException("serviceType");
+        throw new ArgumentNullException(nameof(serviceType));
       }
 
       return Default[serviceType];
