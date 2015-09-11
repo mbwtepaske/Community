@@ -1,7 +1,4 @@
-﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   using Collections.Generic;
   using Linq;
@@ -24,7 +21,7 @@ namespace System.Spatial
     /// </summary>
     public static Vector Create(Double defaultValue = 0D)
     {
-      return Vector.Build.Dense(Size, defaultValue);
+      return new Vector(Size, defaultValue);
     }
 
     /// <summary>
@@ -32,17 +29,17 @@ namespace System.Spatial
     /// </summary>
     public static Vector Create(Double x, Double y, Double z)
     {
-      return Vector.Build.Dense(new[] {x, y, z});
+      return new Vector(new[] {x, y, z});
     }
 
     /// <summary>
     /// Returns a 3D-vector using the specified values for the first components and the defaultValue for the remainder.
     /// </summary>
-    public static Vector Create(IEnumerable<double> values, Double defaultValue = 0D)
+    public static Vector Create(IEnumerable<Double> values, Double defaultValue = 0D)
     {
       if (values == null)
       {
-        throw new ArgumentNullException("values");
+        throw new ArgumentNullException(nameof(values));
       }
 
       var result = Create(defaultValue);
@@ -66,12 +63,12 @@ namespace System.Spatial
     {
       if (left == null)
       {
-        throw new ArgumentNullException("left");
+        throw new ArgumentNullException(nameof(left));
       }
 
       if (right == null)
       {
-        throw new ArgumentNullException("right");
+        throw new ArgumentNullException(nameof(right));
       }
 
       if (left.Count != right.Count)
@@ -81,7 +78,7 @@ namespace System.Spatial
 
       if (result == null)
       {
-        result = Vector.Build.Dense(left.Count);
+        result = new Vector(left.Count);
       }
       else
       {
@@ -97,7 +94,27 @@ namespace System.Spatial
 
       return result;
     }
-    
+
+    /// <summary>
+    /// Returns the Euclidean distance between the two given points.
+    /// </summary>
+    public static Double Distance(Vector left, Vector right)
+    {
+      return Math.Sqrt(DistanceSquared(left, right));
+    }
+
+    /// <summary>
+    /// Returns the Euclidean distance squared between the two given points. This method is faster than <see cref="T:Vector3D.Distance"/>.
+    /// </summary>
+    public static Double DistanceSquared(Vector left, Vector right)
+    {
+      var x = left[0] - right[0];
+      var y = left[1] - right[1];
+      var z = left[2] - right[2];
+
+      return x * x + y * y + z * z;
+    }
+
     /// <summary>
     /// Transforms a 3D-coordinate with a 4x4-matrix.
     /// </summary>
@@ -105,37 +122,30 @@ namespace System.Spatial
     {
       if (vector == null)
       {
-        throw new ArgumentNullException("vector");
+        throw new ArgumentNullException(nameof(vector));
       }
 
       if (matrix == null)
       {
-        throw new ArgumentNullException("matrix");
+        throw new ArgumentNullException(nameof(matrix));
       }
 
       if (vector.Count != Size)
       {
-        throw new ArgumentOutOfRangeException("vector");
+        throw new ArgumentOutOfRangeException(nameof(vector));
       }
 
       if (matrix.ColumnCount != Matrix4D.Order || matrix.RowCount != Matrix4D.Order)
       {
-        throw new ArgumentOutOfRangeException("matrix");
+        throw new ArgumentOutOfRangeException(nameof(matrix));
       }
 
-      var x = vector[0] * matrix[0, 0] + vector[1] * matrix[1, 0] + vector[2] * matrix[2, 0] + matrix[3, 0];
-      var y = vector[0] * matrix[0, 1] + vector[1] * matrix[1, 1] + vector[2] * matrix[2, 1] + matrix[3, 1];
-      var z = vector[0] * matrix[0, 2] + vector[1] * matrix[1, 2] + vector[2] * matrix[2, 2] + matrix[3, 2];
+      var x = vector[0] * matrix[0, 0] + vector[1] * matrix[0, 1] + vector[2] * matrix[0, 2] + matrix[0, 3];
+      var y = vector[0] * matrix[1, 0] + vector[1] * matrix[1, 1] + vector[2] * matrix[1, 2] + matrix[1, 3];
+      var z = vector[0] * matrix[2, 0] + vector[1] * matrix[2, 1] + vector[2] * matrix[2, 2] + matrix[2, 3];
       var w = x * matrix[0, 3] + y * matrix[1, 3] + z * matrix[2, 3] + matrix[3, 3];
 
       return Create(x / w, y / w, z / w);
-
-      //var values = Enumerable
-      //  .Range(0, matrix.ColumnCount)
-      //  .Select(index => vector.Zip(matrix.Column(index), (left, right) => left * right).Sum() + matrix[index, matrix.ColumnCount - 1])
-      //  .ToArray();
-      //
-      //return Create(values.Take(Size)).Multiply(1D / values.Last()); // (x, y, z) * (w ^ -1)
     }
   }
 }

@@ -3,7 +3,11 @@
   using ComponentModel;
 
   /// <summary>
-  /// Hides the <see cref="T:System.Object" />-methods 'Equals', 'GetHashCode', 'GetType' and 'ToString' from the Visual Studio intellisence.
+  /// Hides the <see cref="T:System.Object" />-members from the Visual Studio intellisence:
+  /// <para> - Equals</para>
+  /// <para> - GetHashCode</para>
+  /// <para> - GetType</para>
+  /// <para> - ToString</para>
   /// </summary>
   /// <resharper>
   /// Default configuration displays hidden members. 

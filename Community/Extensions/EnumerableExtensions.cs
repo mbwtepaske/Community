@@ -24,8 +24,10 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static IEnumerable<TElement> Append<TElement>(this IEnumerable<TElement> source, IEnumerable<TElement> elements)
     {
-      Assert.ThrowIfNull<NullReferenceException>(source, "source");
-      Assert.ThrowIfNull<ArgumentNullException>(elements, "elements");
+      if (elements == null)
+      {
+        throw new ArgumentNullException("elements");
+      }
 
       return source.Concat(elements);
     }
@@ -36,11 +38,9 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static IEnumerable<IEnumerable<TSource>> Partition<TSource>(this IEnumerable<TSource> source, Int32 partitionSize)
     {
-      Assert.ThrowIfNull<NullReferenceException>(source, "source");
-
       if (partitionSize < 1)
       {
-        throw new ArgumentOutOfRangeException("partitionSize");
+        throw new ArgumentOutOfRangeException(nameof(partitionSize));
       }
 
       var list = new List<TSource>(partitionSize);
@@ -68,8 +68,10 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static IEnumerable<IEnumerable<TSource>> Partition<TSource>(this IEnumerable<TSource> source, Func<TSource, Boolean> partitioner)
     {
-      Assert.ThrowIfNull<NullReferenceException>(source, "source");
-      Assert.ThrowIfNull<ArgumentNullException>(partitioner, "continuePredicate");
+      if (partitioner == null)
+      {
+        throw new ArgumentNullException("partitioner");
+      }
 
       var list = new List<TSource>();
 
@@ -94,8 +96,6 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static TSource ElementAtOrDefault<TSource>(this IEnumerable<TSource> source, Int32 index, TSource defaultValue)
     {
-      Assert.ThrowIfNull<NullReferenceException>(source, "source");
-      
       if (index >= 0)
       {
         var list = source as IList<TSource>;
@@ -131,11 +131,6 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static String Format<TElement>(this IEnumerable<TElement> source, String format)
     {
-      if (source == null)
-      {
-        throw new NullReferenceException("source");
-      }
-
       return String.Format(format, source.ToArray());
     }
 
@@ -147,7 +142,7 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       using (var enumerator = source.GetEnumerator())
@@ -170,12 +165,12 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       if (action == null)
       {
-        throw new ArgumentNullException("action");
+        throw new ArgumentNullException(nameof(action));
       }
 
       foreach (var element in source)
@@ -192,12 +187,12 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       if (action == null)
       {
-        throw new ArgumentNullException("action");
+        throw new ArgumentNullException(nameof(action));
       }
 
       using (var enumerator = source.GetEnumerator())
@@ -224,11 +219,6 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static IEnumerable<Int32> Modulo(this IEnumerable<Int32> source)
     {
-      if (source == null)
-      {
-        throw new NullReferenceException("dimensions");
-      }
-
       var multiply = new Func<Int32, Int32, Int32>((current, next) => current * next);
 
       var dimensions = source as Int32[] ?? source.ToArray();
@@ -260,8 +250,10 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static IEnumerable<TElement> Prepend<TElement>(this IEnumerable<TElement> source, IEnumerable<TElement> elements)
     {
-      Assert.ThrowIfNull<NullReferenceException>(source, "source");
-      Assert.ThrowIfNull<ArgumentNullException>(elements, "elements");
+      if (elements == null)
+      {
+        throw new ArgumentNullException("elements");
+      }
 
       return elements.Concat(source);
     }
@@ -272,11 +264,6 @@ namespace System.Linq
     [DebuggerStepThrough]
     public static IEnumerable<TElement> Repeat<TElement>(this IEnumerable<TElement> source, Int32 count)
     {
-      if (source == null)
-      {
-        throw new NullReferenceException("source");
-      }
-
       if (count < 0)
       {
         throw new ArgumentException("count must be greater or equal to zero");
@@ -307,9 +294,11 @@ namespace System.Linq
         throw new ArgumentException("count must be greater or equal to zero");
       }
 
+      var sequence = source as TElement[] ?? source.ToArray();
+
       for (var index = 0; index < count; index++)
       {
-        foreach (var element in source)
+        foreach (var element in sequence)
         {
           yield return element;
         }
@@ -333,12 +322,12 @@ namespace System.Linq
     {
       if (source == null)
       {
-        throw new ArgumentNullException("source");
+        throw new ArgumentNullException(nameof(source));
       }
 
       if (selector == null)
       {
-        throw new ArgumentNullException("selector");
+        throw new ArgumentNullException(nameof(selector));
       }
 
       comparer = comparer ?? EqualityComparer<TValue>.Default;

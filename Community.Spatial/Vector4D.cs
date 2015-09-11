@@ -1,4 +1,5 @@
-﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+﻿using System.Linq;
+using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
@@ -17,12 +18,17 @@ namespace System.Spatial
 
     public static Vector Create(Double defaultValue = 0D)
     {
-      return Vector.Build.Dense(Size, defaultValue);
+      return new Vector(Size, defaultValue);
     }
 
     public static Vector Create(Double x, Double y, Double z, Double w)
     {
-      return Vector.Build.Dense(new [] { x, y, z, w });
+      return new Vector(new [] { x, y, z, w });
+    }
+
+    public static Vector Create(Vector vector, params Double[] missingValues)
+    {
+      return Vector.Build.Dense(vector.Concat(missingValues).Concat(Zero).Take(Size).ToArray());
     }
   }
 }

@@ -1,5 +1,5 @@
-﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
+﻿//using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
+//using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
 
 namespace System.Spatial
 {
@@ -11,17 +11,17 @@ namespace System.Spatial
     {
       if (box == null)
       {
-        throw new ArgumentNullException("box");
+        throw new ArgumentNullException(nameof(box));
       }
 
       if (point == null)
       {
-        throw new ArgumentNullException("point");
+        throw new ArgumentNullException(nameof(point));
       }
 
       if (box.Maximum.Count != point.Count)
       {
-        throw new DimensionMismatchException("point");
+        throw new ArgumentDimensionMismatchException("point", box.Maximum.Count);
       }
 
       for (var index = 0; index < point.Count; index++)
@@ -106,17 +106,17 @@ namespace System.Spatial
     {
       if (plane == null)
       {
-        throw new ArgumentNullException("plane");
+        throw new ArgumentNullException(nameof(plane));
       }
 
       if (box == null)
       {
-        throw new ArgumentNullException("box");
+        throw new ArgumentNullException(nameof(box));
       }
 
       if (box.Maximum.Count != plane.Count - 1)
       {
-        throw new DimensionMismatchException("box");
+        throw new ArgumentDimensionMismatchException("box", plane.Count - 1);
       }
 
       var maximum = 0D;
@@ -149,7 +149,7 @@ namespace System.Spatial
     /// </summary>
     public static Boolean Intersects(Ray ray, Vector plane, out Double distance)
     {
-      var directionDotProduct = plane.SubVector(0, ray.Direction.Count).DotProduct(ray.Direction);
+      var directionDotProduct = plane.Subvector(0, ray.Direction.Count).DotProduct(ray.Direction);
 
       if (DoubleComparison.Nano.Equals(directionDotProduct, 0D))
       {
@@ -158,7 +158,7 @@ namespace System.Spatial
         return false;
       }
 
-      var positionDotProduct = plane.SubVector(0, ray.Position.Count).DotProduct(ray.Position);
+      var positionDotProduct = plane.Subvector(0, ray.Position.Count).DotProduct(ray.Position);
 
       distance = (-plane.Last() - positionDotProduct) / directionDotProduct;
 
@@ -182,6 +182,62 @@ namespace System.Spatial
       return Intersects(ray, plane, out distance)
         ? ray.Position + ray.Direction * distance
         : null;
+    }
+
+    /// <summary>
+    /// Determines whether there is an intersection between a <see cref="T:SharpDX.Plane"/> and a point.
+    /// 
+    /// </summary>
+    /// <param name="plane">The plane to test.</param><param name="point">The point to test.</param>
+    /// <returns>
+    /// Whether the two objects intersected.
+    /// </returns>
+    public static PlaneIntersection Intersects(Plane plane, Vector point)
+    {
+      if (plane == null)
+      {
+        throw new ArgumentNullException(nameof(plane));
+      }
+
+      if (point == null)
+      {
+        throw new ArgumentNullException(nameof(point));
+      }
+
+      var result = point * plane;
+
+      if (result > 0D)
+      {
+        return PlaneIntersection.Front;
+      }
+
+      return result < 0D 
+        ? PlaneIntersection.Back 
+        : PlaneIntersection.Intersecting;
+    }
+
+    public static PlaneIntersection Intersects(Plane plane, Sphere sphere)
+    {
+      if (plane == null)
+      {
+        throw new ArgumentNullException(nameof(plane));
+      }
+
+      if (sphere == null)
+      {
+        throw new ArgumentNullException(nameof(sphere));
+      }
+
+      var dot = sphere.Center * plane;
+
+      if (dot > sphere.Radius)
+      {
+        return PlaneIntersection.Front;
+      }
+
+      return dot < -sphere.Radius 
+        ? PlaneIntersection.Back 
+        : PlaneIntersection.Intersecting;
     }
   }
 }

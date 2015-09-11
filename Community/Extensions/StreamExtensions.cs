@@ -15,14 +15,9 @@ namespace System.IO
     [DebuggerStepThrough]
     public static Byte[] Read(this Stream stream, Int32 count)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       if (count < 0)
       {
-        throw new ArgumentOutOfRangeException(String.Format(Exceptions.ARGUMENT_LESS, "count", "zero"));
+        throw new ArgumentOutOfRangeLessException("count", "zero");
       }
       
       var buffer = new Byte[count];
@@ -37,11 +32,6 @@ namespace System.IO
     [DebuggerStepThrough]
     public static Byte[] ReadToEnd(this Stream stream)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       var buffer = new Byte[stream.Length - stream.Position];
 
       stream.Read(buffer, 0, buffer.Length);
@@ -57,11 +47,6 @@ namespace System.IO
     public static TStream Reset<TStream>(this TStream stream)
       where TStream : Stream
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       stream.SeekBegin();
 
       return stream;
@@ -73,11 +58,6 @@ namespace System.IO
     [DebuggerStepThrough]
     public static Int64 SeekBegin(this Stream stream)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       return SeekBegin(stream, 0);
     }
 
@@ -87,14 +67,9 @@ namespace System.IO
     [DebuggerStepThrough]
     public static Int64 SeekBegin(this Stream stream, Int64 offset)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       if (offset < 0)
       {
-        throw new ArgumentOutOfRangeException("offset");
+        throw new ArgumentOutOfRangeException(nameof(offset));
       }
 
       return stream.Seek(offset, SeekOrigin.Begin);
@@ -106,11 +81,6 @@ namespace System.IO
     [DebuggerStepThrough]
     public static Int64 SeekEnd(this Stream stream)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       return SeekEnd(stream, 0);
     }
 
@@ -120,17 +90,12 @@ namespace System.IO
     [DebuggerStepThrough]
     public static Int64 SeekEnd(this Stream stream, Int64 offset)
     {
-      if (stream == null)
-      {
-        throw new NullReferenceException("stream");
-      }
-
       if (offset > 0)
       {
-        throw new ArgumentOutOfRangeException("offset");
+        throw new ArgumentOutOfRangeException(nameof(offset));
       }
 
-      return stream.Seek(-offset, SeekOrigin.End);
+      return stream.Seek(offset, SeekOrigin.End);
     }
   }
 }

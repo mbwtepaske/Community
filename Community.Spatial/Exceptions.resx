@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+		<xsd:element name="root" msdata:IsDataSet="true">
+			<xsd:complexType>
+				<xsd:choice maxOccurs="unbounded">
+					<xsd:element name="data">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+								<xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+							<xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+							<xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+						</xsd:complexType>
+					</xsd:element>
+					<xsd:element name="resheader">
+						<xsd:complexType>
+							<xsd:sequence>
+								<xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+							</xsd:sequence>
+							<xsd:attribute name="name" type="xsd:string" use="required" />
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:schema>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>1.3</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+  <data name="ArgumentMatrixIndexOutOfRange" xml:space="preserve">
+    <value>The matrix indices must not be out of range of the given matrix.</value>
+  </data>
+  <data name="ArgumentMatrixSameColumnDimension" xml:space="preserve">
+    <value>Matrix column dimension mismatch.</value>
+  </data>
+  <data name="ArgumentMatrixDimensions" xml:space="preserve">
+    <value>Matrix dimension mismatch.</value>
+  </data>
+  <data name="ArgumentMatrixDimensions1" xml:space="preserve">
+    <value>Matrix dimension mismatch: {0}.</value>
+  </data>
+  <data name="ArgumentMatrixDimensions2" xml:space="preserve">
+    <value>Matrix dimension mismatch: first operand is {0}, second operand is {1}.</value>
+  </data>
+  <data name="ArgumentMatrixDimensions3" xml:space="preserve">
+    <value>Matrix dimension mismatch: first operand is {0}, second operand is {1}, third operand is {2}.</value>
+  </data>
+  <data name="ArgumentMatrixSameRowDimension" xml:space="preserve">
+    <value>Matrix row dimension mismatch.</value>
+  </data>
+  <data name="ArgumentMatrixSingleColumn" xml:space="preserve">
+    <value>Matrix must have exactly one column.</value>
+  </data>
+  <data name="ArgumentMatrixSingleColumnRow" xml:space="preserve">
+    <value>Matrix must have exactly one column and row, thus have only one cell.</value>
+  </data>
+  <data name="ArgumentMatrixSingleRow" xml:space="preserve">
+    <value>Matrix must have exactly one row.</value>
+  </data>
+  <data name="ArgumentMatrixSquare" xml:space="preserve">
+    <value>Matrix must be square.</value>
+  </data>
+  <data name="ArgumentMatrixSymmetric" xml:space="preserve">
+    <value>Matrix must be symmetric.</value>
+  </data>
+  <data name="ArgumentMatrixSymmetricPositiveDefinite" xml:space="preserve">
+    <value>Matrix must be symmetric positive definite.</value>
+  </data>
+  <data name="ArgumentNotInfinityNaN" xml:space="preserve">
+    <value>Value must neither be infinite nor NaN.</value>
+  </data>
+  <data name="ArgumentNotNegative" xml:space="preserve">
+    <value>Value must not be negative (zero is ok).</value>
+  </data>
+  <data name="ArgumentNull" xml:space="preserve">
+    <value>{0} is a null reference (Nothing in Visual Basic).</value>
+  </data>
+  <data name="ArgumentParameterSetInvalid" xml:space="preserve">
+    <value>The chosen parameter set is invalid (probably some value is out of range).</value>
+  </data>
+  <data name="ArgumentPositive" xml:space="preserve">
+    <value>Value must be positive (and not zero).</value>
+  </data>
+  <data name="ArgumentPowerOfTwo" xml:space="preserve">
+    <value>Size must be a Power of Two.</value>
+  </data>
+  <data name="ArgumentPowerOfTwoEveryDimension" xml:space="preserve">
+    <value>Size must be a Power of Two in every dimension.</value>
+  </data>
+  <data name="ArgumentSingleDimensionArray" xml:space="preserve">
+    <value>Array must have exactly one dimension (and not be null).</value>
+  </data>
+  <data name="ArgumentTypeMismatch" xml:space="preserve">
+    <value>Type mismatch.</value>
+  </data>
+  <data name="ArgumentVectorDimensionMismatch" xml:space="preserve">
+    <value>The dimension of {0} mismatches the expected value or is invalid for the operation.</value>
+  </data>
+  <data name="ArgumentVectorDimensionMismatchExpecting" xml:space="preserve">
+    <value>The dimension of {0} mismatches the expected value or is invalid for the operation, expected dimension {1}.</value>
+  </data>
+  <data name="ArgumentVectorLengthsMultipleOf" xml:space="preserve">
+    <value>Array length must be a multiple of {0}.</value>
+  </data>
+  <data name="ArgumentVectorsSameLength" xml:space="preserve">
+    <value>All vectors must have the same dimensionality.</value>
+  </data>
+  <data name="ArgumentVectorThreeDimensional" xml:space="preserve">
+    <value>The vector must have 3 dimensions.</value>
+  </data>
+  <data name="NotImplemented" xml:space="preserve">
+    <value>This feature is not implemented yet.</value>
+  </data>
+  <data name="ArgumentEven" xml:space="preserve">
+    <value>Value must be even.</value>
+  </data>
+  <data name="ArgumentOdd" xml:space="preserve">
+    <value>Value must be odd.</value>
+  </data>
+  <data name="ArgumentItemNull" xml:space="preserve">
+    <value>At least one item of {0} is a null reference (Nothing in Visual Basic).</value>
+  </data>
+  <data name="ArgumentCannotBeBetweenOneAndNegativeOne" xml:space="preserve">
+    <value>Value cannot be in the range -1 &lt; x &lt; 1.</value>
+  </data>
+  <data name="ArgumentLessThanOne" xml:space="preserve">
+    <value>Value must be greater than or equal to one.</value>
+  </data>
+  <data name="ArgumentMustBePositive" xml:space="preserve">
+    <value>Value must be positive.</value>
+  </data>
+  <data name="ArgumentMinValueGreaterThanMaxValue" xml:space="preserve">
+    <value>In the specified range, the minimum is greater than maximum.</value>
+  </data>
+  <data name="ArgumentUpperBoundMustBeLargerThanOrEqualToLowerBound" xml:space="preserve">
+    <value>The upper bound must be at least as large as the lower bound.</value>
+  </data>
+  <data name="MatrixColumnsMustBePositive" xml:space="preserve">
+    <value>The number of columns of a matrix must be positive.</value>
+  </data>
+  <data name="MatrixRowsMustBePositive" xml:space="preserve">
+    <value>The number of rows of a matrix must be positive.</value>
+  </data>
+  <data name="MatrixRowsOrColumnsMustBePositive" xml:space="preserve">
+    <value>The number of rows or columns of a matrix must be positive.</value>
+  </data>
+  <data name="ArgumentBetweenZeroAndOne" xml:space="preserve">
+    <value>The argument must be between 0 and 1.</value>
+  </data>
+  <data name="ArgumentMatrixPositiveDefinite" xml:space="preserve">
+    <value>Matrix must be positive definite.</value>
+  </data>
+  <data name="ArgumentArraysSameLength" xml:space="preserve">
+    <value>The array arguments must have the same length.</value>
+  </data>
+  <data name="ArgumentReferenceDifferent" xml:space="preserve">
+    <value>Arguments must be different objects.</value>
+  </data>
+  <data name="StringNullOrEmpty" xml:space="preserve">
+    <value>String parameter cannot be empty or null.</value>
+  </data>
+  <data name="ArgumentMatrixDoesNotExist" xml:space="preserve">
+    <value>The requested matrix does not exist.</value>
+  </data>
+  <data name="FileDoesNotExist" xml:space="preserve">
+    <value>The given file doesn't exist.</value>
+  </data>
+  <data name="MoreThan2D" xml:space="preserve">
+    <value>Only 1 and 2 dimensional arrays are supported.</value>
+  </data>
+  <data name="NotSupportedType" xml:space="preserve">
+    <value>{0} is not a supported type.</value>
+  </data>
+  <data name="StopCriterionDuplicate" xml:space="preserve">
+    <value>The given stop criterion already exist in the collection.</value>
+  </data>
+  <data name="StopCriterionMissing" xml:space="preserve">
+    <value>There is no stop criterion in the collection.</value>
+  </data>
+  <data name="NameCannotContainASpace" xml:space="preserve">
+    <value>Name cannot contain a space. name:  {0}</value>
+  </data>
+  <data name="MustContainAtLeast" xml:space="preserve">
+    <value>Data must contain at least {0} values.</value>
+  </data>
+  <data name="ArrayTooSmall" xml:space="preserve">
+    <value>The given array is too small. It must be at least {0} long.</value>
+  </data>
+  <data name="ArgumentArrayWrongLength" xml:space="preserve">
+    <value>The given array is the wrong length. Should be {0}.</value>
+  </data>
+  <data name="RowsLessThanColumns" xml:space="preserve">
+    <value>The number of rows must greater than or equal to the number of columns.</value>
+  </data>
+  <data name="TooManyElements" xml:space="preserve">
+    <value>We only support sparse matrix with less than int.MaxValue elements.</value>
+  </data>
+  <data name="RootNotFound" xml:space="preserve">
+    <value>The algorithm ended without root in the range.</value>
+  </data>
+  <data name="RootMustBeBracketedByBounds" xml:space="preserve">
+    <value>The lower and upper bounds must bracket a single root.</value>
+  </data>
+  <data name="RootFindingFailed" xml:space="preserve">
+    <value>The algorithm has failed, exceeded the number of iterations allowed or there is no root within the provided bounds.</value>
+  </data>
+  <data name="ArgumentUpperBoundMustBeLargerThanLowerBound" xml:space="preserve">
+    <value>The upper bound must be strictly larger than the lower bound.</value>
+  </data>
+</root>

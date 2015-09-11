@@ -37,17 +37,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoxTest.cs" />
-    <Compile Include="FrustumTest.cs" />
+    <None Include="FrustumTest.cs" />
     <Compile Include="MatrixTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpatialTreeTest.cs" />
     <Compile Include="VectorTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Math.NET\Numerics\src\Numerics\Numerics.csproj">
-      <Project>{b7cae5f4-a23f-4438-b5be-41226618b695}</Project>
-      <Name>Numerics</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Community.Spatial\Community.Spatial.csproj">
       <Project>{ec3ad26f-a756-402c-a111-1a5464fa1dcb}</Project>
       <Name>Community.Spatial</Name>

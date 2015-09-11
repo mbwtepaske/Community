@@ -1,8 +1,4 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   public class Ray
   {
@@ -13,17 +9,17 @@ namespace System.Spatial
     {
       if (position == null)
       {
-        throw new ArgumentNullException("position");
+        throw new ArgumentNullException(nameof(position));
       }
 
       if (direction == null)
       {
-        throw new ArgumentNullException("direction");
+        throw new ArgumentNullException(nameof(direction));
       }
 
       if (position.Count != direction.Count)
       {
-        throw new DimensionMismatchException("direction");
+        throw new ArgumentDimensionMismatchException("direction", position.Count);
       }
 
       Position = position;

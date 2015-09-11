@@ -18,7 +18,7 @@
     {
       if (box == null)
       {
-        throw new ArgumentNullException("box");
+        throw new ArgumentNullException(nameof(box));
       }
 
       Dimensions = box.Center.Count;

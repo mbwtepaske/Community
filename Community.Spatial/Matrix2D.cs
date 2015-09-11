@@ -1,17 +1,12 @@
-﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   public static class Matrix2D
   {
     public const Int32 Order = 2;
 
     /// <summary>
-    /// Creates a 2 x 2 identity-matrix.
+    /// A 2 x 2 identity-matrix.
     /// </summary>
-    public static Matrix Identity()
-    {
-      return Matrix.Build.DenseIdentity(Order);
-    }
+    public static readonly Matrix Identity = new Matrix(Order, Order, (columnIndex, rowIndex) => columnIndex == rowIndex ? 1D : 0D, true);
   }
 }

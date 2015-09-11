@@ -11,9 +11,15 @@
     [DebuggerNonUserCode]
 	  public static String GetPropertyName<TObject, TMember>(this TObject instance, Expression<Func<TObject, TMember>> expression)
 	  {
-      Assert.ThrowIfNull<NullReferenceException>(instance);
-      Assert.ThrowIfNull(expression, "expression");
-      Assert.ThrowArgument(expression.Body, exp => exp.NodeType != ExpressionType.MemberAccess, "expression body must be a member accessor");
+      if (expression == null)
+      {
+        throw new ArgumentNullException("expression");
+      }
+
+      if (expression.NodeType != ExpressionType.MemberAccess)
+      {
+        throw new ArgumentException("expression body must be a member accessor");
+      }
 
       return (expression.Body as MemberExpression).Member.Name;
 	  }

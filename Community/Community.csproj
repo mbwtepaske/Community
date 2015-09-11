@@ -7,7 +7,7 @@
     <ProjectGuid>{351B3B5A-13AB-40DB-AF74-E428166C75B5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Community</RootNamespace>
+    <RootNamespace>System</RootNamespace>
     <AssemblyName>Community</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -36,6 +36,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.Company.cs">
@@ -48,13 +49,15 @@
       <Link>Properties\AssemblyInfo.Copyright.cs</Link>
     </Compile>
     <Compile Include="ActionDisposable.cs" />
+    <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.Version.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
     </Compile>
-    <Compile Include="Assert.cs" />
+    <None Include="Assert.cs" />
     <Compile Include="Exceptions.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -85,12 +88,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\AssemblyInfo.Version.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
       <LastOutputs>.\AssemblyInfo.Version.cs</LastOutputs>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

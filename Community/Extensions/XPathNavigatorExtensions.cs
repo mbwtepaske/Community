@@ -7,8 +7,10 @@
     /// </summary>
     public static TResult Evaluate<TResult>(this XPathNavigator navigator, String xPath)
     {
-      Assert.ThrowIfNull<NullReferenceException>(navigator, "navigator");
-      Assert.ThrowIfNull<ArgumentNullException>(xPath, "xPath");
+      if (xPath == null)
+      {
+        throw new ArgumentNullException("xPath");
+      }
       
       return (TResult)navigator.Evaluate(xPath);
     }
