@@ -1,6 +1,4 @@
-﻿using Community;
-
-namespace System.IO
+﻿namespace System.IO
 {
   using Diagnostics;
 
@@ -17,7 +15,7 @@ namespace System.IO
     {
       if (count < 0)
       {
-        throw new ArgumentOutOfRangeLessException("count", "zero");
+        throw new ArgumentOutOfRangeException(nameof(count));
       }
       
       var buffer = new Byte[count];

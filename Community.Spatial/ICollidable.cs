@@ -1,6 +1,4 @@
-﻿using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   /// <summary>
   /// Defines a serie of collision detection methods.

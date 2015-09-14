@@ -1,5 +1,4 @@
-﻿using Matrix = MathNet.Numerics.LinearAlgebra.Matrix<double>;
-namespace System.Spatial
+﻿namespace System.Spatial
 {
   using Collections.Generic;
   using Linq;

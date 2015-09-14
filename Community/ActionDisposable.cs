@@ -1,6 +1,4 @@
-﻿using Community;
-
-namespace System
+﻿namespace System
 {
   using Diagnostics;
   using Diagnostics.CodeAnalysis;

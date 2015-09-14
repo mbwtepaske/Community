@@ -1,6 +1,3 @@
-using MathNet.Numerics.LinearAlgebra;
-using Vector = MathNet.Numerics.LinearAlgebra.Vector<double>;
-
 namespace System.Spatial
 {
   using Linq;

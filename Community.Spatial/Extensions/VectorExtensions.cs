@@ -4,11 +4,11 @@ using System.Numerics;
 
 namespace MathNet.Numerics.LinearAlgebra
 {
-  //using Matrix = Matrix<double>;
-  //using Vector = Vector<double>;
+  using Matrix = Matrix<double>;
+  using Vector = Vector<double>;
 
-  //public static class VectorExtensions
-  //{
+  public static class VectorExtensions
+  {
   //  /// <summary>
   //  /// Returns the magnitude of the vector.
   //  /// </summary>

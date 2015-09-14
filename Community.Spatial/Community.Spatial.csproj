@@ -51,26 +51,26 @@
     <Compile Include="..\AssemblyInfo.Copyright.cs">
       <Link>Properties\AssemblyInfo.Copyright.cs</Link>
     </Compile>
-    <Compile Include="Collision.cs" />
-    <Compile Include="Box.cs" />
+    <None Include="Collision.cs" />
+    <None Include="Box.cs" />
     <Compile Include="CollisionType.cs" />
     <Compile Include="ArgumentDimensionMismatchException.cs" />
     <Compile Include="DoubleComparison.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\MatrixExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
-    <Compile Include="Frustum.cs" />
-    <Compile Include="ICollidable.cs" />
-    <Compile Include="Interpolation.cs" />
-    <Compile Include="Matrix.cs" />
-    <Compile Include="Matrix2D.cs" />
-    <Compile Include="Matrix3D.cs" />
-    <Compile Include="Matrix4D.cs" />
-    <Compile Include="Plane.cs" />
-    <Compile Include="Plane2D.cs" />
-    <Compile Include="Plane3D.cs" />
-    <Compile Include="Plane4D.cs" />
-    <Compile Include="PlaneIntersection.cs" />
+    <None Include="Frustum.cs" />
+    <None Include="ICollidable.cs" />
+    <None Include="Interpolation.cs" />
+    <None Include="Matrix.cs" />
+    <None Include="Matrix2D.cs" />
+    <None Include="Matrix3D.cs" />
+    <None Include="Matrix4D.cs" />
+    <None Include="Plane.cs" />
+    <None Include="Plane2D.cs" />
+    <None Include="Plane3D.cs" />
+    <None Include="Plane4D.cs" />
+    <None Include="PlaneIntersection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.Version.cs">
       <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
@@ -82,17 +82,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Exceptions.resx</DependentUpon>
     </Compile>
-    <Compile Include="Quaternion.cs" />
-    <Compile Include="Ray.cs" />
-    <Compile Include="Sphere.cs" />
+    <None Include="Quaternion.cs" />
+    <None Include="Ray.cs" />
+    <None Include="Sphere.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
     <Compile Include="Structures\SpatialTreeNode.cs" />
-    <Compile Include="Vector.cs" />
-    <Compile Include="Vector2D.cs" />
-    <Compile Include="Vector3D.cs" />
-    <Compile Include="Vector4D.cs" />
-    <Compile Include="VectorStorage.cs" />
-    <Compile Include="Volume.cs" />
+    <None Include="Vector.cs" />
+    <None Include="Vector2D.cs" />
+    <None Include="Vector3D.cs" />
+    <None Include="Vector4D.cs" />
+    <None Include="VectorStorage.cs" />
+    <None Include="Volume.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Exceptions.resx">
