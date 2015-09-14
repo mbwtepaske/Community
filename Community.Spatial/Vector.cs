@@ -1,362 +1,383 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.Serialization;
-
-namespace System.Spatial
+﻿namespace System.Spatial
 {
-  /// <summary>
-  /// Represents a double-precision vector.
-  /// </summary>
-  [Serializable]
-  public class Vector : IVector
+  using Collections;
+  using Collections.Generic;
+  using Diagnostics;
+  using Linq;
+  using Text;
+
+  [DebuggerDisplay("{ToString(\"F5\", null)}")]
+  public class Vector : ICloneable, IEnumerable<Double>, IEquatable<Vector>, IFormattable
   {
-    protected Double[] Data
+    /// <summary>
+    /// The storage of the vector.
+    /// </summary>
+    public readonly VectorStorage Storage;
+
+    /// <summary>
+    /// Gets the length of the vector.
+    /// </summary>
+    public Int32 Count
     {
-      get;
-      private set;
+      get
+      {
+        return Storage.Count;
+      }
     }
 
     public Double this[Int32 index]
     {
       get
       {
-        return Data[index];
+        return Storage[index];
       }
       set
       {
-        Data[index] = value;
+        Storage[index] = value;
       }
     }
 
-    public Int32 Size
-    {
-      get
-      {
-        return Data.Length;
-      }
-    }
-
-    public Vector(Int32 size)
-    {
-      Data = new Double[size];
-    }
-
-    public Vector(Double value, Int32 size)
-    {
-      Data = Enumerable.Repeat(value, size).ToArray();
-    }
-
-    public Vector(params Double[] values) : this(values.Length)
-    {
-      values.CopyTo(Data, 0);
-    }
+    #region Initialization
     
-    public Double GetLength()
+    public Vector(Int32 count, Double defaultValue = 0D) 
+      : this(new VectorStorage(Enumerable.Repeat(defaultValue, count).ToArray()))
     {
-      return GetLength(this);
     }
 
-    public Double GetLengthSquare()
+    public Vector(Int32 count, Func<Int32, Double> valueFactory)
+      : this(new VectorStorage(Enumerable.Range(0, count).Select(valueFactory).ToArray()))
     {
-      return GetLengthSquare(this);
     }
 
-    public static Double GetLength(Vector vector)
+    public Vector(params Double[] values) 
+      : this(new VectorStorage(values))
     {
-      return Math.Sqrt(GetLengthSquare(vector));
     }
 
-    public static Double GetLengthSquare(Vector vector)
+    public Vector(Vector vector)
+      : this(vector.Storage.IsReadOnly ? vector.Storage : vector.Storage.Clone())
     {
-      return vector.Sum(value => value * value);
     }
 
-    #region IEnumeration
-
-    public IEnumerator<Double> GetEnumerator()
+    public Vector(VectorStorage storage)
     {
-      return Data.AsEnumerable().GetEnumerator();
+      Storage = storage;
+    }
+
+    #endregion
+
+    #region Cloning
+    
+    Object ICloneable.Clone()
+    {
+      return Clone();
+    }
+
+    /// <summary>
+    /// Returns a deep clone of the vector.
+    /// </summary>
+    public virtual Vector Clone()
+    {
+      return new Vector(Storage.Clone());
+    }
+
+    #endregion
+
+    #region Enumeration
+    
+    IEnumerator<Double> IEnumerable<Double>.GetEnumerator()
+    {
+      return Storage.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      return Data.GetEnumerator();
+      return Storage.GetEnumerator();
     }
 
     #endregion
 
-    #region IEquatability
+    #region Equating
+    
+    public override Boolean Equals(Object other)
+    {
+      return Equals(other as Vector);
+    }
 
     public Boolean Equals(Vector other)
     {
-      return !ReferenceEquals(other, null) && Data.SequenceEqual(other.Data);
+      return Equals(other, EqualityComparer<Double>.Default);
     }
 
-    public override Boolean Equals(Object other)
+    public Boolean Equals(Vector other, IEqualityComparer<Double> comparer)
     {
-      return !ReferenceEquals(other, null) && GetType() == other.GetType() && Equals(other as Vector);
-    }
-
-    public override Int32 GetHashCode()
-    {
-      return Data
-        .Select(scalar => scalar.GetHashCode())
-        .Aggregate((current, next) => current ^ next);
-    }
-
-    public static Boolean operator ==(Vector left, Vector right)
-    {
-      if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+      if (comparer == null)
       {
-        return true;
+        throw new ArgumentNullException("comparer");
       }
 
-      return !ReferenceEquals(left, null) && !ReferenceEquals(right, null) && left.Equals(right);
-    }
-
-    public static Boolean operator !=(Vector left, Vector right)
-    {
-      if (ReferenceEquals(left, null) && ReferenceEquals(right, null))
+      if (other == null || Count != other.Count)
       {
         return false;
       }
 
-      if (ReferenceEquals(left, null) ^ ReferenceEquals(right, null))
+      if (!ReferenceEquals(this, other))
       {
-        return true;
+        for (var index = 0; index < Count; index++)
+        {
+          if (!comparer.Equals(Storage[index], other.Storage[index]))
+          {
+            return false;
+          }
+        }
       }
 
-      return !left.Equals(right);
+      return true;
+    }
+
+    public override Int32 GetHashCode()
+    {
+      return Storage.Enumerate(value => value.GetHashCode()).Aggregate((left, right) => left.GetHashCode() ^ right.GetHashCode());
     }
 
     #endregion
 
-    #region IFormattable
+    #region Formatting
     
     public override String ToString()
     {
-      return ToString("F3", null);
+      return ToString(null, null);
+    }
+
+    public String ToString(String format)
+    {
+      return ToString(format, null);
     }
 
     public String ToString(String format, IFormatProvider formatProvider)
     {
-      return "[" + String.Join(", ", Data.Select(scalar => scalar.ToString(format, formatProvider))) + "]";
+      var stringBuilder = new StringBuilder();
+
+      stringBuilder.Append("[");
+      stringBuilder.Append(String.Join(", ", Storage.Enumerate(value => value.ToString(format, null))));
+      stringBuilder.Append("]");
+
+      return stringBuilder.ToString();
     }
 
     #endregion
 
-    private static void ValidateParameters(Vector first, params Vector[] additional)
+    #region Operations
+
+    public virtual Vector Add(Vector right)
     {
-      if (first == null)
+      Verify(right);
+
+      return new Vector(Count, index => this[index] + right[index]);
+    }
+
+    public virtual Vector Add(Double right)
+    {
+      return new Vector(Count, index => this[index] + right);
+    }
+
+    public virtual Vector Divide(Vector right)
+    {
+      Verify(right);
+
+      return new Vector(Count, index => this[index] / right[index]);
+    }
+
+    public virtual Vector Divide(Double right)
+    {
+      return new Vector(Count, index => this[index] / right);
+    }
+
+    public virtual Double DotProduct(Vector right)
+    {
+      Verify(right);
+
+      return Enumerable.Range(0, Count).Select(index => Storage[index] * right.Storage[index]).Sum();
+    }
+
+    public Double Magnitude()
+    {
+      return Math.Sqrt(MagnitudeSquare());
+    }
+
+    public Double MagnitudeSquare()
+    {
+      return Storage.Enumerate(value => value * value).Sum();
+    }
+
+    public virtual Vector Modulo(Vector right)
+    {
+      Verify(right);
+
+      return new Vector(Count, index => this[index] % right[index]);
+    }
+
+    public virtual Vector Modulo(Double right)
+    {
+      return new Vector(Count, index => this[index] % right);
+    }
+
+    public virtual Vector Multiply(Matrix right)
+    {
+      if (right == null)
       {
-        throw new ArgumentNullException("first");
+        throw new ArgumentNullException("right");
       }
 
-      foreach (var vector in additional)
+      if (Count != right.RowCount)
       {
-        if (vector == null)
-        {
-          throw new ArgumentNullException();
-        }
+        throw new ArgumentDimensionMismatchException("right.RowCount", Count);
+      }
 
-        if (first.Size != vector.Size)
-        {
-          throw new ArgumentException("vector sizes do not match");
-        }
+      return new Vector(right.ColumnCount, index => DotProduct(right.GetColumn(index)));
+    }
+
+    public virtual Vector Multiply(Vector right)
+    {
+      Verify(right);
+
+      return new Vector(Count, index => this[index] + right[index]);
+    }
+
+    public virtual Vector Multiply(Double right)
+    {
+      return new Vector(Count, index => this[index] * right);
+    }
+
+    public virtual Vector Normalize()
+    {
+      var magnitude = Magnitude();
+
+      return magnitude > 0 ? Divide(magnitude) : new Vector(Count, Double.NaN);
+    }
+
+    public virtual Vector Subtract(Vector right)
+    {
+      Verify(right);
+
+      return new Vector(Count, index => this[index] - right[index]);
+    }
+
+    public virtual Vector Subtract(Double right)
+    {
+      return new Vector(Count, index => this[index] - right);
+    }
+
+    public virtual Vector Subvector(Int32 index, Int32 length)
+    {
+      return new Vector(length, currentIndex => Storage[currentIndex + index]);
+    }
+
+    protected virtual void Verify(Vector right)
+    {
+      if (right == null)
+      {
+        throw new ArgumentNullException("right");
+      }
+
+      if (Count != right.Count)
+      {
+        throw new ArgumentDimensionMismatchException("right");
       }
     }
+
+    #endregion
 
     #region Operators
 
-    private static Double Add(Double left, Double right)
+    public static Vector operator +(Vector vector)
     {
-      return left + right;
-    }
-
-    public static Vector Add(Vector left, Vector right, Vector result = null)
-    {
-      return Operation(left, right, result, Add);
-    }
-
-    private static Double Divide(Double left, Double right)
-    {
-      return left / right;
-    }
-
-    public static Vector Divide(Vector left, Vector right, Vector result = null)
-    {
-      return Operation(left, right, result, Divide);
-    }
-
-    public static Vector Interpolate(Vector left, Vector right, Double value, Vector result = null)
-    {
-      return Interpolate(left, right, new Vector(value, left.Size), result);
-    }
-    
-    public static Vector Interpolate(Vector left, Vector right, Vector values, Vector result = null)
-    {
-      if (result != null)
-      {
-        ValidateParameters(left, right, values, result);
-      }
-      else
-      {
-        ValidateParameters(left, right, values);
-
-        result = new Vector(left.Size);
-      }
-
-      for (var index = 0; index < result.Size; index++)
-      {
-        result[index] = left[index] + (right[index] - left[index]) * values[index];
-      }
-
-      return result;
-    }
-
-    private static Double Modulo(Double left, Double right)
-    {
-      return left % right;
-    }
-    
-    public static Vector Modulo(Vector left, Vector right, Vector result = null)
-    {
-      return Operation(left, right, result, Modulo);
-    }
-
-    private static Double Multiply(Double left, Double right)
-    {
-      return left * right;
-    }
-
-    public static Vector Multiply(Vector left, Vector right, Vector result = null)
-    {
-      return Operation(left, right, result, Multiply);
-    }
-
-    private static Vector Operation(Vector left, Double right, Vector result, Func<Double, Double, Double> operation)
-    {
-      if (result != null)
-      {
-        ValidateParameters(left, result);
-      }
-      else
-      {
-        ValidateParameters(left);
-
-        result = new Vector(left.Size);
-      }
-
-      for (var index = 0; index < result.Size; index++)
-      {
-        result[index] = operation(left[index], right);
-      }
-
-      return result;
-    }
-
-    private static Vector Operation(Vector left, Vector right, Vector result, Func<Double, Double, Double> operation)
-    {
-      if (result != null)
-      {
-        ValidateParameters(left, right, result);
-      }
-      else
-      {
-        ValidateParameters(left, right);
-
-        result = new Vector(left.Size);
-      }
-
-      for (var index = 0; index < result.Size; index++)
-      {
-        result[index] = operation(left[index], right[index]);
-      }
-
-      return result;
-    }
-
-    private static Double Subtract(Double left, Double right)
-    {
-      return left - right;
-    }
-
-    public static Vector Subtract(Vector left, Vector right, Vector result = null)
-    {
-      return Operation(left, right, result, Subtract);
-    }
-
-    public static implicit operator Vector(Single[] values)
-    {
-      return new Vector(values.Cast<Single>().Select(Convert.ToDouble).ToArray());
-    }
-
-    public static implicit operator Vector(Double[] values)
-    {
-      return new Vector(values);
-    }
-
-    public static implicit operator Single[](Vector vector)
-    {
-      return vector.Data.Select(Convert.ToSingle).ToArray();
-    }
-
-    public static implicit operator Double[](Vector vector)
-    {
-      return vector.Data;
-    }
-
-    public static Vector operator +(Vector left, Double right)
-    {
-      return Operation(left, right, null, Add);
+      return vector.Clone();
     }
 
     public static Vector operator +(Vector left, Vector right)
     {
-      return Operation(left, right, null, Add);
+      return left.Add(right);
     }
 
-    public static Vector operator -(Vector left, Double right)
+    public static Vector operator +(Vector left, Double right)
     {
-      return Operation(left, right, null, Subtract);
+      return left.Add(right);
+    }
+
+    public static Vector operator +(Double left, Vector right)
+    {
+      return right.Add(left);
+    }
+
+    public static Vector operator -(Vector vector)
+    {
+      return vector.Multiply(-1D);
     }
 
     public static Vector operator -(Vector left, Vector right)
     {
-      return Operation(left, right, null, Subtract);
+      return left.Subtract(right);
+    }
+
+    public static Vector operator -(Vector left, Double right)
+    {
+      return left.Subtract(right);
+    }
+
+    public static Vector operator -(Double left, Vector right)
+    {
+      return new Vector(right.Count, left).Subtract(right);
     }
 
     public static Vector operator *(Vector left, Double right)
     {
-      return Operation(left, right, null, Multiply);
+      return left.Multiply(right);
+    }
+
+    public static Vector operator *(Double left, Vector right)
+    {
+      return right.Multiply(left);
     }
 
     public static Vector operator *(Vector left, Vector right)
     {
-      return Operation(left, right, null, Multiply);
+      return left.Multiply(right);
+    }
+
+    public static Vector operator *(Vector left, Matrix right)
+    {
+      return left.Multiply(right);
+    }
+
+    public static Vector operator /(Double left, Vector right)
+    {
+      return new Vector(right.Count, left).Subtract(right);
     }
 
     public static Vector operator /(Vector left, Double right)
     {
-      return Operation(left, right, null, Divide);
+      return left.Divide(right);
     }
 
     public static Vector operator /(Vector left, Vector right)
     {
-      return Operation(left, right, null, Divide);
+      return left.Divide(right);
     }
 
     public static Vector operator %(Vector left, Double right)
     {
-      return Operation(left, right, null, Modulo);
+      return left.Modulo(right);
+    }
+
+    public static Vector operator %(Double left, Vector right)
+    {
+      return new Vector(right.Count, left).Modulo(right);
     }
 
     public static Vector operator %(Vector left, Vector right)
     {
-      return Operation(left, right, null, Modulo);
+      return left.Modulo(right);
     }
 
     #endregion

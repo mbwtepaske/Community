@@ -46,7 +46,7 @@
     public static void Throw<TException, TObject>(TObject instance, Predicate<TObject> predicate, params Object[] arguments) where TException : Exception
     {
       if (predicate(instance))
-      {
+    {
         throw (TException) Activator.CreateInstance(typeof(TException), arguments);
       }
     }

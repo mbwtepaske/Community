@@ -11,6 +11,7 @@
     <AssemblyName>Community.Spatial</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,30 +30,86 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\..\seTools\SpatialWorkshop3D\packages\System.Numerics.Vectors.4.0.0\lib\portable-net45+win8+wpa81\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IMatrix.cs" />
-    <Compile Include="IVector.cs" />
-    <Compile Include="Matrix.cs" />
-    <Compile Include="Matrix.Operations.cs">
-      <DependentUpon>Matrix.cs</DependentUpon>
+    <Compile Include="..\AssemblyInfo.Company.cs">
+      <Link>Properties\AssemblyInfo.Company.cs</Link>
     </Compile>
+    <Compile Include="..\AssemblyInfo.Configuration.cs">
+      <Link>Properties\AssemblyInfo.Configuration.cs</Link>
+    </Compile>
+    <Compile Include="..\AssemblyInfo.Copyright.cs">
+      <Link>Properties\AssemblyInfo.Copyright.cs</Link>
+    </Compile>
+    <Compile Include="Collision.cs" />
+    <Compile Include="Box.cs" />
+    <Compile Include="CollisionType.cs" />
+    <Compile Include="ArgumentDimensionMismatchException.cs" />
+    <Compile Include="DoubleComparison.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\MatrixExtensions.cs" />
+    <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="Frustum.cs" />
+    <Compile Include="ICollidable.cs" />
+    <Compile Include="Interpolation.cs" />
+    <Compile Include="Matrix.cs" />
+    <Compile Include="Matrix2D.cs" />
+    <Compile Include="Matrix3D.cs" />
+    <Compile Include="Matrix4D.cs" />
+    <Compile Include="Plane.cs" />
+    <Compile Include="Plane2D.cs" />
+    <Compile Include="Plane3D.cs" />
+    <Compile Include="Plane4D.cs" />
+    <Compile Include="PlaneIntersection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.Version.cs">
+      <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Exceptions.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Exceptions.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Quaternion.cs" />
+    <Compile Include="Ray.cs" />
+    <Compile Include="Sphere.cs" />
     <Compile Include="Structures\SpatialTree.cs" />
+    <Compile Include="Structures\SpatialTreeNode.cs" />
+    <Compile Include="Vector.cs" />
+    <Compile Include="Vector2D.cs" />
+    <Compile Include="Vector3D.cs" />
     <Compile Include="Vector4D.cs" />
-    <Compile Include="VectorOperation.cs" />
+    <Compile Include="VectorStorage.cs" />
+    <Compile Include="Volume.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Geometry\" />
+    <EmbeddedResource Include="Exceptions.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Exceptions.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Properties\AssemblyInfo.Version.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Community\Community.csproj">

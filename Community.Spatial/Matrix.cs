@@ -1,198 +1,134 @@
-﻿namespace System.Spatial
+﻿using System.Collections.ObjectModel;
+using System.Text;
+
+namespace System.Spatial
 {
   using Collections;
   using Collections.Generic;
+  using Diagnostics;
   using Linq;
 
-  public partial struct Matrix : IMatrix<Matrix>
+  public delegate Double MatrixValueFactory(Int32 columnIndex, Int32 rowIndex);
+
+  [DebuggerDisplay("{ToString(\"F5\", null)}")]
+  public class Matrix : ICloneable, IEnumerable<Double>, IEquatable<Matrix>, IFormattable
   {
-    public Double M11;
-    public Double M12;
-    public Double M13;
-    public Double M14;
-    public Double M21;
-    public Double M22;
-    public Double M23;
-    public Double M24;
-    public Double M31;
-    public Double M32;
-    public Double M33;
-    public Double M34;
-    public Double M41;
-    public Double M42;
-    public Double M43;
-    public Double M44;
+    public readonly MatrixStorage Storage;
 
-    public Int32 Columns
+    public Int32 ColumnCount
     {
       get
       {
-        return 4;
+        return Storage.ColumnCount;
       }
     }
 
-    public Int32 Rows
+    public Int32 RowCount
     {
       get
       {
-        return 4;
+        return Storage.RowCount;
       }
     }
 
-    public Double this[Int32 index]
+    public Boolean IsSquare
     {
       get
       {
-        switch (index)
-        {
-          case 0:
-            return M11;
+        return Storage.ColumnCount == Storage.RowCount;
+      }
+    }
 
-          case 1:
-            return M12;
-
-          case 2:
-            return M13;
-
-          case 3:
-            return M14;
-
-          case 4:
-            return M21;
-
-          case 5:
-            return M22;
-
-          case 6:
-            return M23;
-
-          case 7:
-            return M24;
-
-          case 8:
-            return M31;
-
-          case 9:
-            return M32;
-
-          case 10:
-            return M33;
-
-          case 11:
-            return M34;
-
-          case 12:
-            return M41;
-
-          case 13:
-            return M42;
-
-          case 14:
-            return M43;
-
-          case 15:
-            return M44;
-
-          default:
-            throw new ArgumentOutOfRangeException("index");
-        }
+    public Double this[Int32 columnIndex, Int32 rowIndex]
+    {
+      get
+      {
+        return Storage[columnIndex, rowIndex];
       }
       set
       {
-        switch (index)
+        Storage[columnIndex, rowIndex] = value;
+      }
+    }
+
+    #region Initialization
+
+    public Matrix(Int32 order, Double defaultValue = 0D)
+      : this(new MatrixStorage(order, order, Enumerable.Repeat(defaultValue, order * order).ToArray()))
+    {
+    }
+
+    public Matrix(Int32 order, Func<Int32, Double> valueFactory, Boolean isReadOnly = false)
+      : this(new MatrixStorage(order, order, Enumerable.Range(0, order * order).Select(valueFactory).ToArray(), isReadOnly))
+    {
+    }
+
+    public Matrix(Int32 order, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+      : this(CreateMatrixStorage(order, order, valueFactory, isReadOnly))
+    {
+    }
+
+    public Matrix(Int32 columnCount, Int32 rowCount, Double defaultValue = 0D)
+      : this(new MatrixStorage(columnCount, rowCount, Enumerable.Repeat(defaultValue, columnCount * rowCount).ToArray()))
+    {
+    }
+
+    public Matrix(Int32 columnCount, Int32 rowCount, Func<Int32, Double> valueFactory, Boolean isReadOnly = false)
+      : this(new MatrixStorage(columnCount, rowCount, Enumerable.Range(0, columnCount * rowCount).Select(valueFactory).ToArray(), isReadOnly))
+    {
+    }
+
+    public Matrix(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+      : this(CreateMatrixStorage(columnCount, rowCount, valueFactory, isReadOnly))
+    {
+    }
+
+    public Matrix(Matrix matrix)
+      : this(matrix.Storage.Clone())
+    {
+    }
+
+    public Matrix(MatrixStorage storage)
+    {
+      Storage = storage;
+    }
+
+    private static MatrixStorage CreateMatrixStorage(Int32 columnCount, Int32 rowCount, MatrixValueFactory valueFactory, Boolean isReadOnly = false)
+    {
+      var data = new Double[columnCount * rowCount];
+
+      for (var rowIndex = 0; rowIndex < rowCount; rowIndex++)
+      {
+        for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
         {
-          default:
-            throw new ArgumentOutOfRangeException("index");
+          data[rowIndex * rowCount + columnIndex] = valueFactory(columnIndex, rowIndex);
         }
       }
-    }
-   
-    public Double this[Int32 column, Int32 row]
-    {
-      get
-      {
-        return this[column + Rows * Columns];
-      }
-      set
-      {
-        this[column + Rows * Columns] = value;
-      }
+
+      return new MatrixStorage(columnCount, rowCount, data, isReadOnly);
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="T:Matrix"/> struct.
-    /// </summary>
-    /// <param name="m11">The value to assign at row 1 column 1 of the matrix.</param>
-    /// <param name="m12">The value to assign at row 1 column 2 of the matrix.</param>
-    /// <param name="m13">The value to assign at row 1 column 3 of the matrix.</param>
-    /// <param name="m14">The value to assign at row 1 column 4 of the matrix.</param>
-    /// <param name="m21">The value to assign at row 2 column 1 of the matrix.</param>
-    /// <param name="m22">The value to assign at row 2 column 2 of the matrix.</param>
-    /// <param name="m23">The value to assign at row 2 column 3 of the matrix.</param>
-    /// <param name="m24">The value to assign at row 2 column 4 of the matrix.</param>
-    /// <param name="m31">The value to assign at row 3 column 1 of the matrix.</param>
-    /// <param name="m32">The value to assign at row 3 column 2 of the matrix.</param>
-    /// <param name="m33">The value to assign at row 3 column 3 of the matrix.</param>
-    /// <param name="m34">The value to assign at row 3 column 4 of the matrix.</param>
-    /// <param name="m41">The value to assign at row 4 column 1 of the matrix.</param>
-    /// <param name="m42">The value to assign at row 4 column 2 of the matrix.</param>
-    /// <param name="m43">The value to assign at row 4 column 3 of the matrix.</param>
-    /// <param name="m44">The value to assign at row 4 column 4 of the matrix.</param>
-    public Matrix(
-      Double m11 = 0D, Double m12 = 0D, Double m13 = 0D, Double m14 = 0D, 
-      Double m21 = 0D, Double m22 = 0D, Double m23 = 0D, Double m24 = 0D, 
-      Double m31 = 0D, Double m32 = 0D, Double m33 = 0D, Double m34 = 0D, 
-      Double m41 = 0D, Double m42 = 0D, Double m43 = 0D, Double m44 = 0D)
+    #endregion
+
+    #region Cloning
+
+    Object ICloneable.Clone()
     {
-      M11 = m11;  M12 = m12;  M13 = m13;  M14 = m14;
-      M21 = m21;  M22 = m22;  M23 = m23;  M24 = m24;
-      M31 = m31;  M32 = m32;  M33 = m33;  M34 = m34;
-      M41 = m41;  M42 = m42;  M43 = m43;  M44 = m44;
+      return Clone();
     }
 
-    public Boolean Equals(Matrix other)
+    public Matrix Clone()
     {
-      return Equals(other, 0D);
+      return new Matrix(Storage.Clone());
     }
 
-    public Boolean Equals(Matrix other, Double tolerance)
-    {
-      return Math.Abs(M11 - other.M11) <= tolerance
-        && Math.Abs(M12 - other.M12) <= tolerance
-        && Math.Abs(M13 - other.M13) <= tolerance
-        && Math.Abs(M14 - other.M14) <= tolerance
-        && Math.Abs(M21 - other.M21) <= tolerance
-        && Math.Abs(M22 - other.M22) <= tolerance
-        && Math.Abs(M23 - other.M23) <= tolerance
-        && Math.Abs(M24 - other.M24) <= tolerance
-        && Math.Abs(M31 - other.M31) <= tolerance
-        && Math.Abs(M32 - other.M32) <= tolerance
-        && Math.Abs(M33 - other.M33) <= tolerance
-        && Math.Abs(M34 - other.M34) <= tolerance
-        && Math.Abs(M41 - other.M41) <= tolerance
-        && Math.Abs(M42 - other.M42) <= tolerance
-        && Math.Abs(M43 - other.M43) <= tolerance
-        && Math.Abs(M44 - other.M44) <= tolerance;
-    }
+    #endregion
+
+    #region Enumerable
 
     public IEnumerator<Double> GetEnumerator()
     {
-      yield return M11;
-      yield return M12;
-      yield return M13;
-      yield return M14;
-      yield return M21;
-      yield return M22;
-      yield return M23;
-      yield return M24;
-      yield return M31;
-      yield return M32;
-      yield return M33;
-      yield return M34;
-      yield return M41;
-      yield return M42;
-      yield return M43;
-      yield return M44;
+      return Storage.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -200,23 +136,247 @@
       return GetEnumerator();
     }
 
+    public IEnumerable<Vector> EnumerateColumns()
+    {
+      for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
+      {
+        yield return GetColumn(columnIndex);
+      }
+    }
+
+    public IEnumerable<Vector> EnumerateRows()
+    {
+      for (var rowIndex = 0; rowIndex < RowCount; rowIndex++)
+      {
+        yield return GetRow(rowIndex);
+      }
+    }
+
+    #endregion
+
+    #region Equation
+
+    public override Boolean Equals(Object other)
+    {
+      return Equals(other as Matrix);
+    }
+
+    public Boolean Equals(Matrix other)
+    {
+      return Equals(other, EqualityComparer<Double>.Default);
+    }
+
+    public Boolean Equals(Matrix other, IEqualityComparer<Double> comparer)
+    {
+      if (comparer == null)
+      {
+        throw new ArgumentNullException("comparer");
+      }
+
+      if (other == null || ColumnCount != other.ColumnCount || RowCount != other.RowCount)
+      {
+        return false;
+      }
+
+      if (!ReferenceEquals(this, other))
+      {
+        for (int index = 0, count = ColumnCount * RowCount; index < count; index++)
+        {
+          if (!comparer.Equals(Storage[index], other.Storage[index]))
+          {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+
     public override Int32 GetHashCode()
     {
-      return 
-          M11.GetHashCode() ^ M12.GetHashCode() ^ M13.GetHashCode() ^ M14.GetHashCode()
-        ^ M21.GetHashCode() ^ M22.GetHashCode() ^ M23.GetHashCode() ^ M24.GetHashCode()
-        ^ M31.GetHashCode() ^ M32.GetHashCode() ^ M33.GetHashCode() ^ M34.GetHashCode()
-        ^ M41.GetHashCode() ^ M42.GetHashCode() ^ M43.GetHashCode() ^ M44.GetHashCode();
+      return Storage.Data.Select(value => value.GetHashCode()).Aggregate((left, right) => left ^ right);
     }
+
+    #endregion
+
+    #region Formatting
 
     public override String ToString()
     {
-      return base.ToString();
+      return ToString(null, null);
+    }
+
+    public String ToString(String format)
+    {
+      return ToString(format, null);
     }
 
     public String ToString(String format, IFormatProvider formatProvider)
     {
+      return String.Join(" ", EnumerateRows().Select(row => row.ToString(format, formatProvider)));
+    }
+
+    #endregion
+
+    #region Operations
+
+    public virtual Matrix Addition(Matrix right)
+    {
+      Verify(right);
+
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] + right.Storage[index]);
+    }
+
+    public virtual Matrix Addition(Double right)
+    {
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] + right);
+    }
+
+    /// <summary>
+    /// Returns the column as a vector.
+    /// </summary>
+    public Vector GetColumn(Int32 columnIndex)
+    {
+      if (columnIndex < 0 || columnIndex >= ColumnCount)
+      {
+        throw new ArgumentOutOfRangeException("columnIndex");
+      }
+
+      return new Vector(RowCount, rowIndex => Storage[columnIndex, rowIndex]);
+    }
+
+    /// <summary>
+    /// Returns the row as a vector.
+    /// </summary>
+    public Vector GetRow(Int32 rowIndex)
+    {
+      if (rowIndex < 0 || rowIndex >= RowCount)
+      {
+        throw new ArgumentOutOfRangeException("rowIndex");
+      }
+
+      return new Vector(ColumnCount, columnIndex => Storage[columnIndex, rowIndex]);
+    }
+
+    public virtual Matrix Inverse()
+    {
+      if (ColumnCount != RowCount)
+      {
+        throw new ArgumentException(Exceptions.ArgumentMatrixSquare);
+      }
+
       throw new NotImplementedException();
     }
+
+    public virtual Matrix Multiply(Matrix right)
+    {
+      if (right == null)
+      {
+        throw new ArgumentNullException("right");
+      }
+
+      if (ColumnCount != right.RowCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.RowCount", ColumnCount);
+      }
+
+      if (RowCount != right.ColumnCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.ColumnCount", RowCount);
+      }
+
+      var result = new MatrixStorage(right.ColumnCount, RowCount);
+
+      for (var columnIndex = 0; columnIndex < right.ColumnCount; columnIndex++)
+      {
+        for (var rowIndex = 0; rowIndex < RowCount; rowIndex++)
+        {
+          result[columnIndex, rowIndex] = GetRow(rowIndex).DotProduct(right.GetColumn(columnIndex));
+        }
+      }
+
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] + right.Storage[index]);
+    }
+
+    public virtual Matrix Multiply(Double right)
+    {
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] * right);
+    }
+
+    public virtual Matrix Subtract(Matrix right)
+    {
+      Verify(right);
+
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] - right.Storage[index]);
+    }
+
+    public virtual Matrix Subtract(Double right)
+    {
+      return new Matrix(ColumnCount, RowCount, index => Storage[index] - right);
+    }
+
+    public virtual Matrix Transpose()
+    {
+      return new Matrix(RowCount, ColumnCount, (columnIndex, rowIndex) => Storage[rowIndex, columnIndex]);
+    }
+
+    protected virtual void Verify(Matrix right)
+    {
+      if (right == null)
+      {
+        throw new ArgumentNullException("right");
+      }
+
+      if (ColumnCount != right.ColumnCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.ColumnCount", ColumnCount);
+      }
+
+      if (RowCount != right.RowCount)
+      {
+        throw new ArgumentDimensionMismatchException("right.RowCount", RowCount);
+      }
+    }
+
+    #endregion
+
+    #region Operators
+
+    public static Matrix operator +(Matrix matrix)
+    {
+      return matrix.Clone();
+    }
+
+    public static Matrix operator +(Matrix left, Matrix right)
+    {
+      return left.Addition(right);
+    }
+
+    public static Matrix operator -(Matrix matrix)
+    {
+      return matrix.Multiply(-1D);
+    }
+
+    public static Matrix operator -(Matrix left, Matrix right)
+    {
+      return left.Subtract(right);
+    }
+
+    public static Matrix operator *(Matrix left, Double right)
+    {
+      return left.Multiply(right);
+    }
+
+    public static Matrix operator *(Double left, Matrix right)
+    {
+      return right.Multiply(left);
+    }
+
+    public static Matrix operator *(Matrix left, Matrix right)
+    {
+      return left.Multiply(right);
+    }
+
+    #endregion
   }
 }
