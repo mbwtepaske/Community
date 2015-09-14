@@ -38,7 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionDisposable.cs" />
-    <Compile Include="Assert.cs" />
+    <Compile Include="ThrowHelper.cs" />
     <Compile Include="Exceptions.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
