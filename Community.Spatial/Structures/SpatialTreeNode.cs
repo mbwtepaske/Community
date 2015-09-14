@@ -25,11 +25,7 @@
       }
     }
 
-    public Box Box
-    {
-      get;
-      private set;
-    }
+    public Vector Center => Interpolation.Linear(Minimum, Maximum, 0.5D);
 
     public Int32 Level
     {
@@ -44,7 +40,7 @@
     /// <summary>
     /// Gets a read-only collection containing the child <see cref="T:SpatialTreeNode"/>s of this instance.
     /// </summary>
-    public IReadOnlyCollection<SpatialTreeNode<TValue>> Nodes
+    public ICollection<SpatialTreeNode<TValue>> Nodes
     {
       get;
       private set;
@@ -98,7 +94,11 @@
       Tree = tree;
     }
 
-    public IEnumerable<SpatialTreeNode<TValue>> Ancestry()
+    /// <summary>
+    /// Clears the node from its sub-nodes. 
+    /// </summary>
+    /// <returns></returns>
+    public SpatialTreeNode<TValue> Clear()
     {
       var current = this;
 
@@ -106,6 +106,8 @@
       {
         yield return current = current.Parent;
       }
+
+      return this;
     }
 
     public IEnumerable<TValue> Enumerate(Func<TValue, Boolean> continuationPredicate, Boolean includeSelf = true)
