@@ -38,18 +38,8 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.Company.cs">
-      <Link>Properties\AssemblyInfo.Company.cs</Link>
-    </Compile>
-    <Compile Include="..\AssemblyInfo.Configuration.cs">
-      <Link>Properties\AssemblyInfo.Configuration.cs</Link>
-    </Compile>
-    <Compile Include="..\AssemblyInfo.Copyright.cs">
-      <Link>Properties\AssemblyInfo.Copyright.cs</Link>
-    </Compile>
     <Compile Include="ActionDisposable.cs" />
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />

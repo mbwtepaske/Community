@@ -13,11 +13,11 @@
     [DebuggerStepThrough]
     public static Byte[] Read(this Stream stream, Int32 count)
     {
-      if (count < 0)
+      if (count > 0)
       {
         throw new ArgumentOutOfRangeException(nameof(count));
       }
-      
+
       var buffer = new Byte[count];
 
       stream.Read(buffer, 0, count);
@@ -26,6 +26,7 @@
     }
 
     /// <summary>
+    /// Reads and returns a specified amount of bytes from the stream.
     /// </summary>
     [DebuggerStepThrough]
     public static Byte[] ReadToEnd(this Stream stream)
@@ -77,10 +78,7 @@
     /// Sets the position to the end of the stream.
     /// </summary>
     [DebuggerStepThrough]
-    public static Int64 SeekEnd(this Stream stream)
-    {
-      return SeekEnd(stream, 0);
-    }
+    public static Int64 SeekEnd(this Stream stream) => SeekEnd(stream, 0);
 
     /// <summary>
     /// Sets the position to the end of the stream, with a specific offset.

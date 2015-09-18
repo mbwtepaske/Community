@@ -11,9 +11,6 @@
     /// A new object that is a copy of this instance.
     /// </returns>
     [DebuggerStepThrough]
-    public static T Clone<T>(this ICloneable cloneable)
-    {
-      return (T)cloneable.Clone();
-    }
+    public static T Clone<T>(this ICloneable cloneable) => (T)cloneable.Clone();
   }
 }

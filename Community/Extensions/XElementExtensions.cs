@@ -10,18 +10,9 @@
     /// <summary>
     /// Returns the value of an xml-attribute if it exists or else returns the default value.
     /// </summary>
-    /// <param name="element"></param>
     /// <param name="attributeName">The name of the attribute.</param>
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
-    public static String AttributeValue(this XElement element, String attributeName, String defaultValue = null)
-    {
-      if (attributeName == null)
-      {
-        throw new ArgumentNullException("attributeName");
-      }
-
-      return AttributeValue<String>(element, attributeName, defaultValue);
-    }
+    public static String AttributeValue(this XElement element, String attributeName, String defaultValue = null) => AttributeValue<String>(element, attributeName, defaultValue);
 
     /// <summary>
     /// Returns the value of an xml-attribute if it exists or else returns the default value.
@@ -29,15 +20,7 @@
     /// <typeparam name="TValue">The type of the value to return.</typeparam>
     /// <param name="element"></param>
     /// <param name="attributeName">The name of the attribute.</param>
-    public static TValue AttributeValue<TValue>(this XElement element, String attributeName)
-    {
-      if (attributeName == null)
-      {
-        throw new ArgumentNullException("attributeName");
-      }
-
-      return AttributeValue(element, attributeName, default(TValue));
-    }
+    public static TValue AttributeValue<TValue>(this XElement element, String attributeName) => AttributeValue(element, attributeName, default(TValue));
 
     /// <summary>
     /// Returns the value of an xml-attribute if it exists or else returns the specified default value.
@@ -48,10 +31,7 @@
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
     public static TValue AttributeValue<TValue>(this XElement element, String attributeName, TValue defaultValue)
     {
-      if (attributeName == null)
-      {
-        throw new ArgumentNullException("attributeName");
-      }
+      attributeName.NullOrWhiteSpace(nameof(attributeName));
 
       var attribute = element.Attribute(attributeName);
 
@@ -66,15 +46,7 @@
     /// <param name="element"></param>
     /// <param name="elementName">The name of the attribute.</param>
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
-    public static String ElementValue(this XElement element, String elementName, String defaultValue = null)
-    {
-      if (elementName == null)
-      {
-        throw new ArgumentNullException("elementName");
-      }
-
-      return ElementValue<String>(element, elementName, defaultValue);
-    }
+    public static String ElementValue(this XElement element, String elementName, String defaultValue = null) => ElementValue<String>(element, elementName, defaultValue);
 
     /// <summary>
     /// Returns the value of an xml-element if it exists or else returns the default value.
@@ -82,15 +54,7 @@
     /// <typeparam name="TValue">The type of the value to return.</typeparam>
     /// <param name="element"></param>
     /// <param name="elementPath"></param>
-    public static TValue ElementValue<TValue>(this XElement element, String elementPath)
-    {
-      if (elementPath == null)
-      {
-        throw new ArgumentNullException("elementPath");
-      }
-
-      return ElementValue(element, elementPath, default(TValue));
-    }
+    public static TValue ElementValue<TValue>(this XElement element, String elementPath) => ElementValue(element, elementPath, default(TValue));
 
     /// <summary>
     /// Returns the value of an xml-element if it exists or else returns the specified default value.
@@ -101,10 +65,7 @@
     /// <param name="defaultValue">The fallback value if the attribute doesn't exists.</param>
     public static TValue ElementValue<TValue>(this XElement element, String elementPath, TValue defaultValue)
     {
-      if (elementPath == null)
-      {
-        throw new ArgumentNullException("elementPath");
-      }
+      elementPath.NullOrWhiteSpace(nameof(elementPath));
 
       var childNames = elementPath.Split("/");
       var childElement = element;
@@ -114,12 +75,9 @@
         childElement = childElement.Element(childNames[index]);
       }
 
-      if (childElement != null)
-      {
-        return TypeConverterService.ConvertFromString<TValue>(childElement.Value);
-      }
-
-      return defaultValue;
+      return childElement != null 
+        ? TypeConverterService.ConvertFromString<TValue>(childElement.Value) 
+        : defaultValue;
     }
   }
 }

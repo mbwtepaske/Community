@@ -6,10 +6,7 @@
   {
     public static Boolean Validate(this XDocument document, XmlSchema schema, XmlSeverityType severity)
     {
-      if (schema == null)
-      {
-        throw new ArgumentNullException("schema");
-      }
+      schema.ArgumentNull(nameof(schema));
 
       var isValid = true;
 
@@ -29,14 +26,8 @@
       return isValid;
     }
 
-    public static Boolean ValidateForErrors(this XDocument document, XmlSchema schema)
-    {
-      return Validate(document, schema, XmlSeverityType.Error);
-    }
+    public static Boolean ValidateForErrors(this XDocument document, XmlSchema schema) => Validate(document, schema, XmlSeverityType.Error);
 
-    public static Boolean ValidateForErrorsAndWarnings(this XDocument document, XmlSchema schema)
-    {
-      return Validate(document, schema, XmlSeverityType.Warning);
-    }
+    public static Boolean ValidateForErrorsAndWarnings(this XDocument document, XmlSchema schema) => Validate(document, schema, XmlSeverityType.Warning);
   }
 }
