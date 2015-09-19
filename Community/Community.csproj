@@ -40,6 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.Company.cs">
+      <Link>Properties\AssemblyInfo.Company.cs</Link>
+    </Compile>
+    <Compile Include="..\AssemblyInfo.Configuration.cs">
+      <Link>Properties\AssemblyInfo.Configuration.cs</Link>
+    </Compile>
+    <Compile Include="..\AssemblyInfo.Copyright.cs">
+      <Link>Properties\AssemblyInfo.Copyright.cs</Link>
+    </Compile>
     <Compile Include="ActionDisposable.cs" />
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
@@ -50,12 +59,6 @@
     <Compile Include="Collections\TreeNode.cs" />
     <Compile Include="Collections\TreeNodeCollection.cs" />
     <Compile Include="ObjectPool`1.cs" />
-    <Compile Include="Properties\AssemblyInfo.Version.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyInfo.Version.tt</DependentUpon>
-    </Compile>
-    <None Include="Assert.cs" />
     <Compile Include="Exceptions.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -75,7 +78,13 @@
     <Compile Include="Extensions\XPathNavigatorExtensions.cs" />
     <Compile Include="IHideObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.Version.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.Version.t4</DependentUpon>
+    </Compile>
     <Compile Include="Range.cs" />
+    <Compile Include="ThrowHelper.cs" />
     <Compile Include="TypeConverterService.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -87,10 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Properties\AssemblyInfo.Version.tt">
+    <None Include="Properties\AssemblyInfo.Version.t4">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
-      <LastOutputs>.\AssemblyInfo.Version.cs</LastOutputs>
     </None>
   </ItemGroup>
   <ItemGroup>

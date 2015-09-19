@@ -33,6 +33,18 @@
     public static IEnumerable<TElement> Prepend<TElement>(this IEnumerable<TElement> source, IEnumerable<TElement> elements) => elements.Concat(source);
 
     /// <summary>
+    /// Invokes the specified action for each of the source elements.
+    /// </summary>
+    [DebuggerStepThrough]
+    public static void Invoke<TElement>(this IEnumerable<TElement> source, Action<TElement> action)
+    {
+      foreach (var element in source)
+      {
+        action(element);
+      }
+    }
+
+    /// <summary>
     /// Formats the specified elements before the source elements.
     /// </summary>
     [DebuggerStepThrough]

@@ -16,7 +16,10 @@
       {
         if (args.Action == NotifyCollectionChangedAction.Add)
         {
-          args.NewItems.Cast<T>().Invoke(action);
+          foreach (var element in args.NewItems.Cast<T>())
+          {
+            action(element);
+          }
         }
       });
     }
@@ -96,7 +99,10 @@
       {
         if (args.Action == NotifyCollectionChangedAction.Remove)
         {
-          args.OldItems.Cast<T>().Invoke(action);
+          foreach (var element in args.OldItems.Cast<T>())
+          {
+            action(element);
+          }
         }
       });
     }
@@ -115,12 +121,12 @@
     {
       if (collection == null)
       {
-        throw new NullReferenceException("collection");
+        throw new NullReferenceException(nameof(collection));
       }
 
       if (action == null)
       {
-        throw new ArgumentNullException("action");
+        throw new ArgumentNullException(nameof(action));
       }
     }
   }
