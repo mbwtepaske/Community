@@ -40,9 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.Company.cs">
-      <Link>Properties\AssemblyInfo.Company.cs</Link>
-    </Compile>
     <Compile Include="..\AssemblyInfo.Configuration.cs">
       <Link>Properties\AssemblyInfo.Configuration.cs</Link>
     </Compile>
@@ -53,11 +50,11 @@
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
-    <Compile Include="Collections\Generic\PriorityQueue`2.cs" />
-    <Compile Include="Collections\Generic\Tree%271.cs" />
-    <Compile Include="Collections\Tree.cs" />
-    <Compile Include="Collections\TreeNode.cs" />
-    <Compile Include="Collections\TreeNodeCollection.cs" />
+    <None Include="Collections\Generic\PriorityQueue`2.cs" />
+    <None Include="Collections\Generic\Tree%271.cs" />
+    <None Include="Collections\Tree.cs" />
+    <None Include="Collections\TreeNode.cs" />
+    <None Include="Collections\TreeNodeCollection.cs" />
     <Compile Include="ObjectPool`1.cs" />
     <Compile Include="Exceptions.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -95,7 +92,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Properties\AssemblyInfo.Version.t4">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
@@ -108,6 +104,9 @@
     <Folder Include="Collections\Concurrent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <PostBuildEvent>$(SolutionDir).nuget\nuget.exe pack $(ProjectDir)Community.csproj -Properties Configuration=Release</PostBuildEvent>
+  </PropertyGroup>
   <!-- <Import Project="$(SolutionDir)$(SolutionName).targets" /> -->
   <!--
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">

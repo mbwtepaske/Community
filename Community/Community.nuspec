@@ -1,14 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<?xml version="1.0"?>
+<package >
   <metadata>
-    <id>Community</id>
-    <version>0.0.0.0</version>
-    <title>Community Library</title>
-    <authors>M.B.W. te Paske</authors>
-    <owners>M.B.W. te Paske</owners>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <description>$description$</description>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
+    <iconUrl>http://files.softicons.com/download/social-media-icons/free-social-media-icons-by-aha-soft/png/32x32/Community.png</iconUrl>
     <projectUrl>https://github.com/mbwtepaske/Community</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Community Library for commonly used functionality.</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>Community System Extensions</tags>
     <language>en-US</language>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
@@ -20,6 +25,8 @@
   </metadata>
   <files>
     <file src="bin\Release\Community.dll" target="lib\net40\Community.dll" />
+    <!--
     <file src="bin\Release\Community.pdb" target="lib\net40\Community.pdb" />
+    -->
   </files>
 </package>

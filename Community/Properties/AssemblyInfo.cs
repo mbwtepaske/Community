@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Community")]
 [assembly: AssemblyDescription("Community library containing commonly used functionality.")]
 [assembly: AssemblyProduct("Community Library")]
+[assembly: AssemblyCompanyAttribute("M.B.W. te Paske")]
 
 [assembly: ComVisible(true)]
 

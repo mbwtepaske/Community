@@ -2,6 +2,7 @@
 <#@ output extension="cs" #>
 using System.Reflection;
 
+[assembly: AssemblyInformationalVersion("1.0.0-Beta")]
 [assembly: AssemblyVersion("1.0.0.<#= this.revision.ToString() #>")]
 [assembly: AssemblyFileVersion("1.0.0.<#= this.revision.ToString() #>")]
 <#+
