@@ -1,5 +1,10 @@
-Param ([switch]$Publish)
+Param 
+(  
+  [switch]  
+  $Publish  
+)
 
+$NuGetExecutable = "NuGet.exe"
 $ErrorActionPreference = "Stop"
 $global:ExitCode = 1
 
@@ -46,9 +51,7 @@ function Write-Log
 
 	Begin {}
 
-	Process 
-  {
-		
+	Process {		
 		$ErrorActionPreference = "Continue"
 
 		if ($Messages.Length -gt 0) {
@@ -191,7 +194,7 @@ function HandlePublishError {
 
 	if ($setupTask.ExitCode -eq 0) {
 		# Try to push package again
-		$publishTask = Create-Process .\NuGet.exe ("push " + $_.Name + " -Source " + $url)
+		$publishTask = Create-Process $NuGetExecutable ("push " + $_.Name + " -Source " + $url)
 		$publishTask.Start() | Out-Null
 		$publishTask.WaitForExit()
 			
@@ -229,7 +232,7 @@ function Publish {
 		Get-ChildItem *.nupkg | Where-Object { $_.Name.EndsWith(".symbols.nupkg") -eq $false } | ForEach-Object { 
 
 			# Try to push package
-			$task = Create-Process .\NuGet.exe ("push " + $_.Name + " -Source " + $url)
+			$task = Create-Process $NuGetExecutable ("push " + $_.Name + " -Source " + $url)
 			$task.Start() | Out-Null
 			$task.WaitForExit()
 			
@@ -249,11 +252,8 @@ function Publish {
 	}
 }
 
-Write-Log " "
-Write-Log "NuGet Packager 2.0.3" -ForegroundColor Yellow
-
 # Make sure the nuget executable is writable
-Set-ItemProperty NuGet.exe -Name IsReadOnly -Value $false
+Set-ItemProperty $NuGetExecutable -Name IsReadOnly -Value $false
 
 # Make sure the nupkg files are writeable and create backup
 if (Test-Path *.nupkg) {
@@ -269,15 +269,11 @@ if (Test-Path *.nupkg) {
 }
 
 Write-Log " "
-Write-Log "Updating NuGet..." -ForegroundColor Green
-Write-Log (Invoke-Command {.\NuGet.exe update -Self} -ErrorAction Stop)
-
-Write-Log " "
 Write-Log "Creating package..." -ForegroundColor Green
 
 # Create symbols package if any .pdb files are located in the lib folder
 If ((Get-ChildItem *.pdb -Path .\lib -Recurse).Count -gt 0) {
-	$packageTask = Create-Process .\NuGet.exe ("pack Package.nuspec -Symbol -Verbosity Detailed")
+	$packageTask = Create-Process $NuGetExecutable ("pack Package.nuspec -Symbol -Verbosity Detailed")
 	$packageTask.Start() | Out-Null
 	$packageTask.WaitForExit()
 			
@@ -289,7 +285,7 @@ If ((Get-ChildItem *.pdb -Path .\lib -Recurse).Count -gt 0) {
 	$global:ExitCode = $packageTask.ExitCode
 }
 Else {
-	$packageTask = Create-Process .\NuGet.exe ("pack Package.nuspec -Verbosity Detailed")
+	$packageTask = Create-Process $NuGetExecutable ("pack Package.nuspec -Verbosity Detailed")
 	$packageTask.Start() | Out-Null
 	$packageTask.WaitForExit()
 			
@@ -307,7 +303,7 @@ if ($Publish -and $global:ExitCode -eq 0) {
 }
 
 Write-Log " "
-Write-Log "Exit Code: $global:ExitCode" -ForegroundColor Gray
+Write-Log "Exit Code: '$global:ExitCode'..." -ForegroundColor Gray
 
 $host.SetShouldExit($global:ExitCode)
 Exit $global:ExitCode

@@ -32,6 +32,15 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28BETA%29|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;BETA</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -40,12 +49,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.Configuration.cs">
-      <Link>Properties\AssemblyInfo.Configuration.cs</Link>
-    </Compile>
-    <Compile Include="..\AssemblyInfo.Copyright.cs">
-      <Link>Properties\AssemblyInfo.Copyright.cs</Link>
-    </Compile>
     <Compile Include="ActionDisposable.cs" />
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
@@ -74,15 +77,16 @@
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Extensions\XPathNavigatorExtensions.cs" />
     <Compile Include="IHideObject.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\AssemblyInfo.Version.cs">
+    <Compile Include="Properties\AssemblyInfo.Common.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyInfo.Version.t4</DependentUpon>
+      <DependentUpon>AssemblyInfo.t4</DependentUpon>
     </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="ThrowHelper.cs" />
     <Compile Include="TypeConverterService.cs" />
+    <None Include="Publish.ps1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Exceptions.resx">
@@ -92,9 +96,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\AssemblyInfo.Version.t4">
+    <None Include="Package.nuspec">
+      <DependentUpon>Package.t4</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <SubType>Designer</SubType>
+      <DesignTime>True</DesignTime>
+    </None>
+    <None Include="Package.t4">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AssemblyInfo.Version.cs</LastGenOutput>
+      <LastGenOutput>Package.nuspec</LastGenOutput>
+    </None>
+    <None Include="Properties\AssemblyInfo.t4">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.Common.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -104,15 +118,20 @@
     <Folder Include="Collections\Concurrent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <PostBuildEvent>$(SolutionDir).nuget\nuget.exe pack $(ProjectDir)Community.csproj -Properties Configuration=Release</PostBuildEvent>
-  </PropertyGroup>
-  <!-- <Import Project="$(SolutionDir)$(SolutionName).targets" /> -->
-  <!--
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <PostBuildEvent>ECHO Building NuGet package...
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(SolutionDir).nuget\BuildNewPackage-RanAutomatically.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -Configuration '$(ConfigurationName)' -Platform '$(PlatformName)'"
-	</PostBuildEvent>
-  </PropertyGroup>
-  -->
+  <Target Name="AfterBuild" Condition=" $(Configuration.StartsWith('Release')) ">
+    <!--
+    <Exec Command="NuGet.exe push Package.nupkg" />
+    <Delete Files=".\NuGet.log" />
+    <Exec WorkingDirectory="$(MSBuildProjectDirectory)" ContinueOnError="True" Command="PowerShell.exe -NoProfile -NonInteractive -ExecutionPolicy Unrestricted -Command &quot;&amp; {.\Package.ps1; -Publish} &quot;" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="ExitCode" />
+    </Exec>
+    <Message Condition=" $(ExitCode) != '' " Text=" " Importance="High" />
+    <Message Condition=" $(ExitCode) != '' " Text="Build Exit Code: $(ExitCode)" Importance="High" />
+    <Error Text="Encountered error(s) when creating package.%0aCheck the NuGet.log file for details." Condition=" '$(ExitCode)' == '1' " File="NuGet.log" />
+    <Error Text="Created package but encountered error(s) when trying to publish it.%0aCheck the NuGet.log file for details." Condition=" '$(Configuration)|$(Platform)|$(ExitCode)' == 'Release|AnyCPU|2' " File="NuGet.log" />
+    <Message Text="SUCCESS: Created package." Condition=" '$(Configuration)|$(Platform)|$(ExitCode)' == 'Debug|AnyCPU|0' " Importance="High" />
+    <Message Text="SUCCESS: Published package." Condition=" '$(Configuration)|$(Platform)|$(ExitCode)' == 'Release|AnyCPU|0' " Importance="High" />
+    <Delete Files="NuGet.exe;NuGet.config;Package.ps1" />
+    -->
+  </Target>
 </Project>

@@ -3,10 +3,7 @@
   <ItemGroup>
     <CopySourceFiles Include="$(TargetDir)*.*" Exclude="$(TargetDir)*.vshost.*" />
   </ItemGroup>
-  <PropertyGroup>
-    <CopyDestinationFolder>Build\$(Configuration)</CopyDestinationFolder>
-  </PropertyGroup>
   <Target Name="AfterBuild">
-    <Copy ContinueOnError="True" DestinationFolder="$(SolutionDir)$(CopyDestinationFolder)" SourceFiles="@(CopySourceFiles)" SkipUnchangedFiles="True" />
+    <Copy ContinueOnError="True" DestinationFolder="$(SolutionDir)Build\$(Configuration)" SourceFiles="@(CopySourceFiles)" SkipUnchangedFiles="True" />
   </Target>
 </Project>

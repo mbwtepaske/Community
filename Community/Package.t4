@@ -1,0 +1,37 @@
+<#@ template language="C#" debug="True" hostspecific="true" #>
+<#@ output extension="nuspec" #>
+<#@ include file="T4Toolbox.tt" #>
+<#@ include file="$(SolutionDir)AssemblyInfo.Common.t4" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="EnvDTE, Version=8.0.0.0" #>
+<#@ assembly name="VSLangProj" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="EnvDTE" #>
+<?xml version="1.0"?>
+<#
+  var visualStudio = (DTE)((IServiceProvider) Host).GetService(typeof(DTE));
+  var project = visualStudio.Solution.FindProjectItem(Host.TemplateFile).ContainingProject;
+  var constants = Convert.ToString(project.ConfigurationManager.ActiveConfiguration.Properties.Item("DefineConstants").Value).Split(';');
+#>
+<package >
+  <metadata>
+    <id>Community</id>
+    <title>Community</title>
+    <version>1.0.0<#= constants.Contains("BETA") ? "-Beta" : "." + Revision #></version>
+    <authors><#= CompanyName #></authors>
+    <owners><#= CompanyName #></owners>
+    <summary>Community library containing extending System functionality.</summary>
+    <description>Community library containing extending System functionality, like Stream-, Enumerable-, Dictionary objects and more.</description>
+    <language>en-US</language>
+    <projectUrl>https://github.com/mbwtepaske/Community</projectUrl>
+    <iconUrl>http://files.softicons.com/download/social-media-icons/free-social-media-icons-by-aha-soft/png/32x32/Community.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>http://opensource.org/licenses/Apache-2.0</licenseUrl>
+    <copyright><#= Copyright #></copyright>
+    <tags>System Extensions Community</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\Community.dll" target="lib\net40" />
+  </files>
+</package>
