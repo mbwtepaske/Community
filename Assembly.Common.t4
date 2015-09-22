@@ -1,0 +1,37 @@
+<#@ import namespace="System.Text.RegularExpressions" #><#+
+const String CompanyName = "M.B.W. te Paske";
+
+String Copyright
+{
+  get
+  {
+    return String.Format("Copyright @ {0} {1}", DateTime.UtcNow.Year, CompanyName);
+  }
+}
+
+Int32 Revision
+{
+  get
+  {
+    return (Int32) Math.Round((DateTime.UtcNow - new DateTime(2014, 1, 1)).TotalDays * 24D);
+  }
+}
+
+void GenerateAttributes(String version)
+{
+  var versionMatch = new Regex(@"^(?<Major>\d+)\.(?<Minor>\d+)(\.(?<Patch>\d+))?(-(?<Name>\w+\d*))?$", RegexOptions.IgnoreCase).Match(version.Trim());
+
+  var buildVersion = "0";
+  var majorVersion = versionMatch.Success ? versionMatch.Groups["Major"].Value : "0";
+  var minorVersion = versionMatch.Success ? versionMatch.Groups["Minor"].Value : "0";
+  var patchVersion = versionMatch.Success ? versionMatch.Groups["Patch"].Value : "0";
+
+  #>[assembly: AssemblyCompany("<#= CompanyName #>")]
+[assembly: AssemblyCopyright("<#= Copyright #>")]
+
+[assembly: AssemblyInformationalVersion("<#= version #>")]
+[assembly: AssemblyFileVersion("<#= majorVersion #>.<#= minorVersion #>.<#= buildVersion #>.<#= Revision.ToString() #>")]
+[assembly: AssemblyVersion("<#= majorVersion #>.<#= minorVersion #>.<#= buildVersion #>.<#= Revision.ToString() #>")]
+<#+
+}
+#>

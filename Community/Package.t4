@@ -1,24 +1,26 @@
 <#@ template language="C#" debug="True" hostspecific="true" #>
 <#@ output extension="nuspec" #>
-<#@ include file="T4Toolbox.tt" #>
-<#@ include file="$(SolutionDir)AssemblyInfo.Common.t4" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="EnvDTE, Version=8.0.0.0" #>
 <#@ assembly name="VSLangProj" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Linq" #>
+<#@ import namespace="System.IO" #>
 <#@ import namespace="EnvDTE" #>
+<#@ include file="T4Toolbox.tt" #>
+<#@ include file="$(SolutionDir)Assembly.Common.t4" #>
 <?xml version="1.0"?>
 <#
   var visualStudio = (DTE)((IServiceProvider) Host).GetService(typeof(DTE));
   var project = visualStudio.Solution.FindProjectItem(Host.TemplateFile).ContainingProject;
   var constants = Convert.ToString(project.ConfigurationManager.ActiveConfiguration.Properties.Item("DefineConstants").Value).Split(';');
+  var version = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Host.TemplateFile), "Properties", "Version"));
 #>
 <package >
   <metadata>
     <id>Community</id>
     <title>Community</title>
-    <version>1.0.0<#= constants.Contains("BETA") ? "-Beta" : "." + Revision #></version>
+    <version><#= version #></version>
     <authors><#= CompanyName #></authors>
     <owners><#= CompanyName #></owners>
     <summary>Community library containing extending System functionality.</summary>

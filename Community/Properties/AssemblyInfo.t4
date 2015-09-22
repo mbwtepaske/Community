@@ -1,7 +1,0 @@
-<#@ template language="C#" #>
-<#@ output extension="Common.cs" #>
-<#@ include file="$(SolutionDir)AssemblyInfo.Common.t4" #>using System.Reflection;
-
-<# 
-GenerateAttributes(); 
-#>
